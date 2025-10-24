@@ -1,0 +1,81 @@
+{
+  "name": "30% Off Fine Dining Experience",
+  "symbol": "DEAL",
+  "description": "Indulge in an exquisite 7-course tasting menu at Le Cordon Bleu, Paris.",
+  "image": "https://ayushjhax.github.io/restaurant-discount.jpg",
+  "external_url": "https://dealcoin.app/deals/LCB-DINING30-2024",
+  "attributes": [
+    {
+      "trait_type": "Discount Percentage",
+      "value": 30
+    },
+    {
+      "trait_type": "Original Price",
+      "value": "$200"
+    },
+    {
+      "trait_type": "Discounted Price",
+      "value": "$140"
+    },
+    {
+      "trait_type": "Savings",
+      "value": "$60"
+    },
+    {
+      "trait_type": "Merchant",
+      "value": "Le Cordon Bleu"
+    },
+    {
+      "trait_type": "Merchant ID",
+      "value": "le-cordon-bleu"
+    },
+    {
+      "trait_type": "Category",
+      "value": "Restaurant"
+    },
+    {
+      "trait_type": "Location",
+      "value": "Paris, France"
+    },
+    {
+      "trait_type": "Expiry Date",
+      "value": "2024-10-31"
+    },
+    {
+      "trait_type": "Valid Until",
+      "value": "10/31/2024"
+    },
+    {
+      "trait_type": "Redemption Code",
+      "value": "LCB-DINING30-2024"
+    },
+    {
+      "trait_type": "Max Uses",
+      "value": 1
+    },
+    {
+      "trait_type": "Current Uses",
+      "value": 0
+    },
+    {
+      "trait_type": "Status",
+      "value": "Active"
+    },
+    {
+      "trait_type": "Transferable",
+      "value": "Yes"
+    },
+    {
+      "trait_type": "Platform",
+      "value": "DealCoin"
+    },
+    {
+      "trait_type": "Verification Method",
+      "value": "Solana Pay"
+    },
+    {
+      "trait_type": "NFT Type",
+      "value": "Compressed NFT"
+    }
+  ]
+}

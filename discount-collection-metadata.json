@@ -1,0 +1,47 @@
+{
+  "name": "DealCoin Discount Collection",
+  "symbol": "DEAL",
+  "description": "Verifiable discount coupons powered by cNFTs. Each promotion is a transferable NFT that grants real-world savings.",
+  "image": "https://ayushjhax.github.io/discount-collection.jpeg",
+  "external_url": "x.com/ayushjhax",
+  "seller_fee_basis_points": 0,
+  "properties": {
+    "category": "image",
+    "files": [
+      {
+        "file": "https://ayushjhax.github.io/discount-collection.jpeg",
+        "type": "image/png"
+      }
+    ]
+  },
+  "attributes": [
+    {
+      "trait_type": "Collection Type",
+      "value": "Discount Coupons"
+    },
+    {
+      "trait_type": "Platform",
+      "value": "DealCoin"
+    },
+    {
+      "trait_type": "Verification",
+      "value": "Solana Pay"
+    },
+    {
+      "trait_type": "Transferable",
+      "value": "Yes"
+    },
+    {
+      "trait_type": "NFT Type",
+      "value": "Compressed NFT"
+    },
+    {
+      "trait_type": "Blockchain",
+      "value": "Solana"
+    },
+    {
+      "trait_type": "Purpose",
+      "value": "Real-world Discounts"
+    }
+  ]
+}

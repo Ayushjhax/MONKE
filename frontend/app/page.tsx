@@ -24,11 +24,30 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto mb-8">
+          {/* Merchant Dashboard */}
+          <Link href="/dashboard/login">
+            <div className="bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl p-8 hover:shadow-2xl hover:scale-105 transition cursor-pointer border-2 border-white/30">
+              <div className="text-6xl mb-4">🏪</div>
+              <h3 className="text-2xl font-bold text-white mb-3">
+                Merchant Dashboard
+              </h3>
+              <p className="text-gray-100 mb-4 font-medium">
+                Create and mint NFT discount coupons. Manage your promotions with ease.
+              </p>
+              <ul className="text-sm text-gray-200 space-y-2">
+                <li>✓ Create NFT collections</li>
+                <li>✓ Mint discount coupons</li>
+                <li>✓ Upload to IPFS automatically</li>
+                <li>✓ Send to multiple wallets</li>
+              </ul>
+            </div>
+          </Link>
+
           {/* Merchant: Generate QR Code */}
           <Link href="/merchant">
             <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 hover:bg-white/20 transition cursor-pointer border border-white/20">
-              <div className="text-6xl mb-4">🏪</div>
+              <div className="text-6xl mb-4">📱</div>
               <h3 className="text-2xl font-bold text-white mb-3">
                 Merchant: Generate QR
               </h3>
@@ -43,6 +62,10 @@ export default function Home() {
               </ul>
             </div>
           </Link>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+
 
           {/* User: Redeem with Wallet */}
           <Link href="/redeem">

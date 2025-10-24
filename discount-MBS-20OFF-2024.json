@@ -1,0 +1,81 @@
+{
+  "name": "20% Off Hotel Stay in Singapore",
+  "symbol": "DEAL",
+  "description": "Experience luxury at Marina Bay Sands. Valid for 3 nights in a Deluxe Room.",
+  "image": "https://ayushjhax.github.io/hotel-discount.jpg",
+  "external_url": "https://dealcoin.app/deals/MBS-20OFF-2024",
+  "attributes": [
+    {
+      "trait_type": "Discount Percentage",  
+      "value": 20
+    },
+    {
+      "trait_type": "Original Price",
+      "value": "$800"
+    },
+    {
+      "trait_type": "Discounted Price",
+      "value": "$640"
+    },
+    {
+      "trait_type": "Savings",
+      "value": "$160"
+    },
+    {
+      "trait_type": "Merchant",
+      "value": "Marina Bay Sands"
+    },
+    {
+      "trait_type": "Merchant ID",
+      "value": "mbs-singapore"
+    },
+    {
+      "trait_type": "Category",
+      "value": "Hotel"
+    },
+    {
+      "trait_type": "Location",
+      "value": "Singapore"
+    },
+    {
+      "trait_type": "Expiry Date",
+      "value": "2024-12-31"
+    },
+    {
+      "trait_type": "Valid Until",
+      "value": "12/31/2024"
+    },
+    {
+      "trait_type": "Redemption Code",
+      "value": "MBS-20OFF-2024"
+    },
+    {
+      "trait_type": "Max Uses",
+      "value": 1
+    },
+    {
+      "trait_type": "Current Uses",
+      "value": 0
+    },
+    {
+      "trait_type": "Status",
+      "value": "Active"
+    },
+    {
+      "trait_type": "Transferable",
+      "value": "Yes"
+    },
+    {
+      "trait_type": "Platform",
+      "value": "DealCoin"
+    },
+    {
+      "trait_type": "Verification Method",
+      "value": "Solana Pay"
+    },
+    {
+      "trait_type": "NFT Type",
+      "value": "Compressed NFT"
+    }
+  ]
+}
