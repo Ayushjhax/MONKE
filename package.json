@@ -1,0 +1,52 @@
+{
+  "name": "dealcoin-platform",
+  "version": "1.0.0",
+  "description": "Web3-powered discount marketplace using cNFTs",
+  "module": "index.ts",
+  "type": "module",
+  "scripts": {
+    "start": "bun run api/server.ts",
+    "dev": "bun --watch api/server.ts",
+    "setup:helius": "chmod +x setup-helius.sh && ./setup-helius.sh",
+    "setup:demo": "bun run scripts/setup-demo.ts",
+    "mint:discount": "bun run scripts/mint-discount.ts",
+    "create:collection": "bun run 1_createNFTCollection.ts",
+    "create:tree": "bun run 2_createMerkleTree.ts",
+    "mint:discounts": "bun run 3_mintDiscountCNFT.ts",
+    "mint:hotel": "bun run mint-hotel-discounts.ts",
+    "mint:flight": "bun run mint-flight-discounts.ts",
+    "mint:dining": "bun run mint-dining-discounts.ts",
+    "mint:all": "bun run mint-all-discounts.ts",
+    "verify:discounts": "bun run 6_verifyDiscount.ts",
+    "verify:promotions": "bun run verify-promotions.ts",
+    "setup:discount-system": "bun run 1_createNFTCollection.ts && bun run 2_createMerkleTree.ts && echo 'Collection & Merkle Tree created! Now run: bun run mint:discounts'",
+    "test:api": "curl http://localhost:3001/api/deals",
+    "docs": "echo 'API Documentation: http://localhost:3001/api/docs' && echo 'Read: SOLANA_PAY_INNOVATION.md'"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "@types/node": "^20.0.0",
+    "@types/express": "^4.17.21",
+    "@types/cors": "^2.8.17"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@metaplex-foundation/mpl-bubblegum": "^1.0.1",
+    "@metaplex-foundation/mpl-token-metadata": "^3.0.0",
+    "@metaplex-foundation/umi-bundle-defaults": "^0.8.9",
+    "@metaplex-foundation/umi-uploader-nft-storage": "^0.8.9",
+    "bs58": "^5.0.0",
+    "csv-parse": "^5.5.6",
+    "date-fns": "^2.30.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "qrcode": "^1.5.3",
+    "@types/qrcode": "^1.5.5",
+    "@solana/pay": "^0.2.5",
+    "@solana/web3.js": "^1.87.6",
+    "bignumber.js": "^9.1.2"
+  }
+}

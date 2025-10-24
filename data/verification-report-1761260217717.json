@@ -1,0 +1,141 @@
+{
+  "reportId": "VR-1761260216972",
+  "timestamp": 1761260216972,
+  "network": "devnet",
+  "totalAddresses": 4,
+  "validPromotions": 0,
+  "invalidPromotions": 4,
+  "averageScore": 25,
+  "results": [
+    {
+      "address": "6odQQf8251g5Gtb4sDhz8s4ae7DSQmw9D1ZQGwV4Qoae",
+      "isValid": false,
+      "score": 25,
+      "maxScore": 100,
+      "percentage": 25,
+      "checks": {
+        "addressValid": true,
+        "hasNFTBalance": true,
+        "metadataExists": false,
+        "metadataValid": false,
+        "collectionMatch": false,
+        "promotionAttributes": false,
+        "redemptionCode": false,
+        "expiryValid": false
+      },
+      "nftDetails": {},
+      "provenanceData": {},
+      "fraudDetection": {
+        "isForged": false,
+        "isWrapped": false,
+        "isProxy": false,
+        "hasAlterations": false,
+        "warnings": []
+      },
+      "errors": [
+        "Error checking NFT mock-mint-6odQQf82: Non-base58 character"
+      ],
+      "warnings": [],
+      "verifiedAt": 1761260212945
+    },
+    {
+      "address": "79YxpnhDfXpKSvA85HLUKRcgzNE97fCx8juMomegVW4X",
+      "isValid": false,
+      "score": 25,
+      "maxScore": 100,
+      "percentage": 25,
+      "checks": {
+        "addressValid": true,
+        "hasNFTBalance": true,
+        "metadataExists": false,
+        "metadataValid": false,
+        "collectionMatch": false,
+        "promotionAttributes": false,
+        "redemptionCode": false,
+        "expiryValid": false
+      },
+      "nftDetails": {},
+      "provenanceData": {},
+      "fraudDetection": {
+        "isForged": false,
+        "isWrapped": false,
+        "isProxy": false,
+        "hasAlterations": false,
+        "warnings": []
+      },
+      "errors": [
+        "Error checking NFT mock-mint-79YxpnhD: Non-base58 character"
+      ],
+      "warnings": [],
+      "verifiedAt": 1761260213952
+    },
+    {
+      "address": "BkxuGUMYfZe3CEQfLcEG4towJFsXGzXhouM7F8EjSVC2",
+      "isValid": false,
+      "score": 25,
+      "maxScore": 100,
+      "percentage": 25,
+      "checks": {
+        "addressValid": true,
+        "hasNFTBalance": true,
+        "metadataExists": false,
+        "metadataValid": false,
+        "collectionMatch": false,
+        "promotionAttributes": false,
+        "redemptionCode": false,
+        "expiryValid": false
+      },
+      "nftDetails": {},
+      "provenanceData": {},
+      "fraudDetection": {
+        "isForged": false,
+        "isWrapped": false,
+        "isProxy": false,
+        "hasAlterations": false,
+        "warnings": []
+      },
+      "errors": [
+        "Error checking NFT mock-mint-BkxuGUMY: Non-base58 character"
+      ],
+      "warnings": [],
+      "verifiedAt": 1761260214959
+    },
+    {
+      "address": "4aLYHregmyZxYQpTFFNzRAFrBAgs46gNCFsqVQkPP6nK",
+      "isValid": false,
+      "score": 25,
+      "maxScore": 100,
+      "percentage": 25,
+      "checks": {
+        "addressValid": true,
+        "hasNFTBalance": true,
+        "metadataExists": false,
+        "metadataValid": false,
+        "collectionMatch": false,
+        "promotionAttributes": false,
+        "redemptionCode": false,
+        "expiryValid": false
+      },
+      "nftDetails": {},
+      "provenanceData": {},
+      "fraudDetection": {
+        "isForged": false,
+        "isWrapped": false,
+        "isProxy": false,
+        "hasAlterations": false,
+        "warnings": []
+      },
+      "errors": [
+        "Error checking NFT mock-mint-4aLYHreg: Non-base58 character"
+      ],
+      "warnings": [],
+      "verifiedAt": 1761260215967
+    }
+  ],
+  "cryptographicProof": {
+    "reportHash": "1426b4c2aa84ffe51e124eb3fd0b6b7d8e28e3e2317a2693693e099c0f26ed74",
+    "blockHeight": 416648413,
+    "rpcEndpoint": "https://devnet.helius-rpc.com/?api-key=22abefb4-e86a-482d-9a62-452fcd4f2cb0"
+  },
+  "summary": "Verified 4 addresses across 4 CSV files. 0 valid promotions found (0.0%). Average verification score: 25.0%."
+}

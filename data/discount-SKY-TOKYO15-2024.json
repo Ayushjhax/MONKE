@@ -1,0 +1,81 @@
+{
+  "name": "15% Off Flight to Tokyo",
+  "symbol": "DEAL",
+  "description": "Discover Japan with our exclusive discount. Valid for round-trip economy flights.",
+  "image": "https://ayushjhax.github.io/flight-discount.png",
+  "external_url": "https://dealcoin.app/deals/SKY-TOKYO15-2024",
+  "attributes": [
+    {
+      "trait_type": "Discount Percentage",
+      "value": 15
+    },
+    {
+      "trait_type": "Original Price",
+      "value": "$1200"
+    },
+    {
+      "trait_type": "Discounted Price",
+      "value": "$1020"
+    },
+    {
+      "trait_type": "Savings",
+      "value": "$180"
+    },
+    {
+      "trait_type": "Merchant",
+      "value": "SkyTravel Airlines"
+    },
+    {
+      "trait_type": "Merchant ID",
+      "value": "sky-travel"
+    },
+    {
+      "trait_type": "Category",
+      "value": "Flight"
+    },
+    {
+      "trait_type": "Location",
+      "value": "Tokyo, Japan"
+    },
+    {
+      "trait_type": "Expiry Date",
+      "value": "2024-11-30"
+    },
+    {
+      "trait_type": "Valid Until",
+      "value": "11/30/2024"
+    },
+    {
+      "trait_type": "Redemption Code",
+      "value": "SKY-TOKYO15-2024"
+    },
+    {
+      "trait_type": "Max Uses",
+      "value": 1
+    },
+    {
+      "trait_type": "Current Uses",
+      "value": 0
+    },
+    {
+      "trait_type": "Status",
+      "value": "Active"
+    },
+    {
+      "trait_type": "Transferable",
+      "value": "Yes"
+    },
+    {
+      "trait_type": "Platform",
+      "value": "DealCoin"
+    },
+    {
+      "trait_type": "Verification Method",
+      "value": "Solana Pay"
+    },
+    {
+      "trait_type": "NFT Type",
+      "value": "Compressed NFT"
+    }
+  ]
+}

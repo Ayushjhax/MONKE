@@ -1,0 +1,141 @@
+{
+  "reportId": "VR-1761259961758",
+  "timestamp": 1761259961758,
+  "network": "devnet",
+  "totalAddresses": 4,
+  "validPromotions": 0,
+  "invalidPromotions": 4,
+  "averageScore": 10,
+  "results": [
+    {
+      "address": "6odQQf8251g5Gtb4sDhz8s4ae7DSQmw9D1ZQGwV4Qoae",
+      "isValid": false,
+      "score": 10,
+      "maxScore": 100,
+      "percentage": 10,
+      "checks": {
+        "addressValid": true,
+        "hasNFTBalance": false,
+        "metadataExists": false,
+        "metadataValid": false,
+        "collectionMatch": false,
+        "promotionAttributes": false,
+        "redemptionCode": false,
+        "expiryValid": false
+      },
+      "nftDetails": {},
+      "provenanceData": {},
+      "fraudDetection": {
+        "isForged": false,
+        "isWrapped": false,
+        "isProxy": false,
+        "hasAlterations": false,
+        "warnings": []
+      },
+      "errors": [
+        "No NFTs found in wallet"
+      ],
+      "warnings": [],
+      "verifiedAt": 1761259955298
+    },
+    {
+      "address": "79YxpnhDfXpKSvA85HLUKRcgzNE97fCx8juMomegVW4X",
+      "isValid": false,
+      "score": 10,
+      "maxScore": 100,
+      "percentage": 10,
+      "checks": {
+        "addressValid": true,
+        "hasNFTBalance": false,
+        "metadataExists": false,
+        "metadataValid": false,
+        "collectionMatch": false,
+        "promotionAttributes": false,
+        "redemptionCode": false,
+        "expiryValid": false
+      },
+      "nftDetails": {},
+      "provenanceData": {},
+      "fraudDetection": {
+        "isForged": false,
+        "isWrapped": false,
+        "isProxy": false,
+        "hasAlterations": false,
+        "warnings": []
+      },
+      "errors": [
+        "No NFTs found in wallet"
+      ],
+      "warnings": [],
+      "verifiedAt": 1761259957451
+    },
+    {
+      "address": "BkxuGUMYfZe3CEQfLcEG4towJFsXGzXhouM7F8EjSVC2",
+      "isValid": false,
+      "score": 10,
+      "maxScore": 100,
+      "percentage": 10,
+      "checks": {
+        "addressValid": true,
+        "hasNFTBalance": false,
+        "metadataExists": false,
+        "metadataValid": false,
+        "collectionMatch": false,
+        "promotionAttributes": false,
+        "redemptionCode": false,
+        "expiryValid": false
+      },
+      "nftDetails": {},
+      "provenanceData": {},
+      "fraudDetection": {
+        "isForged": false,
+        "isWrapped": false,
+        "isProxy": false,
+        "hasAlterations": false,
+        "warnings": []
+      },
+      "errors": [
+        "No NFTs found in wallet"
+      ],
+      "warnings": [],
+      "verifiedAt": 1761259958894
+    },
+    {
+      "address": "4aLYHregmyZxYQpTFFNzRAFrBAgs46gNCFsqVQkPP6nK",
+      "isValid": false,
+      "score": 10,
+      "maxScore": 100,
+      "percentage": 10,
+      "checks": {
+        "addressValid": true,
+        "hasNFTBalance": false,
+        "metadataExists": false,
+        "metadataValid": false,
+        "collectionMatch": false,
+        "promotionAttributes": false,
+        "redemptionCode": false,
+        "expiryValid": false
+      },
+      "nftDetails": {},
+      "provenanceData": {},
+      "fraudDetection": {
+        "isForged": false,
+        "isWrapped": false,
+        "isProxy": false,
+        "hasAlterations": false,
+        "warnings": []
+      },
+      "errors": [
+        "No NFTs found in wallet"
+      ],
+      "warnings": [],
+      "verifiedAt": 1761259960321
+    }
+  ],
+  "cryptographicProof": {
+    "reportHash": "81b9b4e2ea53db92e3aa051543208142810f8f729ea01193e28bfdd5a7cd7743",
+    "blockHeight": 416647747,
+    "rpcEndpoint": "https://devnet.helius-rpc.com/?api-key=22abefb4-e86a-482d-9a62-452fcd4f2cb0"
+  },
+  "summary": "Verified 4 addresses across 4 CSV files. 0 valid promotions found (0.0%). Average verification score: 10.0%."
+}
