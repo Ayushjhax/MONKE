@@ -50,6 +50,7 @@ export default function MerchantDashboard() {
   // Collections
   const [myCollections, setMyCollections] = useState<any[]>([]);
   const [loadingCollections, setLoadingCollections] = useState(false);
+  const [addingToMarketplace, setAddingToMarketplace] = useState(false);
 
   // Form data
   const [collectionForm, setCollectionForm] = useState<CollectionData>({
@@ -72,9 +73,9 @@ export default function MerchantDashboard() {
     merchantId: 'luxury-hotels',
     category: 'Hotel',
     location: 'Singapore',
-    expiryDate: '2024-12-31',
+    expiryDate: '2025-12-31',
     redemptionCode: 'HOTEL20-2024',
-    maxUses: 1
+    maxUses: 999999
   });
 
   // Check authentication
@@ -237,6 +238,61 @@ export default function MerchantDashboard() {
       console.error('Error loading collections:', err);
     } finally {
       setLoadingCollections(false);
+    }
+  };
+
+  const handleAddToMarketplace = async () => {
+    if (!currentUser || !collectionMint || !merkleTree) {
+      setError('Please create collection and merkle tree first!');
+      return;
+    }
+
+    setAddingToMarketplace(true);
+    setError('');
+    setSuccess('');
+
+    try {
+      const response = await fetch('/api/collections/add', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: collectionForm.name,
+          symbol: collectionForm.symbol,
+          description: collectionForm.description,
+          imageUrl: collectionForm.imageUrl,
+          collectionMint: collectionMint,
+          merkleTree: merkleTree,
+          merchantId: currentUser.username,
+          merchantName: currentUser.username,
+          merchantWallet: currentUser.publicKey,
+          category: discountForm.category,
+          discountPercent: discountForm.discountPercent,
+          originalPrice: discountForm.originalPrice,
+          discountedPrice: discountForm.discountedPrice,
+          location: discountForm.location,
+          expiryDate: discountForm.expiryDate,
+          maxUses: discountForm.maxUses
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        if (data.isExisting) {
+          setSuccess('✅ Collection already exists in marketplace! Users can discover and claim your deals.');
+        } else {
+          setSuccess('✅ Collection added to marketplace! Users can now discover and claim your deals.');
+        }
+      } else {
+        setError(`Failed to add to marketplace: ${data.error}`);
+      }
+    } catch (err) {
+      setError(`Failed to add to marketplace: ${err instanceof Error ? err.message : String(err)}`);
+      console.error(err);
+    } finally {
+      setAddingToMarketplace(false);
     }
   };
 
@@ -692,14 +748,37 @@ export default function MerchantDashboard() {
                   )}
                 </div>
 
-                {/* Mint Button */}
-                <button
-                  onClick={handleMintNFT}
-                  disabled={mintingNFT}
-                  className="w-full bg-gradient-to-r from-green-500 to-blue-500 text-white font-bold py-4 px-6 rounded-lg hover:from-green-600 hover:to-blue-600 transition disabled:opacity-50"
-                >
-                  {mintingNFT ? 'Minting... (this may take a while)' : '🎫 Mint NFT'}
-                </button>
+                {/* Action Buttons */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <button
+                    onClick={handleMintNFT}
+                    disabled={mintingNFT}
+                    className="bg-gradient-to-r from-green-500 to-blue-500 text-white font-bold py-4 px-6 rounded-lg hover:from-green-600 hover:to-blue-600 transition disabled:opacity-50"
+                  >
+                    {mintingNFT ? 'Minting... (this may take a while)' : '🎫 Mint NFT'}
+                  </button>
+                  
+                  <button
+                    onClick={handleAddToMarketplace}
+                    disabled={addingToMarketplace || !collectionMint || !merkleTree}
+                    className="bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-4 px-6 rounded-lg hover:from-purple-600 hover:to-pink-600 transition disabled:opacity-50"
+                  >
+                    {addingToMarketplace ? 'Adding to Marketplace...' : '🛒 Add to Marketplace'}
+                  </button>
+                </div>
+
+                {/* Marketplace Info */}
+                <div className="bg-blue-500/20 border border-blue-500/50 rounded-lg p-4 mt-4">
+                  <h4 className="text-white font-bold mb-2">🛒 Marketplace Integration</h4>
+                  <p className="text-sm text-gray-300 mb-2">
+                    Click "Add to Marketplace" to make your collection discoverable by users. 
+                    Users will be able to browse and claim your discount NFTs directly from the marketplace.
+                  </p>
+                  <div className="text-xs text-gray-400">
+                    <p>• Collection: {collectionMint ? '✅ Created' : '❌ Not created'}</p>
+                    <p>• Merkle Tree: {merkleTree ? '✅ Created' : '❌ Not created'}</p>
+                  </div>
+                </div>
               </div>
             )}
           </div>

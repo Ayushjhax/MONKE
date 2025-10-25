@@ -24,7 +24,26 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto mb-8">
+        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-8">
+          {/* Marketplace */}
+          <Link href="/marketplace">
+            <div className="bg-gradient-to-br from-green-600 to-emerald-600 rounded-2xl p-8 hover:shadow-2xl hover:scale-105 transition cursor-pointer border-2 border-white/30">
+              <div className="text-6xl mb-4">🛒</div>
+              <h3 className="text-2xl font-bold text-white mb-3">
+                Marketplace
+              </h3>
+              <p className="text-gray-100 mb-4 font-medium">
+                Discover and claim amazing deals from verified merchants
+              </p>
+              <ul className="text-sm text-gray-200 space-y-2">
+                <li>✓ Browse all available deals</li>
+                <li>✓ One-click NFT claiming</li>
+                <li>✓ Real-time availability</li>
+                <li>✓ Wallet integration</li>
+              </ul>
+            </div>
+          </Link>
+
           {/* Merchant Dashboard */}
           <Link href="/dashboard/login">
             <div className="bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl p-8 hover:shadow-2xl hover:scale-105 transition cursor-pointer border-2 border-white/30">

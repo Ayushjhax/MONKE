@@ -140,6 +140,29 @@ export async function createMerchantUser(username: string, password: string): Pr
     createdAt: Date.now()
   };
   
+  // Also store in database for server-side access
+  try {
+    const response = await fetch('/api/merchants/sync', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        username: user.username,
+        publicKey: user.publicKey,
+        secretKey: user.secretKey
+      }),
+    });
+    
+    if (response.ok) {
+      console.log('✅ Merchant keypair stored in database');
+    } else {
+      console.warn('⚠️ Failed to store merchant keypair in database');
+    }
+  } catch (error) {
+    console.warn('⚠️ Failed to sync merchant to database:', error);
+  }
+  
   return user;
 }
 

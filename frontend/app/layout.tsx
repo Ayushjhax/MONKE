@@ -3,8 +3,8 @@ import "./globals.css";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "DealCoin - Redeem Your Discounts",
-  description: "Redeem your DealCoin promotion NFTs on-chain",
+  title: "DealCoin - Web3 Deal Discovery & Loyalty Platform",
+  description: "Discover and claim amazing discounts using Compressed NFTs on Solana",
 };
 
 export default function RootLayout({
