@@ -17,6 +17,12 @@ export default function DealCard({ collection, userWallet, onMintSuccess }: Deal
   const [hasClaimed, setHasClaimed] = useState(false);
 
   const getImageUrl = (category: string) => {
+    // Prioritize custom image URL if provided
+    if (collection.image_url) {
+      return collection.image_url;
+    }
+    
+    // Fallback to category-based images only if no custom image
     switch (category.toLowerCase()) {
       case 'flight':
         return 'https://ayushjhax.github.io/flight-discount.png';
@@ -25,7 +31,7 @@ export default function DealCard({ collection, userWallet, onMintSuccess }: Deal
       case 'restaurant':
         return 'https://ayushjhax.github.io/restaurant-discount.jpg';
       default:
-        return collection.image_url || 'https://ayushjhax.github.io/restaurant-discount.jpg';
+        return 'https://ayushjhax.github.io/restaurant-discount.jpg';
     }
   };
 

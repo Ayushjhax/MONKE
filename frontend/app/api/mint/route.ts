@@ -128,19 +128,43 @@ export async function POST(request: NextRequest) {
         throw new Error(`Failed to create merchant keypair: ${keypairError instanceof Error ? keypairError.message : 'Unknown error'}`);
       }
       
-      // Create metadata for the NFT
+      // Create metadata for the NFT with all 18 attributes (matching direct minting)
       const metadata = {
-        name: `${collection.name} - Discount Coupon`,
+        name: collection.name.length > 25 ? collection.name.substring(0, 25) : collection.name,
         symbol: collection.symbol,
         description: collection.description,
         image: collection.image_url,
+        external_url: `https://dealcoin.app/deals/${collection.merchant_id}-${collection.id}`,
         attributes: [
-          { trait_type: "Category", value: collection.category },
-          { trait_type: "Discount", value: `${collection.discount_percent}%` },
-          { trait_type: "Location", value: collection.location },
+          // Pricing
+          { trait_type: "Discount Percentage", value: collection.discount_percent },
           { trait_type: "Original Price", value: `$${collection.original_price}` },
           { trait_type: "Discounted Price", value: `$${collection.discounted_price}` },
+          { trait_type: "Savings", value: `$${collection.original_price - collection.discounted_price}` },
+          
+          // Merchant
           { trait_type: "Merchant", value: collection.merchant_name },
+          { trait_type: "Merchant ID", value: collection.merchant_id || collection.merchant_wallet },
+          
+          // Category & Location
+          { trait_type: "Category", value: collection.category },
+          { trait_type: "Location", value: collection.location },
+          
+          // Validity
+          { trait_type: "Expiry Date", value: collection.expiry_date },
+          { trait_type: "Valid Until", value: new Date(collection.expiry_date).toLocaleDateString() },
+          
+          // Redemption
+          { trait_type: "Redemption Code", value: `${collection.merchant_id}-${collection.id}` },
+          { trait_type: "Max Uses", value: collection.max_uses },
+          { trait_type: "Current Uses", value: collection.current_uses },
+          { trait_type: "Status", value: "Active" },
+          { trait_type: "Transferable", value: "Yes" },
+          
+          // Platform
+          { trait_type: "Platform", value: "DealCoin" },
+          { trait_type: "Verification Method", value: "Solana Pay" },
+          { trait_type: "NFT Type", value: "Compressed NFT" }
         ],
         properties: {
           files: [{ uri: collection.image_url, type: "image/png" }],
