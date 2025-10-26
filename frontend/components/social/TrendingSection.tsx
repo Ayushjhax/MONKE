@@ -60,74 +60,87 @@ export default function TrendingSection({ limit = 10, dealType }: TrendingSectio
 
   return (
     <div className="space-y-3">
-      {trending.map((deal, index) => (
-        <Link
-          key={deal.deal_id}
-          href={`/deal/${deal.deal_id}?type=${deal.deal_type}`}
-          className="block p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
-        >
-          <div className="flex items-start justify-between">
-            <div className="flex-1">
-              {/* Rank Badge */}
-              <div className="flex items-center gap-3 mb-2">
-                <span className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-red-500 text-white font-bold text-sm">
-                  #{index + 1}
-                </span>
-                <span className="px-2 py-1 bg-red-100 text-red-600 rounded-full text-xs font-bold">
-                  🔥 HOT
-                </span>
+      {trending.map((deal, index) => {
+        // Safely convert database values to numbers (PostgreSQL may return as strings)
+        const avgRating = typeof deal.avg_rating === 'string' ? parseFloat(deal.avg_rating) : deal.avg_rating;
+        const ratingCount = typeof deal.rating_count === 'string' ? parseInt(deal.rating_count) : deal.rating_count;
+        const commentCount = typeof deal.comment_count === 'string' ? parseInt(deal.comment_count) : deal.comment_count;
+        const upvoteCount = typeof deal.upvote_count === 'string' ? parseInt(deal.upvote_count) : deal.upvote_count;
+        const downvoteCount = typeof deal.downvote_count === 'string' ? parseInt(deal.downvote_count) : deal.downvote_count;
+        const shareCount = typeof deal.share_count === 'string' ? parseInt(deal.share_count) : deal.share_count;
+        const hotnessScore = typeof deal.hotness_score === 'string' ? parseFloat(deal.hotness_score) : deal.hotness_score;
+
+        const netVotes = upvoteCount - downvoteCount;
+
+        return (
+          <Link
+            key={deal.deal_id}
+            href={`/deal/${deal.deal_id}?type=${deal.deal_type}`}
+            className="block p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
+          >
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                {/* Rank Badge */}
+                <div className="flex items-center gap-3 mb-2">
+                  <span className="flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-orange-400 to-red-500 text-white font-bold text-sm">
+                    #{index + 1}
+                  </span>
+                  <span className="px-2 py-1 bg-red-100 text-red-600 rounded-full text-xs font-bold">
+                    🔥 HOT
+                  </span>
+                </div>
+
+                {/* Deal Type */}
+                <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">
+                  {deal.deal_type}
+                </p>
+
+                {/* Stats */}
+                <div className="flex items-center gap-4 text-sm">
+                  {avgRating > 0 && (
+                    <div className="flex items-center gap-1">
+                      <span className="text-yellow-500">⭐</span>
+                      <span className="font-medium">{formatRating(avgRating)}</span>
+                      <span className="text-gray-500">({ratingCount})</span>
+                    </div>
+                  )}
+                  
+                  {commentCount > 0 && (
+                    <div className="flex items-center gap-1">
+                      <span>💬</span>
+                      <span>{commentCount}</span>
+                    </div>
+                  )}
+                  
+                  {netVotes > 0 && (
+                    <div className="flex items-center gap-1">
+                      <span>👍</span>
+                      <span>{formatVoteCount(netVotes)}</span>
+                    </div>
+                  )}
+
+                  {shareCount > 0 && (
+                    <div className="flex items-center gap-1">
+                      <span>🔗</span>
+                      <span>{shareCount}</span>
+                    </div>
+                  )}
+                </div>
               </div>
 
-              {/* Deal Type */}
-              <p className="text-xs text-gray-500 uppercase tracking-wide mb-1">
-                {deal.deal_type}
-              </p>
-
-              {/* Stats */}
-              <div className="flex items-center gap-4 text-sm">
-                {deal.avg_rating > 0 && (
-                  <div className="flex items-center gap-1">
-                    <span className="text-yellow-500">⭐</span>
-                    <span className="font-medium">{formatRating(deal.avg_rating)}</span>
-                    <span className="text-gray-500">({deal.rating_count})</span>
-                  </div>
-                )}
-                
-                {deal.comment_count > 0 && (
-                  <div className="flex items-center gap-1">
-                    <span>💬</span>
-                    <span>{deal.comment_count}</span>
-                  </div>
-                )}
-                
-                {(deal.upvote_count - deal.downvote_count) > 0 && (
-                  <div className="flex items-center gap-1">
-                    <span>👍</span>
-                    <span>{formatVoteCount(deal.upvote_count - deal.downvote_count)}</span>
-                  </div>
-                )}
-
-                {deal.share_count > 0 && (
-                  <div className="flex items-center gap-1">
-                    <span>🔗</span>
-                    <span>{deal.share_count}</span>
-                  </div>
-                )}
+              {/* Hotness Score */}
+              <div className="text-right">
+                <div className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500">
+                  {hotnessScore.toFixed(0)}
+                </div>
+                <div className="text-xs text-gray-500">
+                  hotness
+                </div>
               </div>
             </div>
-
-            {/* Hotness Score */}
-            <div className="text-right">
-              <div className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500">
-                {deal.hotness_score.toFixed(0)}
-              </div>
-              <div className="text-xs text-gray-500">
-                hotness
-              </div>
-            </div>
-          </div>
-        </Link>
-      ))}
+          </Link>
+        );
+      })}
     </div>
   );
 }
