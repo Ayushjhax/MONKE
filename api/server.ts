@@ -8,6 +8,9 @@ import { dealsRouter } from './routes/deals.js';
 import { merchantsRouter } from './routes/merchants.js';
 import { redemptionRouter } from './routes/redemption.js';
 import { qrRouter } from './routes/qr.js';
+import { stakingRouter } from './routes/staking.js';
+import { runAllJobs } from './jobs/staking-verification.js';
+import * as cron from 'node-cron';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -38,6 +41,7 @@ app.use('/api/deals', dealsRouter);
 app.use('/api/merchants', merchantsRouter);
 app.use('/api/redemption', redemptionRouter);
 app.use('/api/qr', qrRouter);
+app.use('/api/staking', stakingRouter);
 
 // Root endpoint
 app.get('/', (req: Request, res: Response) => {
@@ -108,6 +112,17 @@ app.use((req: Request, res: Response) => {
   });
 });
 
+// Schedule background jobs
+// Run verification job every 6 hours
+cron.schedule('0 */6 * * *', async () => {
+  console.log('⏰ Running scheduled staking verification job...');
+  await runAllJobs();
+});
+
+// Also run on startup for immediate processing
+console.log('⏰ Running initial staking verification job...');
+runAllJobs().catch(err => console.error('Error running initial job:', err));
+
 // Start server
 app.listen(PORT, () => {
   console.log('🚀 DealCoin API Server Started');
@@ -115,6 +130,7 @@ app.listen(PORT, () => {
   console.log(`📚 API Documentation: http://localhost:${PORT}/api/docs`);
   console.log(`🔧 Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`⛓️  Network: ${process.env.NODE_ENV === 'production' ? 'Mainnet' : 'Devnet'}`);
+  console.log(`⏰ Staking verification job scheduled to run every 6 hours`);
 });
 
 export default app;

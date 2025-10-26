@@ -105,6 +105,25 @@ export default function Home() {
               </ul>
             </div>
           </Link>
+
+          {/* Staking Dashboard */}
+          <Link href="/staking">
+            <div className="bg-gradient-to-br from-yellow-500 via-orange-500 to-pink-500 rounded-2xl p-8 hover:shadow-2xl hover:scale-105 transition cursor-pointer border-2 border-white/30">
+              <div className="text-6xl mb-4">⭐</div>
+              <h3 className="text-2xl font-bold text-white mb-3">
+                Staking Dashboard
+              </h3>
+              <p className="text-gray-100 mb-4 font-medium">
+                Stake your NFTs and earn rewards for holding your discount NFTs
+              </p>
+              <ul className="text-sm text-gray-200 space-y-2">
+                <li>✓ Earn rewards for holding</li>
+                <li>✓ Tier-based rewards system</li>
+                <li>✓ Consecutive bonus (up to 50%)</li>
+                <li>✓ Real-time dashboard</li>
+              </ul>
+            </div>
+          </Link>
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">

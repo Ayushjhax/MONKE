@@ -27,15 +27,17 @@ export default function RedeemPage() {
   const [redeeming, setRedeeming] = useState<string | null>(null);
   const [transactionSignature, setTransactionSignature] = useState('');
   const [redeemMode, setRedeemMode] = useState<'nft' | 'signature'>('nft');
+  const [stakingStatuses, setStakingStatuses] = useState<{ [key: string]: any }>({});
 
   // Sample merchant wallet
   const merchantWallet = 'aPi7gR9c3s7eUvtWu7HVFRakW1e9rZz59ZNzrGbkKZ3';
 
-  // Fetch user's NFTs
+  // Fetch user's NFTs and staking statuses
   useEffect(() => {
     if (publicKey) {
       console.log('🔗 Wallet connected, fetching NFTs for:', publicKey.toBase58());
       fetchUserNFTs();
+      fetchStakingStatuses();
     } else {
       console.log('🔗 No wallet connected');
     }
@@ -165,6 +167,59 @@ export default function RedeemPage() {
       console.error('Error fetching NFTs:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchStakingStatuses = async () => {
+    if (!publicKey) return;
+
+    try {
+      const response = await fetch(
+        `/api/staking/my-stakes?ownerAddress=${publicKey.toBase58()}`
+      );
+      const data = await response.json();
+
+      if (data.success) {
+        const statusMap: { [key: string]: any } = {};
+        data.stakes.forEach((stake: any) => {
+          statusMap[stake.assetId] = stake;
+        });
+        setStakingStatuses(statusMap);
+      }
+    } catch (error) {
+      console.error('Error fetching staking statuses:', error);
+    }
+  };
+
+  const handleStakeNFT = async (nft: NFTData) => {
+    if (!publicKey) {
+      alert('Please connect your wallet');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/staking/stake',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            assetId: nft.mint,
+            ownerAddress: publicKey.toBase58()
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert(`Successfully staked ${nft.name}! You'll start earning rewards.`);
+        fetchStakingStatuses();
+      } else {
+        alert(`Error: ${data.error}`);
+      }
+    } catch (error) {
+      console.error('Error staking NFT:', error);
+      alert('Failed to stake NFT');
     }
   };
 
@@ -617,23 +672,59 @@ export default function RedeemPage() {
                           </div>
                         </div>
 
-                        <button
-                          onClick={() => redeemNFT(nft)}
-                          disabled={redeeming === nft.mint}
-                          className="w-full bg-gradient-to-r from-green-500 to-blue-500 text-white font-bold py-3 px-6 rounded-xl hover:from-green-600 hover:to-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {redeeming === nft.mint ? (
-                            <span className="flex items-center justify-center gap-2">
-                              <span className="animate-spin">⚡</span>
-                              Redeeming...
-                            </span>
-                          ) : (
-                            '🎫 Redeem This Discount'
-                          )}
-                        </button>
+                        {stakingStatuses[nft.mint] ? (
+                          <div className="space-y-3">
+                            <div className="bg-yellow-500/20 border border-yellow-500/50 rounded-lg p-3">
+                              <p className="text-yellow-200 text-sm font-semibold mb-1">
+                                ⭐ Currently Staking
+                              </p>
+                              <div className="grid grid-cols-2 gap-2 text-xs text-yellow-100">
+                                <div>
+                                  <span className="text-yellow-300">Pending Rewards:</span>
+                                  <p className="font-bold">{stakingStatuses[nft.mint].pendingRewards?.toFixed(6) || '0'}</p>
+                                </div>
+                                <div>
+                                  <span className="text-yellow-300">Tier:</span>
+                                  <p className="font-bold capitalize">{stakingStatuses[nft.mint].tier}</p>
+                                </div>
+                              </div>
+                            </div>
+                            <Link
+                              href="/staking"
+                              className="block w-full text-center bg-gradient-to-r from-purple-500 to-pink-600 text-white font-bold py-3 px-6 rounded-xl hover:from-purple-600 hover:to-pink-700 transition"
+                            >
+                              📊 View in Staking Dashboard
+                            </Link>
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-2 gap-3">
+                            <button
+                              onClick={() => handleStakeNFT(nft)}
+                              className="bg-gradient-to-r from-purple-500 to-pink-600 text-white font-bold py-3 px-4 rounded-xl hover:from-purple-600 hover:to-pink-700 transition"
+                            >
+                              ⭐ Stake NFT
+                            </button>
+                            <button
+                              onClick={() => redeemNFT(nft)}
+                              disabled={redeeming === nft.mint}
+                              className="bg-gradient-to-r from-green-500 to-blue-500 text-white font-bold py-3 px-4 rounded-xl hover:from-green-600 hover:to-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {redeeming === nft.mint ? (
+                                <span className="flex items-center justify-center gap-2">
+                                  <span className="animate-spin">⚡</span>
+                                  <span className="hidden sm:inline">Redeeming...</span>
+                                </span>
+                              ) : (
+                                '🎫 Redeem'
+                              )}
+                            </button>
+                          </div>
+                        )}
 
                         <p className="text-xs text-gray-400 text-center mt-2">
-                          NFT will be burned after redemption to prevent reuse
+                          {stakingStatuses[nft.mint] 
+                            ? 'NFT is staked and earning rewards'
+                            : 'Stake to earn rewards or redeem for discount'}
                         </p>
                       </div>
                     ))}
