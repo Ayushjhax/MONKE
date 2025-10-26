@@ -213,6 +213,62 @@ export async function initializeDatabase() {
         redeemed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    // Create amadeus_deals table for caching Amadeus API results
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS amadeus_deals (
+        id SERIAL PRIMARY KEY,
+        deal_type VARCHAR(20) NOT NULL,
+        amadeus_offer_id VARCHAR(255) UNIQUE NOT NULL,
+        origin VARCHAR(100),
+        destination VARCHAR(100),
+        departure_date DATE,
+        return_date DATE,
+        price DECIMAL(10,2) NOT NULL,
+        currency VARCHAR(10) DEFAULT 'USD',
+        provider_name VARCHAR(255),
+        details JSONB,
+        cached_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        expires_at TIMESTAMP
+      )
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_amadeus_deals_type_cached 
+      ON amadeus_deals(deal_type, cached_at)
+    `);
+
+    // Create deal_bookings table for simulated bookings
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS deal_bookings (
+        id SERIAL PRIMARY KEY,
+        user_wallet VARCHAR(44) NOT NULL,
+        deal_type VARCHAR(20) NOT NULL,
+        amadeus_offer_id VARCHAR(255),
+        original_price DECIMAL(10,2) NOT NULL,
+        discount_applied DECIMAL(10,2) DEFAULT 0,
+        final_price DECIMAL(10,2) NOT NULL,
+        coupon_code VARCHAR(50),
+        booking_reference VARCHAR(20) UNIQUE,
+        status VARCHAR(20) DEFAULT 'confirmed',
+        booking_details JSONB,
+        booked_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_deal_bookings_user_wallet 
+      ON deal_bookings(user_wallet, booked_at DESC)
+    `);
+
+    // Create user_coupons_applied table to track coupon usage
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS user_coupons_applied (
+        id SERIAL PRIMARY KEY,
+        user_wallet VARCHAR(44) NOT NULL,
+        coupon_code VARCHAR(50) NOT NULL UNIQUE,
+        deal_booking_id INTEGER REFERENCES deal_bookings(id),
+        applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
     
     client.release();
     console.log('✅ Database initialized successfully');
