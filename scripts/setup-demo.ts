@@ -229,4 +229,3 @@ const setupDemo = () => {
 
 // Run setup
 setupDemo();
-

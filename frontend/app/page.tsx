@@ -11,7 +11,12 @@ export default function Home() {
         <h1 className="text-3xl font-bold text-white">
           🎫 DealCoin
         </h1>
-        <WalletMultiButton />
+        <div className="flex items-center space-x-4">
+          <Link href="/profile" className="text-white hover:text-blue-300 font-semibold">
+            Profile
+          </Link>
+          <WalletMultiButton />
+        </div>
       </nav>
 
       <main className="container mx-auto px-4 py-16">
@@ -24,7 +29,7 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto mb-8">
+        <div className="grid md:grid-cols-4 gap-8 max-w-7xl mx-auto mb-8">
           {/* Marketplace */}
           <Link href="/marketplace">
             <div className="bg-gradient-to-br from-green-600 to-emerald-600 rounded-2xl p-8 hover:shadow-2xl hover:scale-105 transition cursor-pointer border-2 border-white/30">
@@ -78,6 +83,25 @@ export default function Home() {
                 <li>✓ On-chain verification</li>
                 <li>✓ NFT burned on blockchain</li>
                 <li>✓ Single-use enforcement</li>
+              </ul>
+            </div>
+          </Link>
+
+          {/* Resell Marketplace */}
+          <Link href="/resell">
+            <div className="bg-gradient-to-br from-orange-600 to-red-600 rounded-2xl p-8 hover:shadow-2xl hover:scale-105 transition cursor-pointer border-2 border-white/30">
+              <div className="text-6xl mb-4">🔄</div>
+              <h3 className="text-2xl font-bold text-white mb-3">
+                Resell Marketplace
+              </h3>
+              <p className="text-gray-100 mb-4 font-medium">
+                List your NFTs for resale or discover amazing deals from other users
+              </p>
+              <ul className="text-sm text-gray-200 space-y-2">
+                <li>✓ List your NFTs for sale</li>
+                <li>✓ Buy from other users</li>
+                <li>✓ Set your own prices</li>
+                <li>✓ Secure transactions</li>
               </ul>
             </div>
           </Link>

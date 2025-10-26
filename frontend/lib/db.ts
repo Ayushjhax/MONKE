@@ -2,7 +2,7 @@
 import { Pool } from 'pg';
 
 // Database connection
-const pool = new Pool({
+export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
     rejectUnauthorized: false
@@ -40,6 +40,55 @@ export interface Merchant {
   public_key: string;
   secret_key: number[];
   created_at: string;
+}
+
+export interface UserClaim {
+  id?: number;
+  buyer_wallet: string;
+  merchant_id: string;
+  collection_mint: string;
+  tx_signature: string;
+  claimed_at?: string;
+}
+
+export interface ResaleListing {
+  id: number;
+  nft_address: string;
+  seller_wallet: string;
+  buyer_wallet?: string;
+  price: number;
+  status: 'active' | 'sold' | 'cancelled';
+  metadata?: any;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Offer {
+  id: number;
+  listing_id: number;
+  nft_address: string;
+  buyer_wallet: string;
+  seller_wallet: string;
+  offer_amount: number;
+  status: 'pending' | 'accepted' | 'rejected' | 'expired';
+  payment_signature?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Transaction {
+  id: number;
+  offer_id?: number;
+  listing_id?: number;
+  nft_address: string;
+  buyer_wallet: string;
+  seller_wallet: string;
+  amount: number;
+  payment_signature?: string;
+  nft_transfer_status: 'pending' | 'in_progress' | 'completed' | 'failed';
+  payment_status: 'pending' | 'completed' | 'failed';
+  created_at: string;
+  updated_at: string;
 }
 
 // Initialize database and create tables
@@ -89,11 +138,65 @@ export async function initializeDatabase() {
     await client.query(`
       CREATE TABLE IF NOT EXISTS user_claims (
         id SERIAL PRIMARY KEY,
-        collection_id INTEGER NOT NULL,
-        user_wallet VARCHAR(44) NOT NULL,
+        buyer_wallet VARCHAR(44) NOT NULL,
+        merchant_id VARCHAR(255) NOT NULL,
+        collection_mint VARCHAR(44) NOT NULL,
+        tx_signature VARCHAR(88) NOT NULL,
         claimed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        UNIQUE(collection_id, user_wallet),
-        FOREIGN KEY (collection_id) REFERENCES collections(id) ON DELETE CASCADE
+        UNIQUE(buyer_wallet, merchant_id, collection_mint),
+        FOREIGN KEY (merchant_id) REFERENCES merchants(username) ON DELETE CASCADE
+      )
+    `);
+
+    // Create resale_listings table for NFT resale marketplace
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS resale_listings (
+        id SERIAL PRIMARY KEY,
+        nft_address VARCHAR(255) UNIQUE NOT NULL,
+        seller_wallet VARCHAR(44) NOT NULL,
+        buyer_wallet VARCHAR(44),
+        price DECIMAL(10,6) NOT NULL,
+        status VARCHAR(20) DEFAULT 'active',
+        metadata JSONB,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Create offers table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS offers (
+        id SERIAL PRIMARY KEY,
+        listing_id INTEGER NOT NULL,
+        nft_address VARCHAR(255) NOT NULL,
+        buyer_wallet VARCHAR(44) NOT NULL,
+        seller_wallet VARCHAR(44) NOT NULL,
+        offer_amount DECIMAL(10,6) NOT NULL,
+        status VARCHAR(20) DEFAULT 'pending',
+        payment_signature VARCHAR(88),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (listing_id) REFERENCES resale_listings(id) ON DELETE CASCADE
+      )
+    `);
+
+    // Create transactions table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS transactions (
+        id SERIAL PRIMARY KEY,
+        offer_id INTEGER,
+        listing_id INTEGER,
+        nft_address VARCHAR(255) NOT NULL,
+        buyer_wallet VARCHAR(44) NOT NULL,
+        seller_wallet VARCHAR(44) NOT NULL,
+        amount DECIMAL(10,6) NOT NULL,
+        payment_signature VARCHAR(88),
+        nft_transfer_status VARCHAR(20) DEFAULT 'pending',
+        payment_status VARCHAR(20) DEFAULT 'pending',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY (offer_id) REFERENCES offers(id) ON DELETE SET NULL,
+        FOREIGN KEY (listing_id) REFERENCES resale_listings(id) ON DELETE CASCADE
       )
     `);
     
@@ -256,13 +359,13 @@ export async function updateCollectionUsage(collectionId: string): Promise<void>
   }
 }
 
-// Check if user has already claimed from a collection
-export async function hasUserClaimed(collectionId: string, userWallet: string): Promise<boolean> {
+// Check if user has already claimed from a merchant
+export async function hasUserClaimed(merchantId: string, userWallet: string): Promise<boolean> {
   try {
     const client = await pool.connect();
     
-    const query = 'SELECT 1 FROM user_claims WHERE collection_id = $1 AND user_wallet = $2 LIMIT 1';
-    const result = await client.query(query, [collectionId, userWallet]);
+    const query = 'SELECT 1 FROM user_claims WHERE merchant_id = $1 AND buyer_wallet = $2 LIMIT 1';
+    const result = await client.query(query, [merchantId, userWallet]);
     client.release();
     
     return result.rows.length > 0;
@@ -272,21 +375,281 @@ export async function hasUserClaimed(collectionId: string, userWallet: string): 
   }
 }
 
-// Record user claim
-export async function recordUserClaim(collectionId: string, userWallet: string): Promise<void> {
+// Resale listing functions
+export async function createResaleListing(
+  assetId: string,
+  sellerWallet: string,
+  priceSol: number
+): Promise<ResaleListing> {
+  try {
+    const client = await pool.connect();
+    
+    // First check if table exists
+    const tableCheck = await client.query(`
+      SELECT EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_name = 'resale_listings'
+      )
+    `);
+    
+    if (!tableCheck.rows[0].exists) {
+      console.log('❌ resale_listings table does not exist, initializing database...');
+      await initializeDatabase();
+    }
+    
+    const query = `
+      INSERT INTO resale_listings (nft_address, seller_wallet, price)
+      VALUES ($1, $2, $3)
+      RETURNING *
+    `;
+    
+    const result = await client.query(query, [assetId, sellerWallet, priceSol]);
+    client.release();
+    
+    return result.rows[0];
+  } catch (error) {
+    console.error('Error creating resale listing:', error);
+    throw error;
+  }
+}
+
+export async function getResaleListings(): Promise<ResaleListing[]> {
   try {
     const client = await pool.connect();
     
     const query = `
-      INSERT INTO user_claims (collection_id, user_wallet) 
-      VALUES ($1, $2) 
-      ON CONFLICT (collection_id, user_wallet) DO NOTHING
+      SELECT * FROM resale_listings 
+      WHERE status = 'active'
+      ORDER BY created_at DESC
     `;
     
-    await client.query(query, [collectionId, userWallet]);
+    const result = await client.query(query);
+    client.release();
+    
+    return result.rows;
+  } catch (error) {
+    console.error('Error fetching resale listings:', error);
+    throw error;
+  }
+}
+
+export async function getResaleListingById(id: number): Promise<ResaleListing | null> {
+  try {
+    const client = await pool.connect();
+    
+    const query = 'SELECT * FROM resale_listings WHERE id = $1';
+    const result = await client.query(query, [id]);
+    client.release();
+    
+    return result.rows[0] || null;
+  } catch (error) {
+    console.error('Error fetching resale listing:', error);
+    throw error;
+  }
+}
+
+export async function updateResaleListingStatus(
+  id: number,
+  status: 'active' | 'sold' | 'cancelled',
+  buyerWallet?: string
+): Promise<void> {
+  try {
+    const client = await pool.connect();
+    
+    const query = `
+      UPDATE resale_listings 
+      SET status = $1, buyer_wallet = $2, updated_at = CURRENT_TIMESTAMP
+      WHERE id = $3
+    `;
+    
+    await client.query(query, [status, buyerWallet, id]);
+    client.release();
+  } catch (error) {
+    console.error('Error updating resale listing:', error);
+    throw error;
+  }
+}
+
+export async function getResaleListingByAssetId(assetId: string): Promise<ResaleListing | null> {
+  try {
+    const client = await pool.connect();
+    
+    // First check if table exists
+    const tableCheck = await client.query(`
+      SELECT EXISTS (
+        SELECT FROM information_schema.tables 
+        WHERE table_name = 'resale_listings'
+      )
+    `);
+    
+    if (!tableCheck.rows[0].exists) {
+      console.log('❌ resale_listings table does not exist, initializing database...');
+      await initializeDatabase();
+    }
+    
+    const query = 'SELECT * FROM resale_listings WHERE nft_address = $1';
+    const result = await client.query(query, [assetId]);
+    client.release();
+    
+    return result.rows[0] || null;
+  } catch (error) {
+    console.error('Error fetching resale listing by asset ID:', error);
+    throw error;
+  }
+}
+
+// Record user claim
+export async function recordUserClaim(merchantId: string, userWallet: string, collectionMint: string, txSignature: string): Promise<void> {
+  try {
+    const client = await pool.connect();
+    
+    const query = `
+      INSERT INTO user_claims (buyer_wallet, merchant_id, collection_mint, tx_signature) 
+      VALUES ($1, $2, $3, $4) 
+      ON CONFLICT (buyer_wallet, merchant_id, collection_mint) DO NOTHING
+    `;
+    
+    await client.query(query, [userWallet, merchantId, collectionMint, txSignature]);
     client.release();
   } catch (error) {
     console.error('Error recording user claim:', error);
+    throw error;
+  }
+}
+
+// Offer functions
+export async function createOffer(
+  listingId: number,
+  nftAddress: string,
+  buyerWallet: string,
+  sellerWallet: string,
+  offerAmount: number
+): Promise<Offer> {
+  try {
+    const client = await pool.connect();
+    const query = `
+      INSERT INTO offers (listing_id, nft_address, buyer_wallet, seller_wallet, offer_amount)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING *
+    `;
+    const result = await client.query(query, [listingId, nftAddress, buyerWallet, sellerWallet, offerAmount]);
+    client.release();
+    return result.rows[0];
+  } catch (error) {
+    console.error('Error creating offer:', error);
+    throw error;
+  }
+}
+
+export async function getOffersByBuyer(buyerWallet: string): Promise<Offer[]> {
+  try {
+    const client = await pool.connect();
+    const query = `SELECT * FROM offers WHERE buyer_wallet = $1 ORDER BY created_at DESC`;
+    const result = await client.query(query, [buyerWallet]);
+    client.release();
+    return result.rows;
+  } catch (error) {
+    console.error('Error fetching buyer offers:', error);
+    throw error;
+  }
+}
+
+export async function getOffersBySeller(sellerWallet: string): Promise<Offer[]> {
+  try {
+    const client = await pool.connect();
+    const query = `SELECT * FROM offers WHERE seller_wallet = $1 ORDER BY created_at DESC`;
+    const result = await client.query(query, [sellerWallet]);
+    client.release();
+    return result.rows;
+  } catch (error) {
+    console.error('Error fetching seller offers:', error);
+    throw error;
+  }
+}
+
+export async function updateOfferStatus(offerId: number, status: string): Promise<void> {
+  try {
+    const client = await pool.connect();
+    const query = `UPDATE offers SET status = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2`;
+    await client.query(query, [status, offerId]);
+    client.release();
+  } catch (error) {
+    console.error('Error updating offer:', error);
+    throw error;
+  }
+}
+
+export async function getOfferById(offerId: number): Promise<Offer | null> {
+  try {
+    const client = await pool.connect();
+    const query = `SELECT * FROM offers WHERE id = $1`;
+    const result = await client.query(query, [offerId]);
+    client.release();
+    return result.rows[0] || null;
+  } catch (error) {
+    console.error('Error fetching offer:', error);
+    throw error;
+  }
+}
+
+// Transaction functions
+export async function createTransaction(transaction: Partial<Transaction>): Promise<Transaction> {
+  try {
+    const client = await pool.connect();
+    const query = `
+      INSERT INTO transactions (offer_id, listing_id, nft_address, buyer_wallet, seller_wallet, amount)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING *
+    `;
+    const result = await client.query(query, [
+      transaction.offer_id,
+      transaction.listing_id,
+      transaction.nft_address,
+      transaction.buyer_wallet,
+      transaction.seller_wallet,
+      transaction.amount
+    ]);
+    client.release();
+    return result.rows[0];
+  } catch (error) {
+    console.error('Error creating transaction:', error);
+    throw error;
+  }
+}
+
+export async function updateTransactionStatus(
+  transactionId: number,
+  paymentStatus: string,
+  nftTransferStatus: string
+): Promise<void> {
+  try {
+    const client = await pool.connect();
+    const query = `
+      UPDATE transactions 
+      SET payment_status = $1, nft_transfer_status = $2, updated_at = CURRENT_TIMESTAMP
+      WHERE id = $3
+    `;
+    await client.query(query, [paymentStatus, nftTransferStatus, transactionId]);
+    client.release();
+  } catch (error) {
+    console.error('Error updating transaction:', error);
+    throw error;
+  }
+}
+
+export async function getTransactionsByUser(walletAddress: string): Promise<Transaction[]> {
+  try {
+    const client = await pool.connect();
+    const query = `
+      SELECT * FROM transactions 
+      WHERE buyer_wallet = $1 OR seller_wallet = $1
+      ORDER BY created_at DESC
+    `;
+    const result = await client.query(query, [walletAddress]);
+    client.release();
+    return result.rows;
+  } catch (error) {
+    console.error('Error fetching transactions:', error);
     throw error;
   }
 }
