@@ -269,6 +269,161 @@ export async function initializeDatabase() {
         applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    // SOCIAL DISCOVERY LAYER TABLES
+
+    // Deal ratings
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS deal_ratings (
+        id SERIAL PRIMARY KEY,
+        deal_id VARCHAR(255) NOT NULL,
+        deal_type VARCHAR(20) NOT NULL,
+        user_wallet VARCHAR(44) NOT NULL,
+        rating INTEGER NOT NULL CHECK (rating >= 1 AND rating <= 5),
+        review_text TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(deal_id, user_wallet)
+      )
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_deal_ratings_deal ON deal_ratings(deal_id, deal_type)
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_deal_ratings_user ON deal_ratings(user_wallet)
+    `);
+
+    // Deal votes (upvote/downvote)
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS deal_votes (
+        id SERIAL PRIMARY KEY,
+        deal_id VARCHAR(255) NOT NULL,
+        deal_type VARCHAR(20) NOT NULL,
+        user_wallet VARCHAR(44) NOT NULL,
+        vote_type VARCHAR(10) NOT NULL CHECK (vote_type IN ('up', 'down')),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(deal_id, user_wallet)
+      )
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_deal_votes_deal ON deal_votes(deal_id, deal_type)
+    `);
+
+    // Comments
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS deal_comments (
+        id SERIAL PRIMARY KEY,
+        deal_id VARCHAR(255) NOT NULL,
+        deal_type VARCHAR(20) NOT NULL,
+        user_wallet VARCHAR(44) NOT NULL,
+        parent_comment_id INTEGER REFERENCES deal_comments(id) ON DELETE CASCADE,
+        comment_text TEXT NOT NULL,
+        upvotes INTEGER DEFAULT 0,
+        downvotes INTEGER DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        deleted BOOLEAN DEFAULT FALSE
+      )
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_comments_deal ON deal_comments(deal_id, deal_type)
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_comments_parent ON deal_comments(parent_comment_id)
+    `);
+
+    // Comment votes
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS comment_votes (
+        id SERIAL PRIMARY KEY,
+        comment_id INTEGER REFERENCES deal_comments(id) ON DELETE CASCADE,
+        user_wallet VARCHAR(44) NOT NULL,
+        vote_type VARCHAR(10) NOT NULL CHECK (vote_type IN ('up', 'down')),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(comment_id, user_wallet)
+      )
+    `);
+
+    // Share tracking
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS deal_shares (
+        id SERIAL PRIMARY KEY,
+        deal_id VARCHAR(255) NOT NULL,
+        deal_type VARCHAR(20) NOT NULL,
+        user_wallet VARCHAR(44) NOT NULL,
+        platform VARCHAR(50) NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_shares_deal ON deal_shares(deal_id, deal_type)
+    `);
+
+    // Social stats (aggregated)
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS deal_social_stats (
+        deal_id VARCHAR(255) PRIMARY KEY,
+        deal_type VARCHAR(20) NOT NULL,
+        avg_rating DECIMAL(3,2) DEFAULT 0,
+        rating_count INTEGER DEFAULT 0,
+        comment_count INTEGER DEFAULT 0,
+        upvote_count INTEGER DEFAULT 0,
+        downvote_count INTEGER DEFAULT 0,
+        share_count INTEGER DEFAULT 0,
+        hotness_score DECIMAL(10,2) DEFAULT 0,
+        last_updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // User social profiles
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS user_social_profiles (
+        user_wallet VARCHAR(44) PRIMARY KEY,
+        display_name VARCHAR(100),
+        avatar_url TEXT,
+        reputation_points INTEGER DEFAULT 0,
+        reputation_level VARCHAR(20) DEFAULT 'Newbie',
+        badges JSONB DEFAULT '[]',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
+    // Activity feed
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS social_activities (
+        id SERIAL PRIMARY KEY,
+        user_wallet VARCHAR(44) NOT NULL,
+        activity_type VARCHAR(50) NOT NULL,
+        deal_id VARCHAR(255),
+        deal_type VARCHAR(20),
+        metadata JSONB,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_activities_created ON social_activities(created_at DESC)
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_activities_user ON social_activities(user_wallet)
+    `);
+
+    // Notifications
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS user_notifications (
+        id SERIAL PRIMARY KEY,
+        user_wallet VARCHAR(44) NOT NULL,
+        notification_type VARCHAR(50) NOT NULL,
+        title VARCHAR(255) NOT NULL,
+        message TEXT NOT NULL,
+        link VARCHAR(500),
+        read BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_notifications_user ON user_notifications(user_wallet, read, created_at DESC)
+    `);
     
     client.release();
     console.log('✅ Database initialized successfully');

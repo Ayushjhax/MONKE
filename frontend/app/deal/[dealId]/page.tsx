@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import Link from 'next/link';
@@ -13,6 +13,11 @@ import {
   getAirlineName,
   calculateDiscountedPrice,
 } from '@/lib/amadeus';
+import RatingWidget from '@/components/social/RatingWidget';
+import VoteButtons from '@/components/social/VoteButtons';
+import ShareButtons from '@/components/social/ShareButtons';
+import CommentSection from '@/components/social/CommentSection';
+import SocialStats from '@/components/social/SocialStats';
 
 interface Coupon {
   id: number;
@@ -27,10 +32,12 @@ interface Coupon {
 export default function DealDetailPage() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { connected, publicKey } = useWallet();
   
   const dealId = params.dealId as string;
-  const dealType = dealId.startsWith('flight-') ? 'flight' : 'hotel';
+  const dealTypeParam = searchParams.get('type');
+  const dealType = dealTypeParam || (dealId.startsWith('flight-') ? 'flight' : dealId.startsWith('hotel-') ? 'hotel' : 'collection');
   const offerId = dealId.replace(/^(flight|hotel)-/, '');
 
   const [loading, setLoading] = useState(true);
@@ -44,6 +51,27 @@ export default function DealDetailPage() {
   const [booking, setBooking] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
   const [bookingReference, setBookingReference] = useState('');
+  
+  const [socialStats, setSocialStats] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState<'details' | 'reviews'>('details');
+
+  useEffect(() => {
+    fetchSocialStats();
+  }, [dealId, publicKey]);
+
+  const fetchSocialStats = async () => {
+    try {
+      const response = await fetch(
+        `/api/social/stats?dealId=${dealId}&userWallet=${publicKey?.toBase58() || ''}`
+      );
+      const data = await response.json();
+      if (response.ok) {
+        setSocialStats(data.stats);
+      }
+    } catch (error) {
+      console.error('Error fetching social stats:', error);
+    }
+  };
 
   useEffect(() => {
     // Get the selected deal from sessionStorage
@@ -178,15 +206,31 @@ export default function DealDetailPage() {
   if (error && !dealDetails) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-        <div className="text-center">
+        <div className="text-center max-w-md mx-auto p-8">
           <div className="text-red-600 text-5xl mb-4">⚠️</div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">{error}</h2>
-          <Link
-            href="/marketplace"
-            className="mt-4 inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            Back to Marketplace
-          </Link>
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">{error}</h2>
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 text-left">
+            <p className="text-sm text-gray-700 mb-2">
+              <strong>💡 Tip:</strong> Deal details are lost when you refresh the page or use a direct link.
+            </p>
+            <p className="text-sm text-gray-600">
+              To view this deal, please go back to the marketplace and search for flights/hotels again, then click "View Details".
+            </p>
+          </div>
+          <div className="space-y-3">
+            <Link
+              href="/marketplace"
+              className="block w-full px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              🔍 Search Deals in Marketplace
+            </Link>
+            <Link
+              href="/community"
+              className="block w-full px-6 py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition-colors"
+            >
+              🔥 Browse Trending Deals
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -243,8 +287,57 @@ export default function DealDetailPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Deal Details */}
-          <div className="lg:col-span-2">
-            <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="lg:col-span-2 space-y-6">
+            {/* Social Stats Overview */}
+            {socialStats && (
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <SocialStats
+                  avgRating={socialStats.avg_rating}
+                  ratingCount={socialStats.rating_count}
+                  commentCount={socialStats.comment_count}
+                  upvoteCount={socialStats.upvote_count}
+                  downvoteCount={socialStats.downvote_count}
+                  shareCount={socialStats.share_count}
+                  isHot={socialStats.hotness_score > 50}
+                  compact={false}
+                />
+              </div>
+            )}
+
+            {/* Tab Navigation */}
+            <div className="bg-white rounded-lg shadow-md">
+              <div className="border-b">
+                <div className="flex">
+                  <button
+                    onClick={() => setActiveTab('details')}
+                    className={`px-6 py-4 font-medium text-sm border-b-2 transition-colors ${
+                      activeTab === 'details'
+                        ? 'border-purple-600 text-purple-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700'
+                    }`}
+                  >
+                    Deal Details
+                  </button>
+                  <button
+                    onClick={() => setActiveTab('reviews')}
+                    className={`px-6 py-4 font-medium text-sm border-b-2 transition-colors ${
+                      activeTab === 'reviews'
+                        ? 'border-purple-600 text-purple-600'
+                        : 'border-transparent text-gray-500 hover:text-gray-700'
+                    }`}
+                  >
+                    Reviews & Comments
+                    {socialStats?.comment_count > 0 && (
+                      <span className="ml-2 px-2 py-0.5 bg-gray-200 text-gray-700 rounded-full text-xs">
+                        {socialStats.comment_count}
+                      </span>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {activeTab === 'details' ? (
+            <div className="p-6">
               <div className="mb-6">
                 <div className="flex items-center space-x-2 mb-2">
                   <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
@@ -326,12 +419,71 @@ export default function DealDetailPage() {
                 </div>
               )}
             </div>
+              ) : (
+                /* Reviews & Comments Tab */
+                <div className="p-6 space-y-8">
+                  {/* Rating Section */}
+                  <div>
+                    <h3 className="text-xl font-bold mb-4">Rate this Deal</h3>
+                    <RatingWidget
+                      dealId={dealId}
+                      dealType={dealType}
+                      initialStats={socialStats ? {
+                        avg_rating: socialStats.avg_rating,
+                        rating_count: socialStats.rating_count
+                      } : undefined}
+                      onRatingUpdate={(newStats) => {
+                        setSocialStats({ ...socialStats, ...newStats });
+                      }}
+                    />
+                  </div>
+
+                  {/* Comments Section */}
+                  <div>
+                    <CommentSection
+                      dealId={dealId}
+                      dealType={dealType}
+                      onCommentCountUpdate={(count) => {
+                        setSocialStats({ ...socialStats, comment_count: count });
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Booking Panel */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-6 sticky top-8">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Booking Summary</h3>
+            <div className="bg-white rounded-lg shadow-md p-6 sticky top-8 space-y-6">
+              {/* Vote & Share Actions */}
+              <div className="flex items-center justify-between pb-6 border-b">
+                <VoteButtons
+                  dealId={dealId}
+                  dealType={dealType}
+                  initialUpvotes={socialStats?.upvote_count}
+                  initialDownvotes={socialStats?.downvote_count}
+                  initialUserVote={socialStats?.user_vote}
+                  onVoteUpdate={(upvotes, downvotes) => {
+                    setSocialStats({ ...socialStats, upvote_count: upvotes, downvote_count: downvotes });
+                  }}
+                />
+              </div>
+
+              <div className="pb-6 border-b">
+                <h4 className="text-sm font-semibold mb-3">Share this deal</h4>
+                <ShareButtons
+                  dealId={dealId}
+                  dealType={dealType}
+                  dealTitle={dealDetails?.name || `${dealDetails?.origin} → ${dealDetails?.destination}`}
+                  initialShareCount={socialStats?.share_count}
+                  onShareUpdate={(count) => {
+                    setSocialStats({ ...socialStats, share_count: count });
+                  }}
+                />
+              </div>
+
+              <h3 className="text-lg font-semibold text-gray-900">Booking Summary</h3>
               
               {/* Price */}
               <div className="mb-6">

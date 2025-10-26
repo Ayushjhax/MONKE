@@ -1,7 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Collection } from '@/lib/db';
+import Link from 'next/link';
+import SocialStats from './social/SocialStats';
 
 interface DealCardProps {
   collection: Collection;
@@ -15,6 +17,25 @@ export default function DealCard({ collection, userWallet, onMintSuccess }: Deal
   const [errorMessage, setErrorMessage] = useState('');
   const [countdown, setCountdown] = useState(0);
   const [hasClaimed, setHasClaimed] = useState(false);
+  const [socialStats, setSocialStats] = useState<any>(null);
+
+  useEffect(() => {
+    fetchSocialStats();
+  }, [collection.id]);
+
+  const fetchSocialStats = async () => {
+    try {
+      const response = await fetch(
+        `/api/social/stats?dealId=${collection.id}&userWallet=${userWallet || ''}`
+      );
+      const data = await response.json();
+      if (response.ok) {
+        setSocialStats(data.stats);
+      }
+    } catch (error) {
+      console.error('Error fetching social stats:', error);
+    }
+  };
 
   const getImageUrl = (category: string) => {
     // Prioritize custom image URL if provided
@@ -117,9 +138,12 @@ export default function DealCard({ collection, userWallet, onMintSuccess }: Deal
   const savings = Number(collection.original_price) - Number(collection.discounted_price);
   const isExpired = new Date(collection.expiry_date) < new Date();
   const isFullyRedeemed = false; // Unlimited minting - never fully redeemed
+  
+  const dealUrl = `/deal/${collection.id}?type=collection`;
 
   return (
     <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-200">
+      <Link href={dealUrl} className="block">
       {/* Image */}
       <div className="relative h-48 bg-gray-200">
         <img
@@ -139,9 +163,11 @@ export default function DealCard({ collection, userWallet, onMintSuccess }: Deal
           </div>
         </div>
       </div>
+      </Link>
 
       {/* Content */}
       <div className="p-6">
+        <Link href={dealUrl} className="block">
         <div className="flex items-start justify-between mb-2">
           <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">
             {collection.name}
@@ -181,6 +207,23 @@ export default function DealCard({ collection, userWallet, onMintSuccess }: Deal
             Save ${savings.toFixed(2)}
           </p>
         </div>
+        </Link>
+
+        {/* Social Stats */}
+        {socialStats && (
+          <div className="mb-4 pb-4 border-b">
+            <SocialStats
+              avgRating={socialStats.avg_rating}
+              ratingCount={socialStats.rating_count}
+              commentCount={socialStats.comment_count}
+              upvoteCount={socialStats.upvote_count}
+              downvoteCount={socialStats.downvote_count}
+              shareCount={socialStats.share_count}
+              isHot={socialStats.hotness_score > 50}
+              compact={true}
+            />
+          </div>
+        )}
 
         {/* Status */}
         <div className="mb-4">
