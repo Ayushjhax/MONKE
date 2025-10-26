@@ -61,6 +61,12 @@ export async function createRealBurnTransaction(
   // 1. Add compute budget to ensure transaction has enough compute units
   // Note: Bubblegum burn needs sufficient compute units for merkle proof verification
   transaction.add(
+    ComputeBudgetProgram.setComputeUnitPrice({
+      microLamports: 375000, // 0.375 lamports per compute unit (from your successful tx)
+    })
+  );
+
+  transaction.add(
     ComputeBudgetProgram.setComputeUnitLimit({
       units: 100_000, // Optimized for burn instruction
     })
@@ -232,6 +238,8 @@ export async function fetchAssetDataForBurn(
   nonce: number;
 } | null> {
   try {
+    console.log('🔍 Fetching asset proof for:', assetId);
+    
     // Fetch asset proof
     const proofResponse = await fetch(`https://devnet.helius-rpc.com/?api-key=${heliusApiKey}`, {
       method: 'POST',
@@ -245,14 +253,15 @@ export async function fetchAssetDataForBurn(
     });
 
     const proofData = await proofResponse.json();
+    console.log('📊 Proof response:', proofData);
     
     if (!proofData.result) {
-      console.error('No proof data found');
+      console.error('❌ No proof data found');
       return null;
     }
 
     // Fetch full asset data for metadata
-    const assetResponse = await fetch(`https://devnet.helius-rpc.com/?api-key=22abefb4-e86a-482d-9a62-452fcd4f2cb0`, {
+    const assetResponse = await fetch(`https://devnet.helius-rpc.com/?api-key=${heliusApiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -264,14 +273,22 @@ export async function fetchAssetDataForBurn(
     });
 
     const assetData = await assetResponse.json();
+    console.log('📊 Asset response:', assetData);
     
     if (!assetData.result) {
-      console.error('No asset data found');
+      console.error('❌ No asset data found');
       return null;
     }
 
     const asset = assetData.result;
-    const proof = proofData.result.proof.map((p: string) => new PublicKey(p));
+    
+    // Check if compression data exists
+    if (!asset.compression) {
+      console.error('❌ Asset has no compression data');
+      return null;
+    }
+    
+    const proof = proofData.result.proof?.map((p: string) => new PublicKey(p)) || [];
     
     // Get hashes from asset compression data (already computed by Bubblegum)
     const dataHash = Buffer.from(bs58.decode(asset.compression.data_hash.trim()));
@@ -279,14 +296,14 @@ export async function fetchAssetDataForBurn(
     const root = Buffer.from(bs58.decode(proofData.result.root));
     const leafNonce = asset.compression.leaf_id;
 
-    console.log('🔍 Asset data fetched:');
+    console.log('✅ Asset data fetched successfully:');
     console.log('   Merkle Tree:', proofData.result.tree_id);
     console.log('   Leaf Index:', proofData.result.node_index);
     console.log('   Leaf Nonce:', leafNonce);
     console.log('   Proof length:', proof.length);
-    console.log('   Data Hash:', dataHash.toString('hex'));
-    console.log('   Creator Hash:', creatorHash.toString('hex'));
-    console.log('   Root:', root.toString('hex'));
+    console.log('   Data Hash:', dataHash.toString('hex').substring(0, 20) + '...');
+    console.log('   Creator Hash:', creatorHash.toString('hex').substring(0, 20) + '...');
+    console.log('   Root:', root.toString('hex').substring(0, 20) + '...');
 
     return {
       merkleTree: proofData.result.tree_id,
@@ -298,7 +315,10 @@ export async function fetchAssetDataForBurn(
       nonce: leafNonce,
     };
   } catch (error) {
-    console.error('Error fetching asset data for burn:', error);
+    console.error('❌ Error fetching asset data for burn:', error);
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+    }
   }
   
   return null;

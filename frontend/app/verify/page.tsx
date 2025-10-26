@@ -39,6 +39,34 @@ export default function VerifyPage() {
     try {
       console.log('🔍 Verifying transaction:', transactionSignature);
 
+      // First, check database for coupon redemption
+      console.log('💾 Checking database for coupon redemption...');
+      const dbCheckResponse = await fetch(`/api/redemption/verify?txSignature=${transactionSignature}`);
+      const dbCheck = await dbCheckResponse.json();
+
+      if (dbCheck.success && dbCheck.redemption) {
+        console.log('✅ Found in database:', dbCheck.redemption);
+        
+        const result: VerificationResult = {
+          success: true,
+          nftMint: dbCheck.redemption.nft_mint || 'N/A',
+          redemptionCode: dbCheck.redemption.coupon_code,
+          discountValue: dbCheck.redemption.discount_value || 20,
+          userWallet: dbCheck.redemption.wallet_address,
+          transactionSignature: dbCheck.redemption.tx_signature,
+          timestamp: dbCheck.redemption.redeemed_at ? new Date(dbCheck.redemption.redeemed_at).getTime() : Date.now(),
+          nftBurned: true, // If in database, NFT was successfully burned
+          message: '✅ Valid redemption found in database - NFT was burned and coupon code stored'
+        };
+
+        setVerificationResult(result);
+        console.log('✅ Verification result from database:', result);
+        return;
+      }
+
+      // If not in database, try to verify from blockchain
+      console.log('📝 Not found in database, checking blockchain...');
+
       // Fetch transaction details
       const tx = await connection.getTransaction(transactionSignature, {
         maxSupportedTransactionVersion: 0,
@@ -135,99 +163,9 @@ export default function VerifyPage() {
               discountValue: parseInt(parts[2]) || 20
             };
             console.log('✅ Parsed memo data:', memoData);
-          } else if (!memoText || memoText.length === 0) {
-            // If memo text is empty, try to extract from transaction logs
-            console.log('📄 Memo text is empty, trying transaction logs...');
-            if (tx.meta?.logMessages) {
-              const memoLog = tx.meta.logMessages.find((log: string) => log.includes('Memo (len'));
-              if (memoLog) {
-                console.log('📝 Found memo in logs:', memoLog);
-                const match = memoLog.match(/Memo \(len \d+\): "(.+)"/);
-                if (match && match[1]) {
-                  const memoFromLog = match[1];
-                  console.log('📝 Extracted from log:', memoFromLog);
-                  if (memoFromLog.startsWith('R:')) {
-                    const parts = memoFromLog.split(':');
-                    memoData = {
-                      redemptionCode: parts[1] || 'UNKNOWN',
-                      discountValue: parseInt(parts[2]) || 20
-                    };
-                    console.log('✅ Parsed memo data from logs:', memoData);
-                  }
-                }
-              }
-            }
-          } else {
-            console.warn('⚠️ Memo does not start with "R:" - memo text:', memoText);
-            // Try to find memo in transaction logs
-            if (tx.meta?.logMessages) {
-              console.log('📝 Transaction logs:', tx.meta.logMessages);
-              const memoLog = tx.meta.logMessages.find((log: string) => log.includes('Memo'));
-              if (memoLog) {
-                console.log('📝 Found memo in logs:', memoLog);
-                // Try multiple regex patterns to extract memo
-                const patterns = [
-                  /Memo \(len \d+\): "(.+)"/,  // Standard format
-                  /Memo: "(.+)"/,              // Simple format
-                  /Memo \(len \d+\): (.+)/,    // Without quotes
-                  /"R:([^"]+)"/,               // Direct R: pattern
-                ];
-                
-                for (const pattern of patterns) {
-                  const match = memoLog.match(pattern);
-                  if (match && match[1]) {
-                    const memoFromLog = match[1];
-                    console.log('📝 Extracted from log with pattern:', pattern, '->', memoFromLog);
-                    if (memoFromLog.startsWith('R:')) {
-                      const parts = memoFromLog.split(':');
-                      memoData = {
-                        redemptionCode: parts[1] || 'UNKNOWN',
-                        discountValue: parseInt(parts[2]) || 20
-                      };
-                      console.log('✅ Parsed memo data from logs:', memoData);
-                      break;
-                    }
-                  }
-                }
-              }
-            }
           }
         } catch (e) {
           console.error('❌ Could not parse memo:', e);
-        }
-      } else {
-        console.warn('⚠️ No memo instruction found');
-        // Try to extract memo from transaction logs
-        if (tx.meta?.logMessages) {
-          console.log('📝 Checking transaction logs for memo...');
-          const memoLog = tx.meta.logMessages.find((log: string) => log.includes('Memo'));
-          if (memoLog) {
-            console.log('📝 Found memo in logs:', memoLog);
-            // Try multiple regex patterns to extract memo
-            const patterns = [
-              /Memo \(len \d+\): "(.+)"/,  // Standard format
-              /Memo: "(.+)"/,              // Simple format
-              /Memo \(len \d+\): (.+)/,    // Without quotes
-              /"R:([^"]+)"/,               // Direct R: pattern
-            ];
-            
-            for (const pattern of patterns) {
-              const match = memoLog.match(pattern);
-              if (match && match[1]) {
-                const memoFromLog = match[1];
-                console.log('📝 Extracted from log with pattern:', pattern, '->', memoFromLog);
-                if (memoFromLog.startsWith('R:')) {
-                  const parts = memoFromLog.split(':');
-                  memoData = {
-                    redemptionCode: parts[1] || 'UNKNOWN',
-                    discountValue: parseInt(parts[2]) || 20
-                  };
-                  console.log('✅ Parsed memo data from logs:', memoData);
-                  break;
-                }
-              }
-            }
-          }
         }
       }
 

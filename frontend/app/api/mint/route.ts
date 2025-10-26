@@ -220,11 +220,11 @@ export async function POST(request: NextRequest) {
       
       console.log(`✅ Mint transaction completed!`);
 
-      // Record user claim and update collection usage
-      await recordUserClaim(collectionId, userWallet);
-      await updateCollectionUsage(collectionId);
-
       const signature = bs58.encode(mintResult.signature);
+
+      // Record user claim and update collection usage
+      await recordUserClaim(collection.merchant_id, userWallet, collection.collection_mint, signature);
+      await updateCollectionUsage(collectionId);
       const explorerUrl = `https://explorer.solana.com/tx/${signature}?cluster=devnet`;
 
       return NextResponse.json({

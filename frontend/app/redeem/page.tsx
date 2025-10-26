@@ -73,18 +73,25 @@ export default function RedeemPage() {
       console.log('🔍 Total assets fetched from DAS API:', assets.length);
       console.log('🔍 Raw assets:', assets.map((a: any) => ({ id: a.id, name: a.content?.metadata?.name, burned: a.burnt })));
 
-      // Filter for DealCoin promotion NFTs
+      // Filter for DealCoin promotion NFTs - BETTER FILTERING
       const promotionNFTs = assets
         .filter((asset: any) => {
           const attrs = asset.content?.metadata?.attributes || [];
-          const isDealCoin = attrs.some((attr: any) => attr.trait_type === 'Platform' && attr.value === 'DealCoin');
+          const metadataName = asset.content?.metadata?.name || '';
+          
+          // Check for DealCoin platform attribute OR name containing DealCoin
+          const isDealCoin = attrs.some((attr: any) => attr.trait_type === 'Platform' && attr.value === 'DealCoin') ||
+                             metadataName.toLowerCase().includes('dealcoin') ||
+                             metadataName.toLowerCase().includes('discount');
+          
           const isBurned = asset.burnt || false;
           
           console.log(`🔍 Asset ${asset.id}:`, {
-            name: asset.content?.metadata?.name,
+            name: metadataName,
             isDealCoin,
             isBurned,
-            hasAttributes: attrs.length > 0
+            hasAttributes: attrs.length > 0,
+            attributes: attrs.map((a: any) => `${a.trait_type}: ${a.value}`).join(', ')
           });
           
           return isDealCoin && !isBurned; // Only include non-burned DealCoin NFTs
@@ -169,6 +176,19 @@ export default function RedeemPage() {
 
     setRedeeming(nft.mint);
     try {
+      // Generate 8-digit random coupon code
+      const generateCouponCode = () => {
+        const digits = '0123456789';
+        let code = '';
+        for (let i = 0; i < 8; i++) {
+          code += digits.charAt(Math.floor(Math.random() * digits.length));
+        }
+        return code;
+      };
+
+      const couponCode = generateCouponCode();
+      console.log('🎫 Generated coupon code:', couponCode);
+      
       console.log('🔥 Starting REAL NFT burn process...');
       
       // Step 1: Fetch asset proof data from Helius DAS API for burning
@@ -177,29 +197,34 @@ export default function RedeemPage() {
       
       const assetData = await fetchAssetDataForBurn(nft.mint, HELIUS_API_KEY);
 
+      console.log('🔍 Detailed asset data check:', {
+        hasAssetData: !!assetData,
+        dataHash: assetData?.dataHash ? 'present' : 'missing',
+        creatorHash: assetData?.creatorHash ? 'present' : 'missing',
+        proof: assetData?.proof?.length || 0,
+        merkleTree: assetData?.merkleTree,
+        leafIndex: assetData?.leafIndex,
+        nonce: assetData?.nonce
+      });
+
       let transaction: Transaction;
 
-      if (assetData) {
+      // Try to burn if we have any valid data
+      if (assetData && assetData.merkleTree && assetData.proof && assetData.proof.length > 0) {
         console.log('✅ Asset data found - creating REAL burn transaction');
         console.log('   Merkle Tree:', assetData.merkleTree);
         console.log('   Leaf Index:', assetData.leafIndex);
-        console.log('   Proof length:', assetData.proof?.length);
+        console.log('   Proof length:', assetData.proof.length);
         console.log('   Has dataHash:', !!assetData.dataHash);
         console.log('   Has creatorHash:', !!assetData.creatorHash);
         console.log('   Has nonce:', !!assetData.nonce);
-        
-        if (!assetData.dataHash || !assetData.creatorHash) {
-          console.warn('⚠️ Missing required hashes for burn - will skip burn instruction');
-        }
-        // Note: Proof can be large (up to ~24 nodes) - we'll handle transaction size later
-        console.log('   Proof nodes:', assetData.proof.length, '(max merkle tree depth)');
         
         // Create REAL burn transaction with Bubblegum instruction
         transaction = await createRealBurnTransaction(connection, {
           nftMint: nft.mint,
           userWallet: publicKey.toBase58(),
           merchantWallet: merchantWallet,
-          redemptionCode: nft.redemptionCode,
+          redemptionCode: couponCode,
           discountValue: nft.discountPercent,
           merkleTree: assetData.merkleTree,
           leafIndex: assetData.leafIndex,
@@ -210,14 +235,20 @@ export default function RedeemPage() {
           nonce: assetData.nonce,
         });
       } else {
-        console.log('⚠️  Asset data not found - creating redemption-only transaction');
+        console.log('⚠️  Asset data incomplete - creating redemption-only transaction');
+        console.log('   Missing:', {
+          hasAssetData: !!assetData,
+          hasMerkleTree: !!assetData?.merkleTree,
+          hasRoot: !!assetData?.root,
+          hasProof: (assetData?.proof?.length || 0) > 0
+        });
         
         // Fallback: Create redemption transaction without burn
         transaction = await createRedemptionOnlyTransaction(connection, {
           nftMint: nft.mint,
           userWallet: publicKey.toBase58(),
           merchantWallet: merchantWallet,
-          redemptionCode: nft.redemptionCode,
+          redemptionCode: couponCode,
           discountValue: nft.discountPercent
         });
       }
@@ -295,9 +326,32 @@ export default function RedeemPage() {
 
       console.log('🎉 Transaction confirmed!');
 
-      const message = assetData 
-        ? `✅ Redemption successful!\n\n🔥 NFT BURNED ON-CHAIN!\n\nTransaction: ${signature}\n\nThe NFT has been permanently destroyed using Metaplex Bubblegum. It can never be recovered or reused.\n\nView on Solana Explorer to verify the burn.`
-        : `✅ Redemption successful!\n\n📝 Transaction recorded on-chain\n\nTransaction: ${signature}\n\nNote: NFT burn requires merkle tree data. Redemption is tracked via memo.`;
+      // Store coupon redemption in database
+      try {
+        console.log('💾 Storing coupon redemption in database...');
+        const storeResponse = await fetch('/api/redemption/store', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nftMint: nft.mint,
+            walletAddress: publicKey.toBase58(),
+            couponCode: couponCode,
+            txSignature: signature,
+            discountValue: nft.discountPercent,
+            merchantName: nft.merchant
+          })
+        });
+
+        const storeData = await storeResponse.json();
+        console.log('✅ Coupon redemption stored:', storeData);
+      } catch (storeError) {
+        console.error('⚠️ Failed to store coupon redemption:', storeError);
+        // Continue anyway - transaction is already confirmed
+      }
+
+      const message = assetData && assetData.merkleTree && assetData.proof && assetData.proof.length > 0
+        ? `✅ Redemption successful!\n\n🎫 Your Coupon Code: ${couponCode}\n\n🔥 NFT BURN ATTEMPTED!\n\nTransaction: ${signature}\n\nThe NFT burn instruction was added to the transaction.\n\nThe coupon code has been stored in the database.\n\nYou can now verify this redemption on the verify page.`
+        : `✅ Redemption successful!\n\n🎫 Your Coupon Code: ${couponCode}\n\n📝 Transaction recorded on-chain\n\nTransaction: ${signature}\n\nNote: NFT burn requires merkle tree data. Redemption is tracked via memo.\n\nThis coupon code has been stored in the database.`;
 
       alert(message);
 

@@ -199,6 +199,20 @@ export async function initializeDatabase() {
         FOREIGN KEY (listing_id) REFERENCES resale_listings(id) ON DELETE CASCADE
       )
     `);
+
+    // Create coupon_redemptions table
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS coupon_redemptions (
+        id SERIAL PRIMARY KEY,
+        nft_mint VARCHAR(255) UNIQUE NOT NULL,
+        wallet_address VARCHAR(44) NOT NULL,
+        coupon_code VARCHAR(50) NOT NULL,
+        tx_signature VARCHAR(88) NOT NULL,
+        discount_value INTEGER DEFAULT 0,
+        merchant_name VARCHAR(255),
+        redeemed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
     
     client.release();
     console.log('✅ Database initialized successfully');
