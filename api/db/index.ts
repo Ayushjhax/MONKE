@@ -217,3 +217,4 @@ export const clearAllStakingData = (): void => {
   writeFile(DB_PATHS.USER_STATS, []);
 };
 
+

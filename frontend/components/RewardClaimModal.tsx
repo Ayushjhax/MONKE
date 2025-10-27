@@ -90,3 +90,4 @@ export function RewardClaimModal({ isOpen, onClose, totalRewards, onClaim }: Rew
   );
 }
 
+

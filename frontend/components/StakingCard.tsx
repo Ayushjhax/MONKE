@@ -170,3 +170,4 @@ export function StakingCard({ stake, onClaimRewards, onRequestUnstake }: Staking
   );
 }
 
+
