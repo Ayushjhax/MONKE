@@ -330,37 +330,57 @@ export default function MarketplacePage() {
       {/* Main Tabs */}
       <div className="bg-white border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex space-x-8 py-4">
-            <button
-              onClick={() => setActiveTab('static')}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                activeTab === 'static'
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-600 hover:bg-gray-100'
-              }`}
-            >
-              Static Deals
-            </button>
-            <button
-              onClick={() => setActiveTab('flights')}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                activeTab === 'flights'
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-600 hover:bg-gray-100'
-              }`}
-            >
-              ✈️ Live Flights
-            </button>
-            <button
-              onClick={() => setActiveTab('hotels')}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                activeTab === 'hotels'
-                  ? 'bg-blue-600 text-white'
-                  : 'text-gray-600 hover:bg-gray-100'
-              }`}
-            >
-              🏨 Live Hotels
-            </button>
+          <div className="flex justify-between items-center py-4">
+            <div className="flex space-x-8">
+              <button
+                onClick={() => setActiveTab('static')}
+                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  activeTab === 'static'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                Static Deals
+              </button>
+              <button
+                onClick={() => setActiveTab('flights')}
+                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  activeTab === 'flights'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                ✈️ Live Flights
+              </button>
+              <button
+                onClick={() => setActiveTab('hotels')}
+                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  activeTab === 'hotels'
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-600 hover:bg-gray-100'
+                }`}
+              >
+                🏨 Live Hotels
+              </button>
+            </div>
+
+            <div className="flex gap-3">
+              <Link 
+                href="/nearby" 
+                className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition flex items-center gap-2"
+              >
+                <span>📍</span>
+                <span>Deals Near Me</span>
+              </Link>
+
+              <Link 
+                href="/events" 
+                className="px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition flex items-center gap-2"
+              >
+                <span>🎪</span>
+                <span>Crypto Events</span>
+              </Link>
+            </div>
           </div>
         </div>
       </div>

@@ -424,6 +424,137 @@ export async function initializeDatabase() {
     await client.query(`
       CREATE INDEX IF NOT EXISTS idx_notifications_user ON user_notifications(user_wallet, read, created_at DESC)
     `);
+
+    // GEO-BASED DISCOVERY TABLES
+
+    // User location proofs (on-chain verified)
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS user_location_proofs (
+        id SERIAL PRIMARY KEY,
+        user_wallet VARCHAR(44) NOT NULL,
+        latitude DECIMAL(10, 7) NOT NULL,
+        longitude DECIMAL(10, 7) NOT NULL,
+        city VARCHAR(100),
+        country VARCHAR(100),
+        proof_signature VARCHAR(88) NOT NULL,
+        proof_message TEXT NOT NULL,
+        proof_timestamp BIGINT NOT NULL,
+        verified BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        expires_at TIMESTAMP,
+        UNIQUE(user_wallet, proof_timestamp)
+      )
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_user_location_wallet 
+      ON user_location_proofs(user_wallet, verified)
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_user_location_geo 
+      ON user_location_proofs(latitude, longitude)
+    `);
+
+    // Add geo columns to existing amadeus_deals table
+    await client.query(`
+      ALTER TABLE amadeus_deals 
+      ADD COLUMN IF NOT EXISTS origin_lat DECIMAL(10, 7),
+      ADD COLUMN IF NOT EXISTS origin_lng DECIMAL(10, 7),
+      ADD COLUMN IF NOT EXISTS dest_lat DECIMAL(10, 7),
+      ADD COLUMN IF NOT EXISTS dest_lng DECIMAL(10, 7)
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_amadeus_deals_origin_geo 
+      ON amadeus_deals(origin_lat, origin_lng)
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_amadeus_deals_dest_geo 
+      ON amadeus_deals(dest_lat, dest_lng)
+    `);
+
+    // Track geo-based interactions for analytics
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS geo_deal_interactions (
+        id SERIAL PRIMARY KEY,
+        user_wallet VARCHAR(44) NOT NULL,
+        deal_id VARCHAR(255) NOT NULL,
+        user_lat DECIMAL(10, 7),
+        user_lng DECIMAL(10, 7),
+        distance_km INTEGER,
+        interaction_type VARCHAR(20),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_geo_interactions_deal 
+      ON geo_deal_interactions(deal_id)
+    `);
+
+    // Crypto/NFT events calendar
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS crypto_events (
+        id SERIAL PRIMARY KEY,
+        event_name VARCHAR(255) NOT NULL,
+        event_type VARCHAR(50),
+        city VARCHAR(100) NOT NULL,
+        country VARCHAR(100) NOT NULL,
+        venue_address TEXT,
+        latitude DECIMAL(10, 7),
+        longitude DECIMAL(10, 7),
+        start_date DATE NOT NULL,
+        end_date DATE NOT NULL,
+        expected_attendees INTEGER,
+        blockchain VARCHAR(50),
+        official_website TEXT,
+        twitter_handle VARCHAR(100),
+        logo_url TEXT,
+        description TEXT,
+        verified BOOLEAN DEFAULT FALSE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_crypto_events_dates 
+      ON crypto_events(start_date, end_date)
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_crypto_events_location 
+      ON crypto_events(city, country)
+    `);
+
+    // Link deals to events
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS event_linked_deals (
+        id SERIAL PRIMARY KEY,
+        event_id INTEGER REFERENCES crypto_events(id) ON DELETE CASCADE,
+        deal_id VARCHAR(255) NOT NULL,
+        deal_type VARCHAR(20),
+        discount_percent INTEGER DEFAULT 0,
+        auto_matched BOOLEAN DEFAULT FALSE,
+        relevance_score DECIMAL(3,2) DEFAULT 0,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_event_deals 
+      ON event_linked_deals(event_id, deal_type)
+    `);
+
+    // User event interests (follow events)
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS user_event_interests (
+        id SERIAL PRIMARY KEY,
+        user_wallet VARCHAR(44) NOT NULL,
+        event_id INTEGER REFERENCES crypto_events(id) ON DELETE CASCADE,
+        interest_level VARCHAR(20) DEFAULT 'watching',
+        notification_enabled BOOLEAN DEFAULT TRUE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(user_wallet, event_id)
+      )
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_user_interests 
+      ON user_event_interests(user_wallet)
+    `);
     
     client.release();
     console.log('✅ Database initialized successfully');
