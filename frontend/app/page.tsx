@@ -30,6 +30,25 @@ export default function Home() {
         </div>
 
         <div className="grid md:grid-cols-4 gap-8 max-w-7xl mx-auto mb-8">
+          {/* AI Travel Planner */}
+          <Link href="/ai-agent">
+            <div className="bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-500 rounded-2xl p-8 hover:shadow-2xl hover:scale-105 transition cursor-pointer border-2 border-white/30">
+              <div className="text-6xl mb-4">🤖</div>
+              <h3 className="text-2xl font-bold text-white mb-3">
+                AI Travel Planner
+              </h3>
+              <p className="text-gray-100 mb-4 font-medium">
+                Plan your crypto event trips with AI-powered travel assistance
+              </p>
+              <ul className="text-sm text-gray-200 space-y-2">
+                <li>✓ Find crypto events worldwide</li>
+                <li>✓ AI travel itineraries</li>
+                <li>✓ Event recommendations</li>
+                <li>✓ Smart trip planning</li>
+              </ul>
+            </div>
+          </Link>
+
           {/* Marketplace */}
           <Link href="/marketplace">
             <div className="bg-gradient-to-br from-green-600 to-emerald-600 rounded-2xl p-8 hover:shadow-2xl hover:scale-105 transition cursor-pointer border-2 border-white/30">
