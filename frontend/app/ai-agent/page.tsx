@@ -95,6 +95,9 @@ export default function AIAgentPage() {
           🎫 DealCoin
         </Link>
         <div className="flex items-center space-x-4">
+          <Link href="/" className="text-white hover:text-blue-300 font-semibold">
+            Dashboard
+          </Link>
           <Link href="/profile" className="text-white hover:text-blue-300 font-semibold">
             Profile
           </Link>
