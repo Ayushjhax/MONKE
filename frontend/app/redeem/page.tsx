@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import ClientWalletButton from '../../components/ClientWalletButton';
 import { PublicKey, Transaction, SystemProgram, LAMPORTS_PER_SOL, TransactionInstruction } from '@solana/web3.js';
 import Link from 'next/link';
 import { createRealBurnTransaction, fetchAssetDataForBurn, createRedemptionOnlyTransaction } from '../../lib/burn-nft';
@@ -518,7 +518,7 @@ export default function RedeemPage() {
         <Link href="/" className="text-2xl font-bold text-white">
           ← Back
         </Link>
-        <WalletMultiButton />
+        <ClientWalletButton />
       </nav>
 
       <main className="container mx-auto px-4 py-16">
@@ -537,7 +537,7 @@ export default function RedeemPage() {
               <p className="text-white text-lg mb-4">
                 Please connect your wallet to view your NFTs
               </p>
-              <WalletMultiButton />
+              <ClientWalletButton />
             </div>
           ) : (
             <div>

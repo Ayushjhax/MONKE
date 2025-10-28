@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
               id: 'my-request-id',
               method: 'getAsset',
               params: {
-                id: listing.asset_id,
+                id: (listing as any).nft_address,
               },
             }),
           });
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
             asset_data: assetData,
           };
         } catch (error) {
-          console.error(`Error fetching asset data for ${listing.asset_id}:`, error);
+          console.error(`Error fetching asset data for ${(listing as any).nft_address}:`, error);
           return listing; // Return listing without asset data if fetch fails
         }
       })

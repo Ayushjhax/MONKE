@@ -16,6 +16,7 @@ import {
   getAccount,
   createInitializeMintInstruction,
   createInitializeAccountInstruction,
+  createMintToInstruction,
   MINT_SIZE,
   TOKEN_PROGRAM_ID,
   getMinimumBalanceForRentExemptMint
@@ -113,7 +114,7 @@ export async function mintNFTToBuyer(params: MintNFTParams): Promise<{
 
     // Mint 1 token to the buyer
     const mintAmount = 1; // 1 token with 0 decimals
-    const mintToIx = mintTo(
+    const mintToIx = createMintToInstruction(
       mint, // mint
       tokenAccount.address, // destination
       collectionKeypair.publicKey, // authority
@@ -126,8 +127,8 @@ export async function mintNFTToBuyer(params: MintNFTParams): Promise<{
       .add(initializeMintIx)
       .add(mintToIx);
 
-    // Set the mint keypair as a signer
-    transaction.partialSign(mintKeypair);
+      // Set the mint keypair as a signer
+      transaction.partialSign(mintKeypair);
 
     console.log('📤 Sending minting transaction...');
     const signature = await sendAndConfirmTransaction(

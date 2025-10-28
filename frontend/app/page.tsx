@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import Link from 'next/link';
+import ClientWalletButton from '../components/ClientWalletButton';
 
 export default function Home() {
   return (
@@ -15,7 +15,7 @@ export default function Home() {
           <Link href="/profile" className="text-white hover:text-blue-300 font-semibold">
             Profile
           </Link>
-          <WalletMultiButton />
+          <ClientWalletButton />
         </div>
       </nav>
 

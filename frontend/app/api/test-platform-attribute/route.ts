@@ -57,13 +57,13 @@ export async function POST(request: NextRequest) {
     });
 
     // Filter for assets with Platform: DealCoin
-    const dealCoinAssets = platformAnalysis.filter(asset => 
+    const dealCoinAssets = platformAnalysis.filter((asset: any) => 
       asset.platformAttribute?.value === 'DealCoin'
     );
 
     // Filter for assets with discount-related attributes
-    const discountAssets = platformAnalysis.filter(asset => 
-      asset.allAttributes.some(attr => 
+    const discountAssets = platformAnalysis.filter((asset: any) => 
+      asset.allAttributes.some((attr: any) => 
         attr.trait_type === 'Discount Percentage' || 
         attr.trait_type === 'Merchant' ||
         attr.trait_type === 'Redemption Code'

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import ClientWalletButton from '../../components/ClientWalletButton';
 import Link from 'next/link';
 import { formatPrice, formatDate } from '@/lib/amadeus';
 
@@ -119,7 +119,7 @@ export default function BookingsPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <h1 className="text-3xl font-bold text-gray-900">My Bookings</h1>
-              <WalletMultiButton className="!bg-blue-600 hover:!bg-blue-700" />
+              <ClientWalletButton className="!bg-blue-600 hover:!bg-blue-700" />
             </div>
           </div>
         </header>
@@ -135,7 +135,7 @@ export default function BookingsPage() {
             <p className="text-gray-600 mb-6">
               Connect your Solana wallet to view your bookings
             </p>
-            <WalletMultiButton className="!bg-blue-600 hover:!bg-blue-700" />
+            <ClientWalletButton className="!bg-blue-600 hover:!bg-blue-700" />
           </div>
         </main>
       </div>
@@ -149,7 +149,7 @@ export default function BookingsPage() {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center py-6">
               <h1 className="text-3xl font-bold text-gray-900">My Bookings</h1>
-              <WalletMultiButton className="!bg-blue-600 hover:!bg-blue-700" />
+              <ClientWalletButton className="!bg-blue-600 hover:!bg-blue-700" />
             </div>
           </div>
         </header>
@@ -183,7 +183,7 @@ export default function BookingsPage() {
               >
                 Back to Marketplace
               </Link>
-              <WalletMultiButton className="!bg-blue-600 hover:!bg-blue-700" />
+              <ClientWalletButton className="!bg-blue-600 hover:!bg-blue-700" />
             </div>
           </div>
         </div>

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import ClientWalletButton from '../../../components/ClientWalletButton';
 import Link from 'next/link';
 import { UserSocialProfile } from '@/lib/social-types';
 import UserReputation from '@/components/social/UserReputation';
@@ -124,7 +124,7 @@ export default function ProfilePage() {
             </div>
             <div className="flex items-center gap-4">
               <NotificationBell />
-              <WalletMultiButton className="!bg-blue-600 hover:!bg-blue-700" />
+              <ClientWalletButton className="!bg-blue-600 hover:!bg-blue-700" />
             </div>
           </div>
         </div>

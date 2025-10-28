@@ -60,14 +60,14 @@ async function getAccessToken(): Promise<string> {
  * Query params: origin, destination, departureDate, returnDate (optional), adults, max
  */
 export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const origin = searchParams.get('origin');
+  const destination = searchParams.get('destination');
+  const departureDate = searchParams.get('departureDate');
+  const returnDate = searchParams.get('returnDate');
+  const adults = searchParams.get('adults') || '1';
+  const max = searchParams.get('max') || '10';
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const origin = searchParams.get('origin');
-    const destination = searchParams.get('destination');
-    const departureDate = searchParams.get('departureDate');
-    const returnDate = searchParams.get('returnDate');
-    const adults = searchParams.get('adults') || '1';
-    const max = searchParams.get('max') || '10';
 
     // Validation
     if (!origin || !destination || !departureDate) {
@@ -180,7 +180,7 @@ export async function GET(request: NextRequest) {
     }
 
     // STEP 2: Decide on data source and enhancement
-    const mockResults = generateMockFlights(origin, destination, departureDate, returnDate || undefined);
+    const mockResults = generateMockFlights(origin || 'SFO', destination || 'JFK', departureDate || '2026-01-01', returnDate || undefined);
     let finalResults = amadeusResults;
     let reason = '';
 
@@ -236,7 +236,7 @@ export async function GET(request: NextRequest) {
     console.error('💥 Unexpected error in flight search:', error);
     
     // Even on unexpected errors, return mock data
-    const mockResults = generateMockFlights(origin, destination, departureDate, returnDate || undefined);
+    const mockResults = generateMockFlights(origin || 'SFO', destination || 'JFK', departureDate || '2026-01-01', returnDate || undefined);
     
     return NextResponse.json({
       success: true,

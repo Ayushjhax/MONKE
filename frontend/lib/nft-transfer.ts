@@ -16,6 +16,7 @@ import {
   getAccount,
   createInitializeMintInstruction,
   createInitializeAccountInstruction,
+  createMintToInstruction,
   MINT_SIZE,
   TOKEN_PROGRAM_ID,
   getMinimumBalanceForRentExemptMint
@@ -105,13 +106,11 @@ export async function transferNFTToBuyer(params: TransferNFTParams): Promise<{
     console.log('✅ Buyer token account:', buyerTokenAccount.address.toString());
 
     // Mint 1 token to buyer
-    const mintToIx = mintTo(
+    const mintToIx = createMintToInstruction(
       mint,
       buyerTokenAccount.address,
       collectionKeypair.publicKey,
-      1, // amount (1 for NFT)
-      [],
-      TOKEN_PROGRAM_ID
+      1 // amount (1 for NFT)
     );
 
     // Create and send transaction

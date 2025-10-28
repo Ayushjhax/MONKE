@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import ClientWalletButton from '../../components/ClientWalletButton';
 import { PublicKey, Transaction, TransactionInstruction, SystemProgram, LAMPORTS_PER_SOL } from '@solana/web3.js';
 import QRCode from 'qrcode-generator';
 import Link from 'next/link';
@@ -147,7 +147,7 @@ export default function MerchantPage() {
         <Link href="/" className="text-2xl font-bold text-white">
           ← Back
         </Link>
-        <WalletMultiButton />
+        <ClientWalletButton />
       </nav>
 
       <main className="container mx-auto px-4 py-16">
@@ -166,7 +166,7 @@ export default function MerchantPage() {
               <p className="text-white text-lg mb-4">
                 Please connect your wallet to continue
               </p>
-              <WalletMultiButton />
+              <ClientWalletButton />
             </div>
           ) : (
             <div className="space-y-6">

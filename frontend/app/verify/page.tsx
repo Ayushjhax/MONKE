@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useConnection } from '@solana/wallet-adapter-react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import ClientWalletButton from '../../components/ClientWalletButton';
 import { PublicKey } from '@solana/web3.js';
 import Link from 'next/link';
 import bs58 from 'bs58';
@@ -244,7 +244,7 @@ export default function VerifyPage() {
         <Link href="/" className="text-2xl font-bold text-white">
           ← Back
         </Link>
-        <WalletMultiButton />
+            <ClientWalletButton />
       </nav>
 
       <main className="container mx-auto px-4 py-16">

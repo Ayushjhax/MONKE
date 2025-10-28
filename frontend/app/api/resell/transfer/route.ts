@@ -150,7 +150,9 @@ export async function POST(request: NextRequest) {
         if (mintResult.success) {
           console.log('✅ NFT minting completed for buyer:', buyerWallet);
           console.log('New NFT address:', mintResult.nftAddress);
-          console.log('Transaction signature:', mintResult.txSignature);
+          if ((mintResult as any).txSignature) {
+            console.log('Transaction signature:', (mintResult as any).txSignature);
+          }
           console.log('Merchant:', merchantName);
         } else {
           console.error('❌ NFT minting failed:', mintResult.error);

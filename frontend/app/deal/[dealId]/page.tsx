@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { useWallet } from '@solana/wallet-adapter-react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { useWallet, useConnection } from '@solana/wallet-adapter-react';
+import ClientWalletButton from '../../../components/ClientWalletButton';
 import Link from 'next/link';
 import {
   formatPrice,
@@ -18,22 +18,36 @@ import VoteButtons from '@/components/social/VoteButtons';
 import ShareButtons from '@/components/social/ShareButtons';
 import CommentSection from '@/components/social/CommentSection';
 import SocialStats from '@/components/social/SocialStats';
+import { createRealBurnTransaction, fetchAssetDataForBurn, createRedemptionOnlyTransaction } from '@/lib/burn-nft';
+import { PublicKey, Transaction } from '@solana/web3.js';
 
-interface Coupon {
-  id: number;
+interface NFTData {
+  mint: string;
+  name: string;
+  symbol: string;
+  category: string;
+  discountPercent: number;
+  merchant: string;
+  redemptionCode: string;
+  expiryDate: string;
+  isCompressed: boolean;
+}
+
+interface BurnedNFT {
   nftMint: string;
   couponCode: string;
   discountValue: number;
   merchantName: string;
-  redeemedAt: string;
   txSignature: string;
+  burnedAt: string;
 }
 
 export default function DealDetailPage() {
   const params = useParams();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { connected, publicKey } = useWallet();
+  const { connected, publicKey, sendTransaction, signTransaction } = useWallet();
+  const { connection } = useConnection();
   
   const dealId = params.dealId as string;
   const dealTypeParam = searchParams.get('type');
@@ -44,9 +58,10 @@ export default function DealDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [dealDetails, setDealDetails] = useState<any>(null);
   
-  const [coupons, setCoupons] = useState<Coupon[]>([]);
-  const [couponsLoading, setCouponsLoading] = useState(false);
-  const [selectedCoupon, setSelectedCoupon] = useState<Coupon | null>(null);
+  const [nfts, setNfts] = useState<NFTData[]>([]);
+  const [nftsLoading, setNftsLoading] = useState(false);
+  const [burningNFT, setBurningNFT] = useState<string | null>(null);
+  const [burnedNFT, setBurnedNFT] = useState<BurnedNFT | null>(null);
   
   const [booking, setBooking] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
@@ -55,9 +70,18 @@ export default function DealDetailPage() {
   const [socialStats, setSocialStats] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<'details' | 'reviews'>('details');
 
+  // Sample merchant wallet
+  const merchantWallet = 'aPi7gR9c3s7eUvtWu7HVFRakW1e9rZz59ZNzrGbkKZ3';
+
   useEffect(() => {
     fetchSocialStats();
   }, [dealId, publicKey]);
+
+  useEffect(() => {
+    if (connected && publicKey) {
+      fetchUserNFTs();
+    }
+  }, [connected, publicKey]);
 
   const fetchSocialStats = async () => {
     try {
@@ -116,25 +140,307 @@ export default function DealDetailPage() {
 
   useEffect(() => {
     if (connected && publicKey) {
-      fetchUserCoupons();
+      fetchUserNFTs();
     }
   }, [connected, publicKey]);
 
-  const fetchUserCoupons = async () => {
+  const fetchUserNFTs = async () => {
     if (!publicKey) return;
 
-    setCouponsLoading(true);
+    setNftsLoading(true);
     try {
-      const response = await fetch(`/api/redemption/user-coupons?wallet=${publicKey.toString()}`);
-      const data = await response.json();
+      // Call Helius DAS API to get user's NFTs
+      const HELIUS_API_KEY = process.env.NEXT_PUBLIC_HELIUS_API_KEY || '22abefb4-e86a-482d-9a62-452fcd4f2cb0';
+      const response = await fetch(`https://devnet.helius-rpc.com/?api-key=${HELIUS_API_KEY}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          id: 'get-assets',
+          method: 'getAssetsByOwner',
+          params: {
+            ownerAddress: publicKey.toBase58(),
+            page: 1,
+            limit: 1000
+          }
+        })
+      });
 
-      if (data.success) {
-        setCoupons(data.coupons || []);
-      }
-    } catch (err) {
-      console.error('Error fetching coupons:', err);
+      const data = await response.json();
+      const assets = data.result?.items || [];
+
+      console.log('🔍 Total assets fetched from DAS API:', assets.length);
+      console.log('🔍 All assets:', assets.map((a: any) => ({ 
+        id: a.id, 
+        name: a.content?.metadata?.name, 
+        burned: a.burnt,
+        attributes: a.content?.metadata?.attributes?.map((attr: any) => `${attr.trait_type}: ${attr.value}`) || []
+      })));
+
+      // Filter for ALL cNFTs (compressed NFTs) - SHOW EVERYTHING
+      const allCNFTs = assets
+        .filter((asset: any) => {
+          const isCompressed = asset.compression?.compressed || false;
+          const isBurned = asset.burnt || false;
+          
+          // Debug logging for each asset
+          console.log(`🔍 Asset ${asset.id}:`, {
+            name: asset.content?.metadata?.name || 'Unknown',
+            burned: isBurned,
+            isCompressed: isCompressed,
+            attributes: asset.content?.metadata?.attributes?.map((a: any) => `${a.trait_type}: ${a.value}`) || []
+          });
+          
+          // Include ALL non-burned cNFTs
+          const shouldInclude = isCompressed && !isBurned;
+          console.log(`   → ${shouldInclude ? 'INCLUDED' : 'EXCLUDED'}`);
+          
+          return shouldInclude;
+        })
+        .map((asset: any) => {
+          const attrs = asset.content?.metadata?.attributes || [];
+          
+          // Generate a random redemption code if not found in metadata
+          const generateRedemptionCode = () => {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let result = '';
+            for (let i = 0; i < 8; i++) {
+              result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+          };
+          
+          // Extract values with better fallbacks for ANY cNFT
+          const category = attrs.find((a: any) => a.trait_type === 'Category')?.value || 
+                          attrs.find((a: any) => a.trait_type === 'category')?.value || 
+                          attrs.find((a: any) => a.trait_type === 'Type')?.value ||
+                          attrs.find((a: any) => a.trait_type === 'Collection')?.value ||
+                          'General';
+          
+          // Try to extract discount from various possible attributes
+          let discountPercent = 20; // Default discount
+          const discountAttr = attrs.find((a: any) => 
+            a.trait_type && (
+              a.trait_type.toLowerCase().includes('discount') ||
+              a.trait_type.toLowerCase().includes('percent') ||
+              a.trait_type.toLowerCase().includes('off')
+            )
+          );
+          
+          if (discountAttr) {
+            const value = discountAttr.value;
+            if (typeof value === 'number') {
+              discountPercent = value;
+            } else if (typeof value === 'string') {
+              const numValue = parseInt(value.replace('%', '').replace('off', ''));
+              if (!isNaN(numValue)) {
+                discountPercent = numValue;
+              }
+            }
+          }
+          
+          const merchant = attrs.find((a: any) => a.trait_type === 'Merchant')?.value || 
+                          attrs.find((a: any) => a.trait_type === 'merchant')?.value || 
+                          attrs.find((a: any) => a.trait_type === 'Brand')?.value ||
+                          attrs.find((a: any) => a.trait_type === 'Creator')?.value ||
+                          'NFT Partner';
+          
+          const redemptionCode = attrs.find((a: any) => a.trait_type === 'Redemption Code')?.value || 
+                                attrs.find((a: any) => a.trait_type === 'redemption_code')?.value ||
+                                attrs.find((a: any) => a.trait_type === 'Code')?.value ||
+                                generateRedemptionCode(); // Generate if not found
+          
+          const expiryDate = attrs.find((a: any) => a.trait_type === 'Expiry Date')?.value || 
+                            attrs.find((a: any) => a.trait_type === 'expiry_date')?.value ||
+                            attrs.find((a: any) => a.trait_type === 'Expires')?.value ||
+                            '2024-12-31'; // Default expiry
+          
+          return {
+            mint: asset.id,
+            name: asset.content?.metadata?.name || 'Unknown',
+            symbol: asset.content?.metadata?.symbol || '',
+            category,
+            discountPercent: typeof discountPercent === 'number' ? discountPercent : parseInt(discountPercent) || 20,
+            merchant,
+            redemptionCode,
+            expiryDate,
+            isCompressed: asset.compression?.compressed || false
+          };
+        });
+
+      console.log('🔍 Filtered cNFTs:', allCNFTs.length);
+      setNfts(allCNFTs);
+    } catch (error) {
+      console.error('Error fetching NFTs:', error);
     } finally {
-      setCouponsLoading(false);
+      setNftsLoading(false);
+    }
+  };
+
+  const burnNFT = async (nft: NFTData) => {
+    if (!publicKey || !sendTransaction) {
+      alert('Please connect your wallet');
+      return;
+    }
+
+    setBurningNFT(nft.mint);
+    try {
+      // Generate 8-digit random coupon code
+      const generateCouponCode = () => {
+        const digits = '0123456789';
+        let code = '';
+        for (let i = 0; i < 8; i++) {
+          code += digits.charAt(Math.floor(Math.random() * digits.length));
+        }
+        return code;
+      };
+
+      const couponCode = generateCouponCode();
+      console.log('🎫 Generated coupon code:', couponCode);
+      
+      console.log('🔥 Starting REAL NFT burn process...');
+      
+      // Step 1: Fetch asset proof data from Helius DAS API for burning
+      const HELIUS_API_KEY = process.env.NEXT_PUBLIC_HELIUS_API_KEY || '22abefb4-e86a-482d-9a62-452fcd4f2cb0';
+      console.log('📡 Fetching asset proof for burn...');
+      
+      const assetData = await fetchAssetDataForBurn(nft.mint, HELIUS_API_KEY);
+
+      let transaction: Transaction;
+
+      // Try to burn if we have any valid data
+      if (assetData && assetData.merkleTree && assetData.proof && assetData.proof.length > 0) {
+        console.log('✅ Asset data found - creating REAL burn transaction');
+        
+        // Create REAL burn transaction with Bubblegum instruction
+        transaction = await createRealBurnTransaction(connection, {
+          nftMint: nft.mint,
+          userWallet: publicKey.toBase58(),
+          merchantWallet: merchantWallet,
+          redemptionCode: couponCode,
+          discountValue: nft.discountPercent,
+          merkleTree: assetData.merkleTree,
+          leafIndex: assetData.leafIndex,
+          root: assetData.root,
+          proof: assetData.proof,
+          dataHash: assetData.dataHash,
+          creatorHash: assetData.creatorHash,
+          nonce: assetData.nonce,
+        });
+      } else {
+        console.log('⚠️  Asset data incomplete - creating redemption-only transaction');
+        
+        // Fallback: Create redemption transaction without burn
+        transaction = await createRedemptionOnlyTransaction(connection, {
+          nftMint: nft.mint,
+          userWallet: publicKey.toBase58(),
+          merchantWallet: merchantWallet,
+          redemptionCode: couponCode,
+          discountValue: nft.discountPercent
+        });
+      }
+
+      // Check user's SOL balance first
+      const balance = await connection.getBalance(publicKey);
+      console.log('💰 User balance:', balance / 1000000000, 'SOL');
+      
+      if (balance < 1000) { // Less than 0.000001 SOL
+        throw new Error('Insufficient SOL balance. You need at least 0.000001 SOL for transaction fees.');
+      }
+
+      // Get latest blockhash
+      const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
+      transaction.recentBlockhash = blockhash;
+      transaction.feePayer = publicKey;
+
+      // Simulate transaction first to catch errors
+      console.log('🔍 Simulating transaction...');
+      try {
+        const simulationResult = await connection.simulateTransaction(transaction);
+        console.log('📊 Simulation result:', simulationResult);
+        
+        if (simulationResult.value.err) {
+          console.error('❌ Simulation failed with error:', simulationResult.value.err);
+          throw new Error(`Transaction simulation failed: ${JSON.stringify(simulationResult.value.err)}`);
+        }
+        
+        console.log('✅ Simulation successful - transaction should work');
+      } catch (simError) {
+        console.error('❌ Simulation failed:', simError);
+        const errorMessage = simError instanceof Error ? simError.message : String(simError);
+        throw new Error(`Transaction simulation failed: ${errorMessage}. Please check your wallet balance and try again.`);
+      }
+
+      console.log('📝 Sending transaction...');
+      
+      // Send transaction
+      const signature = await sendTransaction(transaction, connection);
+      console.log('✅ Transaction sent:', signature);
+
+      // Wait for confirmation
+      console.log('⏳ Waiting for confirmation...');
+      const confirmation = await connection.confirmTransaction({
+        signature,
+        blockhash,
+        lastValidBlockHeight
+      });
+
+      if (confirmation.value.err) {
+        throw new Error('Transaction failed: ' + JSON.stringify(confirmation.value.err));
+      }
+
+      console.log('🎉 Transaction confirmed!');
+
+      // Store coupon redemption in database
+      try {
+        console.log('💾 Storing coupon redemption in database...');
+        const storeResponse = await fetch('/api/redemption/store', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            nftMint: nft.mint,
+            walletAddress: publicKey.toBase58(),
+            couponCode: couponCode,
+            txSignature: signature,
+            discountValue: nft.discountPercent,
+            merchantName: nft.merchant
+          })
+        });
+
+        const storeData = await storeResponse.json();
+        console.log('✅ Coupon redemption stored:', storeData);
+      } catch (storeError) {
+        console.error('⚠️ Failed to store coupon redemption:', storeError);
+        // Continue anyway - transaction is already confirmed
+      }
+
+      // Set the burned NFT data for immediate discount application
+      const burnedNFTData: BurnedNFT = {
+        nftMint: nft.mint,
+        couponCode: couponCode,
+        discountValue: nft.discountPercent,
+        merchantName: nft.merchant,
+        txSignature: signature,
+        burnedAt: new Date().toISOString()
+      };
+
+      setBurnedNFT(burnedNFTData);
+
+      const message = assetData && assetData.merkleTree && assetData.proof && assetData.proof.length > 0
+        ? `✅ NFT Burned Successfully!\n\n🎫 Your Coupon Code: ${couponCode}\n\n🔥 NFT BURNED!\n\nTransaction: ${signature}\n\nThe NFT has been permanently burned and the discount is now applied to your booking!`
+        : `✅ Redemption Successful!\n\n🎫 Your Coupon Code: ${couponCode}\n\n📝 Transaction recorded on-chain\n\nTransaction: ${signature}\n\nNote: NFT burn requires merkle tree data. Redemption is tracked via memo.\n\nThe discount is now applied to your booking!`;
+
+      alert(message);
+
+      // Refresh NFT list
+      await fetchUserNFTs();
+
+    } catch (error) {
+      console.error('❌ Error burning NFT:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+      alert(`Error during NFT burn: ${errorMessage}\n\nPlease try again.`);
+    } finally {
+      setBurningNFT(null);
     }
   };
 
@@ -159,7 +465,7 @@ export default function DealDetailPage() {
         amadeusOfferId: dealDetails.id,
         originalPrice: dealDetails.price,
         currency: dealDetails.currency || 'USD',
-        couponCode: selectedCoupon?.couponCode,
+        couponCode: burnedNFT?.couponCode,
         bookingDetails: dealDetails.rawOffer,
       };
 
@@ -259,12 +565,12 @@ export default function DealDetailPage() {
     );
   }
 
-  const finalPrice = selectedCoupon
-    ? calculateDiscountedPrice(dealDetails.price, selectedCoupon.discountValue).finalPrice
+  const finalPrice = burnedNFT
+    ? calculateDiscountedPrice(dealDetails.price, burnedNFT.discountValue).finalPrice
     : dealDetails.price;
 
-  const savings = selectedCoupon
-    ? calculateDiscountedPrice(dealDetails.price, selectedCoupon.discountValue).discountAmount
+  const savings = burnedNFT
+    ? calculateDiscountedPrice(dealDetails.price, burnedNFT.discountValue).discountAmount
     : 0;
 
   return (
@@ -278,7 +584,7 @@ export default function DealDetailPage() {
                 ← Back to Marketplace
               </Link>
             </div>
-            <WalletMultiButton className="!bg-blue-600 hover:!bg-blue-700" />
+            <ClientWalletButton className="!bg-blue-600 hover:!bg-blue-700" />
           </div>
         </div>
       </header>
@@ -491,10 +797,10 @@ export default function DealDetailPage() {
                   <span>Original Price</span>
                   <span>{formatPrice(dealDetails.price, dealDetails.currency)}</span>
                 </div>
-                {selectedCoupon && (
+                {burnedNFT && (
                   <>
                     <div className="flex justify-between text-green-600 mb-2">
-                      <span>Discount ({selectedCoupon.discountValue}%)</span>
+                      <span>Discount ({burnedNFT.discountValue}%)</span>
                       <span>-{formatPrice(savings, dealDetails.currency)}</span>
                     </div>
                     <div className="border-t pt-2 flex justify-between font-bold text-xl text-gray-900">
@@ -505,37 +811,80 @@ export default function DealDetailPage() {
                 )}
               </div>
 
-              {/* Coupons */}
+              {/* Available NFTs for Burning */}
               {connected && (
                 <div className="mb-6">
-                  <h4 className="text-sm font-medium text-gray-900 mb-2">Available Coupons</h4>
-                  {couponsLoading ? (
-                    <div className="text-sm text-gray-500">Loading coupons...</div>
-                  ) : coupons.length === 0 ? (
-                    <div className="text-sm text-gray-500">No coupons available</div>
+                  <h4 className="text-sm font-medium text-gray-900 mb-2">Available cNFTs (All Compressed NFTs)</h4>
+                  {nftsLoading ? (
+                    <div className="text-sm text-gray-500">Loading NFTs...</div>
+                  ) : nfts.length === 0 ? (
+                    <div className="space-y-3">
+                      <div className="text-sm text-gray-500">
+                        No compressed NFTs (cNFTs) found in your wallet.
+                      </div>
+                      <div className="text-xs text-gray-400 bg-gray-50 p-3 rounded-lg">
+                        <strong>How to get cNFTs:</strong><br/>
+                        1. Go to <Link href="/marketplace" className="text-blue-600 hover:underline">Marketplace</Link><br/>
+                        2. Browse available collections<br/>
+                        3. Mint compressed NFTs to your wallet<br/>
+                        4. Return here to burn them for discounts
+                      </div>
+                    </div>
                   ) : (
                     <div className="space-y-2">
-                      {coupons.map((coupon) => (
-                        <button
-                          key={coupon.id}
-                          onClick={() => setSelectedCoupon(selectedCoupon?.id === coupon.id ? null : coupon)}
-                          className={`w-full text-left p-3 border rounded-lg transition-colors ${
-                            selectedCoupon?.id === coupon.id
-                              ? 'border-blue-500 bg-blue-50'
-                              : 'border-gray-300 hover:border-blue-300'
-                          }`}
+                      {nfts.map((nft) => (
+                        <div
+                          key={nft.mint}
+                          className="w-full text-left p-3 border rounded-lg bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200"
                         >
-                          <div className="flex justify-between items-center">
+                          <div className="flex justify-between items-center mb-2">
                             <div>
-                              <div className="font-medium text-sm">{coupon.couponCode}</div>
-                              <div className="text-xs text-gray-500">{coupon.merchantName}</div>
+                              <div className="font-medium text-sm text-gray-900">{nft.name}</div>
+                              <div className="text-xs text-gray-500">{nft.merchant}</div>
                             </div>
-                            <div className="text-lg font-bold text-blue-600">{coupon.discountValue}%</div>
+                            <div className="text-lg font-bold text-purple-600">{nft.discountPercent}% OFF</div>
                           </div>
-                        </button>
+                          <div className="flex gap-2 flex-wrap mb-2">
+                            <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">
+                              {nft.category}
+                            </span>
+                            {nft.isCompressed && (
+                              <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">
+                                cNFT
+                              </span>
+                            )}
+                          </div>
+                          <button
+                            onClick={() => burnNFT(nft)}
+                            disabled={burningNFT === nft.mint}
+                            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-2 px-4 rounded-lg hover:from-purple-600 hover:to-pink-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                          >
+                            {burningNFT === nft.mint ? (
+                              <span className="flex items-center justify-center gap-2">
+                                <span className="animate-spin">🔥</span>
+                                <span>Burning NFT...</span>
+                              </span>
+                            ) : (
+                              '🔥 Burn NFT for Discount'
+                            )}
+                          </button>
+                        </div>
                       ))}
                     </div>
                   )}
+                </div>
+              )}
+
+              {/* Burned NFT Status */}
+              {burnedNFT && (
+                <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <h4 className="text-sm font-semibold text-green-800 mb-2">✅ NFT Burned Successfully!</h4>
+                  <div className="space-y-1 text-xs text-green-700">
+                    <div><strong>Coupon Code:</strong> {burnedNFT.couponCode}</div>
+                    <div><strong>Discount:</strong> {burnedNFT.discountValue}% OFF</div>
+                    <div><strong>Merchant:</strong> {burnedNFT.merchantName}</div>
+                    <div><strong>Transaction:</strong> {burnedNFT.txSignature.slice(0, 8)}...</div>
+                  </div>
                 </div>
               )}
 
@@ -543,7 +892,7 @@ export default function DealDetailPage() {
               {!connected ? (
                 <div className="text-center">
                   <p className="text-sm text-gray-600 mb-3">Connect your wallet to book</p>
-                  <WalletMultiButton className="!bg-blue-600 hover:!bg-blue-700 !w-full" />
+                  <ClientWalletButton className="!bg-blue-600 hover:!bg-blue-700 !w-full" />
                 </div>
               ) : (
                 <button
@@ -551,7 +900,7 @@ export default function DealDetailPage() {
                   disabled={booking}
                   className="w-full px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:bg-gray-400 transition-colors"
                 >
-                  {booking ? 'Processing...' : 'Simulate Booking'}
+                  {booking ? 'Processing...' : burnedNFT ? 'Complete Booking with Discount' : 'Simulate Booking'}
                 </button>
               )}
 

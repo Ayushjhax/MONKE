@@ -2,8 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { fetchUserMetrics, scoreFromMetrics } from '@/lib/reputation';
 import { pool } from '@/lib/db';
 
-export async function GET(req: NextRequest, { params }: { params: { wallet: string } }) {
-  const wallet = params.wallet;
+export async function GET(req: NextRequest, ctx: { params: Promise<{ wallet: string }> }) {
+  const { wallet } = await ctx.params;
   try {
     const metrics = await fetchUserMetrics(wallet);
     const { points, level, badges } = scoreFromMetrics(metrics);

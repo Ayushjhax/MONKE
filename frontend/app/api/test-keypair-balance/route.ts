@@ -1,13 +1,14 @@
 // Detailed test for keypair creation and balance check
 import { NextRequest, NextResponse } from 'next/server';
 import { PublicKey, Connection, Keypair } from '@solana/web3.js';
-import { fetchMerchant } from '@/lib/nft-minting-modular';
 
 const RPC_URL = 'https://api.devnet.solana.com';
 const connection = new Connection(RPC_URL, 'confirmed');
 
 export async function POST(request: NextRequest) {
   try {
+    return NextResponse.json({ success: false, error: 'Disabled in production build' }, { status: 501 });
+    /*
     const { merchantId } = await request.json();
 
     if (!merchantId) {
@@ -103,6 +104,7 @@ export async function POST(request: NextRequest) {
       }
     });
 
+  */
   } catch (error: any) {
     console.error('❌ Test failed:', error);
     return NextResponse.json(

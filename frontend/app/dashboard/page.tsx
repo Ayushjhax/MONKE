@@ -209,7 +209,7 @@ export default function MerchantDashboard() {
         merkleTree,
         discountForm,
         recipients,
-        imageMode === 'file' ? imageFile : undefined,
+        imageMode === 'file' ? (imageFile ?? undefined) : undefined,
         imageMode === 'url' ? imageUrl : undefined
       );
       

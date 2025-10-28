@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import ClientWalletButton from '../../components/ClientWalletButton';
 import PaymentModal from '@/components/PaymentModal';
 
 interface CNFTAsset {
@@ -262,7 +262,7 @@ export default function ResellPage() {
           <p className="text-xl text-gray-300 mb-6">
             List your DealCoin NFTs for resale or discover amazing deals
           </p>
-          <WalletMultiButton className="!bg-blue-600 hover:!bg-blue-700" />
+          <ClientWalletButton className="!bg-blue-600 hover:!bg-blue-700" />
         </div>
 
         {!connected ? (
@@ -274,7 +274,7 @@ export default function ResellPage() {
               <p className="text-gray-300 mb-6">
                 Connect your wallet to view your NFTs and start trading
               </p>
-              <WalletMultiButton className="!bg-blue-600 hover:!bg-blue-700" />
+              <ClientWalletButton className="!bg-blue-600 hover:!bg-blue-700" />
             </div>
           </div>
         ) : (

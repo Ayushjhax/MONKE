@@ -73,10 +73,13 @@ export async function POST(request: NextRequest) {
       const sellerPublicKey = new PublicKey(listing.seller_wallet);
       const buyerPublicKey = new PublicKey(buyerWallet);
       
-      // Get account keys from transaction
-      const accountKeys = transaction.transaction.message.accountKeys;
-      const sellerIndex = accountKeys.findIndex(key => key.equals(sellerPublicKey));
-      const buyerIndex = accountKeys.findIndex(key => key.equals(buyerPublicKey));
+      // Get account keys from transaction (supports versioned messages)
+      const msg: any = transaction.transaction.message as any;
+      const keysArr: PublicKey[] = typeof msg.getAccountKeys === 'function'
+        ? (msg.getAccountKeys().staticAccountKeys as PublicKey[])
+        : (msg.accountKeys as PublicKey[]);
+      const sellerIndex = keysArr.findIndex((key: PublicKey) => key.equals(sellerPublicKey));
+      const buyerIndex = keysArr.findIndex((key: PublicKey) => key.equals(buyerPublicKey));
       
       if (sellerIndex === -1 || buyerIndex === -1) {
         return NextResponse.json(
@@ -162,13 +165,17 @@ export async function POST(request: NextRequest) {
     console.error('Error processing purchase:', error);
     
     // Remove from processed transactions if there was an error
-    processedTransactions.delete(purchaseKey);
+    // Remove from processed set if key computed above
+    try {
+      // @ts-ignore
+      if (purchaseKey) processedTransactions.delete(purchaseKey);
+    } catch {}
     
     return NextResponse.json(
       { 
         success: false, 
         error: 'Failed to process purchase',
-        details: error.message || 'Unknown error'
+        details: (error instanceof Error ? error.message : 'Unknown error')
       },
       { status: 500 }
     );

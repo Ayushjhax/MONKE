@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import ClientWalletButton from '../../components/ClientWalletButton';
 import Link from 'next/link';
 import DealCard from '@/components/DealCard';
 import { Collection } from '@/lib/db';
@@ -214,7 +214,7 @@ export default function MarketplacePage() {
                 </svg>
                 My Bookings
               </Link>
-              <WalletMultiButton className="!bg-blue-600 hover:!bg-blue-700" />
+              <ClientWalletButton className="!bg-blue-600 hover:!bg-blue-700" />
             </div>
           </div>
         </div>
@@ -399,7 +399,7 @@ export default function MarketplacePage() {
               Connect your Solana wallet to start exploring deals
             </p>
             <div className="mt-6">
-              <WalletMultiButton className="!bg-blue-600 hover:!bg-blue-700" />
+              <ClientWalletButton className="!bg-blue-600 hover:!bg-blue-700" />
             </div>
           </div>
         )}

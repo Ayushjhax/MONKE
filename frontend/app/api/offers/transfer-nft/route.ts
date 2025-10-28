@@ -22,9 +22,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (offer.status !== 'paid') {
+    // Allow transfer if offer is accepted; adjust check to match DB enum
+    if (offer.status !== 'accepted') {
       return NextResponse.json(
-        { success: false, error: 'Offer must be paid before transfer' },
+        { success: false, error: 'Offer must be accepted before transfer' },
         { status: 400 }
       );
     }

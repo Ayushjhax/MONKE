@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import ClientWalletButton from '../../components/ClientWalletButton';
 import Link from 'next/link';
 import TrendingSection from '@/components/social/TrendingSection';
 import ActivityFeed from '@/components/social/ActivityFeed';
@@ -48,7 +48,7 @@ export default function CommunityPage() {
                   Profile
                 </Link>
               )}
-              <WalletMultiButton className="!bg-blue-600 hover:!bg-blue-700" />
+              <ClientWalletButton className="!bg-blue-600 hover:!bg-blue-700" />
             </div>
           </div>
         </div>

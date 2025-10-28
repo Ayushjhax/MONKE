@@ -2,17 +2,31 @@
 
 import { useState, useEffect } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import ClientWalletButton from '../../components/ClientWalletButton';
 import Link from 'next/link';
 import { StakingCard } from '../../components/StakingCard';
 import { StakingStats } from '../../components/StakingStats';
 import { RewardClaimModal } from '../../components/RewardClaimModal';
 
+interface NFTData {
+  mint: string;
+  name: string;
+  symbol: string;
+  category: string;
+  discountPercent: number;
+  merchant: string;
+  redemptionCode: string;
+  expiryDate: string;
+  isCompressed: boolean;
+}
+
 export default function StakingPage() {
   const { publicKey } = useWallet();
   const [stakes, setStakes] = useState<any[]>([]);
+  const [availableNFTs, setAvailableNFTs] = useState<NFTData[]>([]);
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(false);
+  const [nftsLoading, setNftsLoading] = useState(false);
   const [showClaimModal, setShowClaimModal] = useState(false);
   const [totalPendingRewards, setTotalPendingRewards] = useState(0);
 
@@ -20,6 +34,7 @@ export default function StakingPage() {
     if (publicKey) {
       fetchStakes();
       fetchStats();
+      fetchAvailableNFTs();
     }
   }, [publicKey]);
 
@@ -61,11 +76,171 @@ export default function StakingPage() {
     }
   };
 
+  const fetchAvailableNFTs = async () => {
+    if (!publicKey) return;
+
+    setNftsLoading(true);
+    try {
+      // Call Helius DAS API to get user's NFTs
+      const HELIUS_API_KEY = process.env.NEXT_PUBLIC_HELIUS_API_KEY || '22abefb4-e86a-482d-9a62-452fcd4f2cb0';
+      const response = await fetch(`https://devnet.helius-rpc.com/?api-key=${HELIUS_API_KEY}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          jsonrpc: '2.0',
+          id: 'get-assets',
+          method: 'getAssetsByOwner',
+          params: {
+            ownerAddress: publicKey.toBase58(),
+            page: 1,
+            limit: 1000
+          }
+        })
+      });
+
+      const data = await response.json();
+      const assets = data.result?.items || [];
+
+      console.log('🔍 Total assets fetched from DAS API:', assets.length);
+
+      // Filter for ALL cNFTs (compressed NFTs) - SHOW EVERYTHING
+      const allCNFTs = assets
+        .filter((asset: any) => {
+          const isCompressed = asset.compression?.compressed || false;
+          const isBurned = asset.burnt || false;
+          
+          // Debug logging for each asset
+          console.log(`🔍 Asset ${asset.id}:`, {
+            name: asset.content?.metadata?.name || 'Unknown',
+            burned: isBurned,
+            isCompressed: isCompressed,
+            attributes: asset.content?.metadata?.attributes?.map((a: any) => `${a.trait_type}: ${a.value}`) || []
+          });
+          
+          // Include ALL non-burned cNFTs
+          const shouldInclude = isCompressed && !isBurned;
+          console.log(`   → ${shouldInclude ? 'INCLUDED' : 'EXCLUDED'}`);
+          
+          return shouldInclude;
+        })
+        .map((asset: any) => {
+          const attrs = asset.content?.metadata?.attributes || [];
+          
+          // Generate a random redemption code if not found in metadata
+          const generateRedemptionCode = () => {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let result = '';
+            for (let i = 0; i < 8; i++) {
+              result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+          };
+          
+          // Extract values with better fallbacks for ANY cNFT
+          const category = attrs.find((a: any) => a.trait_type === 'Category')?.value || 
+                          attrs.find((a: any) => a.trait_type === 'category')?.value || 
+                          attrs.find((a: any) => a.trait_type === 'Type')?.value ||
+                          attrs.find((a: any) => a.trait_type === 'Collection')?.value ||
+                          'General';
+          
+          // Try to extract discount from various possible attributes
+          let discountPercent = 20; // Default discount
+          const discountAttr = attrs.find((a: any) => 
+            a.trait_type && (
+              a.trait_type.toLowerCase().includes('discount') ||
+              a.trait_type.toLowerCase().includes('percent') ||
+              a.trait_type.toLowerCase().includes('off')
+            )
+          );
+          
+          if (discountAttr) {
+            const value = discountAttr.value;
+            if (typeof value === 'number') {
+              discountPercent = value;
+            } else if (typeof value === 'string') {
+              const numValue = parseInt(value.replace('%', '').replace('off', ''));
+              if (!isNaN(numValue)) {
+                discountPercent = numValue;
+              }
+            }
+          }
+          
+          const merchant = attrs.find((a: any) => a.trait_type === 'Merchant')?.value || 
+                          attrs.find((a: any) => a.trait_type === 'merchant')?.value || 
+                          attrs.find((a: any) => a.trait_type === 'Brand')?.value ||
+                          attrs.find((a: any) => a.trait_type === 'Creator')?.value ||
+                          'NFT Partner';
+          
+          const redemptionCode = attrs.find((a: any) => a.trait_type === 'Redemption Code')?.value || 
+                                attrs.find((a: any) => a.trait_type === 'redemption_code')?.value ||
+                                attrs.find((a: any) => a.trait_type === 'Code')?.value ||
+                                generateRedemptionCode(); // Generate if not found
+          
+          const expiryDate = attrs.find((a: any) => a.trait_type === 'Expiry Date')?.value || 
+                            attrs.find((a: any) => a.trait_type === 'expiry_date')?.value ||
+                            attrs.find((a: any) => a.trait_type === 'Expires')?.value ||
+                            '2024-12-31'; // Default expiry
+          
+          return {
+            mint: asset.id,
+            name: asset.content?.metadata?.name || 'Unknown',
+            symbol: asset.content?.metadata?.symbol || '',
+            category,
+            discountPercent: typeof discountPercent === 'number' ? discountPercent : parseInt(discountPercent) || 20,
+            merchant,
+            redemptionCode,
+            expiryDate,
+            isCompressed: asset.compression?.compressed || false
+          };
+        });
+
+      console.log('🔍 Filtered cNFTs:', allCNFTs.length);
+      setAvailableNFTs(allCNFTs);
+    } catch (error) {
+      console.error('Error fetching NFTs:', error);
+    } finally {
+      setNftsLoading(false);
+    }
+  };
+
+  const handleStakeNFT = async (nft: NFTData) => {
+    if (!publicKey) {
+      alert('Please connect your wallet');
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/staking/stake',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            assetId: nft.mint,
+            ownerAddress: publicKey.toBase58()
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert(`Successfully staked ${nft.name}! You'll start earning rewards.`);
+        fetchStakes();
+        fetchAvailableNFTs();
+      } else {
+        alert(`Error: ${data.error}`);
+      }
+    } catch (error) {
+      console.error('Error staking NFT:', error);
+      alert('Failed to stake NFT');
+    }
+  };
+
   const handleClaimRewards = async (stakeId: string) => {
     if (!publicKey) return;
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/staking/rewards/claim`, {
+      const response = await fetch(`/api/staking/rewards/claim`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -157,15 +332,7 @@ export default function StakingPage() {
           <p className="text-gray-600 mb-6">
             Please connect your wallet to view your staking dashboard.
           </p>
-          <WalletMultiButton />
-          <div className="mt-6">
-            <Link 
-              href="/redeem" 
-              className="text-blue-600 hover:text-blue-800 font-semibold"
-            >
-              Go to Redeem Page
-            </Link>
-          </div>
+            <ClientWalletButton />
         </div>
       </div>
     );
@@ -195,12 +362,6 @@ export default function StakingPage() {
               >
                 Claim All ({totalPendingRewards.toFixed(6)})
               </button>
-              <Link
-                href="/redeem"
-                className="bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-2 px-6 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all"
-              >
-                View NFTs
-              </Link>
             </div>
           </div>
         </div>
@@ -229,14 +390,8 @@ export default function StakingPage() {
               <div className="text-6xl mb-4">📊</div>
               <h3 className="text-xl font-semibold text-gray-800 mb-2">No Stakes Found</h3>
               <p className="text-gray-600 mb-6">
-                Start staking your discount NFTs to earn rewards!
+                Start staking your discount NFTs to earn rewards! Scroll down to see available NFTs.
               </p>
-              <Link
-                href="/redeem"
-                className="inline-block bg-gradient-to-r from-blue-500 to-purple-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all"
-              >
-                Go to Redeem Page
-              </Link>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -247,6 +402,99 @@ export default function StakingPage() {
                   onClaimRewards={handleClaimRewards}
                   onRequestUnstake={handleRequestUnstake}
                 />
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Available NFTs for Staking */}
+        <div className="mt-12">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-bold text-gray-800">Available NFTs to Stake</h2>
+            <span className="text-sm text-gray-600">
+              {availableNFTs.length} Available
+            </span>
+          </div>
+
+          {nftsLoading ? (
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
+              <p className="mt-4 text-gray-600">Loading available NFTs...</p>
+            </div>
+          ) : availableNFTs.length === 0 ? (
+            <div className="bg-white rounded-lg shadow-lg p-12 text-center">
+              <div className="text-6xl mb-4">🎨</div>
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">No NFTs Available</h3>
+              <p className="text-gray-600 mb-6">
+                No compressed NFTs found in your wallet to stake.
+              </p>
+              <Link
+                href="/marketplace"
+                className="inline-block bg-gradient-to-r from-purple-500 to-pink-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-purple-600 hover:to-pink-700 transition-all"
+              >
+                Browse Marketplace
+              </Link>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {availableNFTs.map((nft) => (
+                <div
+                  key={nft.mint}
+                  className="bg-white rounded-lg shadow-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow"
+                >
+                  <div className="flex justify-between items-start mb-4">
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-900 mb-1">
+                        {nft.name}
+                      </h3>
+                      <div className="flex gap-2 flex-wrap">
+                        <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">
+                          {nft.category}
+                        </span>
+                        <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs">
+                          {nft.discountPercent}% OFF
+                        </span>
+                        {nft.isCompressed && (
+                          <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">
+                            cNFT
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                    <div className="grid grid-cols-2 gap-3 text-sm">
+                      <div>
+                        <span className="text-gray-500">Merchant:</span>
+                        <p className="text-gray-900 font-semibold">{nft.merchant}</p>
+                      </div>
+                      <div>
+                        <span className="text-gray-500">Code:</span>
+                        <p className="text-gray-900 font-mono text-xs">{nft.redemptionCode}</p>
+                      </div>
+                      <div>
+                        <span className="text-gray-500">Expires:</span>
+                        <p className="text-gray-900">{nft.expiryDate}</p>
+                      </div>
+                      <div>
+                        <span className="text-gray-500">Status:</span>
+                        <p className="text-green-600 font-semibold">✓ Available</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => handleStakeNFT(nft)}
+                    className="w-full bg-gradient-to-r from-purple-500 to-pink-600 text-white font-bold py-3 px-4 rounded-lg hover:from-purple-600 hover:to-pink-700 transition"
+                  >
+                    ⭐ Stake NFT
+                  </button>
+
+                  <p className="text-xs text-gray-500 text-center mt-2">
+                    Stake to earn rewards based on tier and time held
+                  </p>
+                </div>
               ))}
             </div>
           )}

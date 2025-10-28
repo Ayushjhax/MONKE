@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import ClientWalletButton from '../../components/ClientWalletButton';
 import Link from 'next/link';
 
 interface Message {
@@ -101,7 +101,7 @@ export default function AIAgentPage() {
           <Link href="/profile" className="text-white hover:text-blue-300 font-semibold">
             Profile
           </Link>
-          <WalletMultiButton />
+            <ClientWalletButton />
         </div>
       </nav>
 

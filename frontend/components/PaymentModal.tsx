@@ -61,6 +61,7 @@ export default function PaymentModal({ isOpen, onClose, listing, onPaymentSucces
     setIsProcessing(true);
     setError(null);
 
+    let timeoutId: ReturnType<typeof setTimeout> | undefined;
     try {
       const connection = new Connection('https://api.devnet.solana.com', 'confirmed');
       const sellerPublicKey = new PublicKey(listing.seller_wallet);
@@ -97,7 +98,7 @@ export default function PaymentModal({ isOpen, onClose, listing, onPaymentSucces
       
       // Set a timeout for the transaction
       const timeoutMs = 30000; // 30 seconds
-      const timeoutId = setTimeout(() => {
+      timeoutId = setTimeout(() => {
         throw new Error('Transaction timeout - please try again');
       }, timeoutMs);
 
@@ -113,7 +114,7 @@ export default function PaymentModal({ isOpen, onClose, listing, onPaymentSucces
 
       console.log('Sending transaction...');
       // Send the transaction with retry logic
-      let signature: string;
+      let signature: string | undefined;
       let retries = 3;
       
       while (retries > 0) {
@@ -158,14 +159,14 @@ export default function PaymentModal({ isOpen, onClose, listing, onPaymentSucces
       await connection.confirmTransaction(signature, 'confirmed');
 
       // Clear timeout on success
-      clearTimeout(timeoutId);
+      if (timeoutId) clearTimeout(timeoutId);
       
       console.log('Payment successful:', signature);
       onPaymentSuccess(signature);
       handleClose();
     } catch (err: any) {
       // Clear timeout on error
-      clearTimeout(timeoutId);
+      if (timeoutId) clearTimeout(timeoutId);
       console.error('Payment failed:', err);
       
       // Handle specific error cases

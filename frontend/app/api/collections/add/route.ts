@@ -92,7 +92,8 @@ export async function POST(request: NextRequest) {
     // Handle duplicate key error specifically
     if (error instanceof Error && error.message.includes('duplicate key value violates unique constraint')) {
       try {
-        const existingCollection = await getCollectionByMint(collectionMint);
+        const body = await request.json().catch(() => ({}));
+        const existingCollection = body?.collectionMint ? await getCollectionByMint(body.collectionMint) : null;
         if (existingCollection) {
           return NextResponse.json({
             success: true,

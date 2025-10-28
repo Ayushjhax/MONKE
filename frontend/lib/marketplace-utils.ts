@@ -19,7 +19,7 @@ export interface MarketplaceCollection {
   expiry_date: string;
   max_uses: number;
   current_uses: number;
-  status: 'Active' | 'Expired' | 'Paused' | 'Redeemed';
+  status: 'Active' | 'Inactive' | 'Expired';
 }
 
 /**

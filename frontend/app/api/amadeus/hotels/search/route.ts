@@ -61,16 +61,16 @@ async function getAccessToken(): Promise<string> {
  * Query params: cityCode, checkInDate, checkOutDate, adults, rooms, radius, radiusUnit, max
  */
 export async function GET(request: NextRequest) {
+  const searchParams = request.nextUrl.searchParams;
+  const cityCode = searchParams.get('cityCode');
+  const checkInDate = searchParams.get('checkInDate');
+  const checkOutDate = searchParams.get('checkOutDate');
+  const adults = searchParams.get('adults') || '1';
+  const rooms = searchParams.get('rooms') || '1';
+  const radius = searchParams.get('radius') || '5';
+  const radiusUnit = searchParams.get('radiusUnit') || 'KM';
+  const max = searchParams.get('max') || '10';
   try {
-    const searchParams = request.nextUrl.searchParams;
-    const cityCode = searchParams.get('cityCode');
-    const checkInDate = searchParams.get('checkInDate');
-    const checkOutDate = searchParams.get('checkOutDate');
-    const adults = searchParams.get('adults') || '1';
-    const rooms = searchParams.get('rooms') || '1';
-    const radius = searchParams.get('radius') || '5';
-    const radiusUnit = searchParams.get('radiusUnit') || 'KM';
-    const max = searchParams.get('max') || '10';
 
     // Validation
     if (!cityCode || !checkInDate || !checkOutDate) {
@@ -312,7 +312,7 @@ export async function GET(request: NextRequest) {
     console.error('💥 Unexpected error in hotel search:', error);
     
     // Even on unexpected errors, return mock data
-    const mockResults = generateMockHotels(cityCode, checkInDate, checkOutDate);
+    const mockResults = generateMockHotels(cityCode || 'NYC', checkInDate || '2026-01-01', checkOutDate || '2026-01-03');
     
     return NextResponse.json({
       success: true,

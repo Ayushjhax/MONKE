@@ -5,10 +5,10 @@ import { sanitizeCommentText, validateCommentText } from '@/lib/social-helpers';
 
 export async function PUT(
   req: NextRequest,
-  { params }: { params: { commentId: string } }
+  ctx: { params: Promise<{ commentId: string }> }
 ) {
   try {
-    const commentId = params.commentId;
+    const { commentId } = await ctx.params;
     const body = await req.json();
     const { commentText, userWallet } = body;
 
@@ -88,10 +88,10 @@ export async function PUT(
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: { commentId: string } }
+  ctx: { params: Promise<{ commentId: string }> }
 ) {
   try {
-    const commentId = params.commentId;
+    const { commentId } = await ctx.params;
     const { searchParams } = new URL(req.url);
     const userWallet = searchParams.get('userWallet');
 
