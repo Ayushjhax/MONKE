@@ -1,5 +1,5 @@
 // DealCoin API Server
-import express, { Request, Response } from 'express';
+import express, { type Request, type Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 dotenv.config();
@@ -10,6 +10,9 @@ import { redemptionRouter } from './routes/redemption.js';
 import { qrRouter } from './routes/qr.js';
 import { stakingRouter } from './routes/staking.js';
 import { runAllJobs } from './jobs/staking-verification.js';
+import { groupDealsRouter } from './routes/group-deals.js';
+import { cancelOrExpireGroup, lockGroup, recomputeGroupProgress } from './services/group-deal-service.js';
+import { initializeDatabase } from '../frontend/lib/db.js';
 import * as cron from 'node-cron';
 
 const app = express();
@@ -42,6 +45,7 @@ app.use('/api/merchants', merchantsRouter);
 app.use('/api/redemption', redemptionRouter);
 app.use('/api/qr', qrRouter);
 app.use('/api/staking', stakingRouter);
+app.use('/api/group-deals', groupDealsRouter);
 
 // Root endpoint
 app.get('/', (req: Request, res: Response) => {
@@ -119,19 +123,68 @@ cron.schedule('0 */6 * * *', async () => {
   await runAllJobs();
 });
 
+// Group deals cron: every 5 minutes
+cron.schedule('*/5 * * * *', async () => {
+  try {
+    console.log('⏰ Group deals cron running...');
+    const { pool } = await import('../frontend/lib/db.js');
+    const client = await pool.connect();
+    try {
+      // Expire or lock groups past expiration
+      const groups = await client.query(
+        `SELECT g.id, g.status, g.expires_at, g.group_deal_id
+         FROM group_deal_groups g
+         WHERE g.status = 'open' AND g.expires_at < NOW()`
+      );
+      for (const row of groups.rows) {
+        try {
+          const progress = await recomputeGroupProgress(row.id);
+          if (progress.current_tier_rank > 0) {
+            await lockGroup(row.id);
+          } else {
+            await cancelOrExpireGroup(row.id);
+          }
+        } catch (e) {
+          console.error('Error processing group', row.id, e);
+        }
+      }
+
+      // Optionally refresh open groups progress
+      const openGroups = await client.query(
+        `SELECT id FROM group_deal_groups WHERE status = 'open' AND expires_at > NOW()`
+      );
+      for (const row of openGroups.rows) {
+        try {
+          await recomputeGroupProgress(row.id);
+        } catch (e) {
+          console.error('Error recomputing group', row.id, e);
+        }
+      }
+    } finally {
+      client.release();
+    }
+  } catch (e) {
+    console.error('Group deals cron error', e);
+  }
+});
+
 // Also run on startup for immediate processing
 console.log('⏰ Running initial staking verification job...');
 runAllJobs().catch(err => console.error('Error running initial job:', err));
 
-// Start server
-app.listen(PORT, () => {
-  console.log('🚀 DealCoin API Server Started');
-  console.log(`📍 Server running on http://localhost:${PORT}`);
-  console.log(`📚 API Documentation: http://localhost:${PORT}/api/docs`);
-  console.log(`🔧 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`⛓️  Network: ${process.env.NODE_ENV === 'production' ? 'Mainnet' : 'Devnet'}`);
-  console.log(`⏰ Staking verification job scheduled to run every 6 hours`);
-});
+// Initialize DB then start server
+initializeDatabase()
+  .catch(err => console.error('DB init error:', err))
+  .finally(() => {
+    app.listen(PORT, () => {
+      console.log('🚀 DealCoin API Server Started');
+      console.log(`📍 Server running on http://localhost:${PORT}`);
+      console.log(`📚 API Documentation: http://localhost:${PORT}/api/docs`);
+      console.log(`🔧 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`⛓️  Network: ${process.env.NODE_ENV === 'production' ? 'Mainnet' : 'Devnet'}`);
+      console.log(`⏰ Staking verification job scheduled to run every 6 hours`);
+    });
+  });
 
 export default app;
 

@@ -9,6 +9,9 @@ export const pool = new Pool({
   }
 });
 
+// Ensure initializeDatabase runs only once per process
+let __dbInitialized = false;
+
 // Types
 export interface Collection {
   id: number;
@@ -94,6 +97,9 @@ export interface Transaction {
 // Initialize database and create tables
 export async function initializeDatabase() {
   try {
+    if (__dbInitialized) {
+      return;
+    }
     const client = await pool.connect();
     
     // Create merchants table
@@ -555,8 +561,92 @@ export async function initializeDatabase() {
       CREATE INDEX IF NOT EXISTS idx_user_interests 
       ON user_event_interests(user_wallet)
     `);
+
+    // GROUP DEALS (CrowdBoost)
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS group_deals (
+        id SERIAL PRIMARY KEY,
+        deal_title VARCHAR(255) NOT NULL,
+        deal_type VARCHAR(20) NOT NULL,
+        merchant_id VARCHAR(255) NOT NULL,
+        base_price DECIMAL(10,2) NOT NULL,
+        min_participants INTEGER DEFAULT 2,
+        status VARCHAR(20) DEFAULT 'active',
+        start_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        end_at TIMESTAMP NOT NULL,
+        tier_type VARCHAR(20) DEFAULT 'by_count', -- 'by_count' | 'by_volume'
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS group_deal_tiers (
+        id SERIAL PRIMARY KEY,
+        group_deal_id INTEGER REFERENCES group_deals(id) ON DELETE CASCADE,
+        threshold INTEGER NOT NULL,
+        discount_percent INTEGER NOT NULL,
+        rank INTEGER NOT NULL,
+        UNIQUE (group_deal_id, rank)
+      )
+    `);
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS group_deal_groups (
+        id SERIAL PRIMARY KEY,
+        group_deal_id INTEGER REFERENCES group_deals(id) ON DELETE CASCADE,
+        host_wallet VARCHAR(44) NOT NULL,
+        invite_code VARCHAR(16) UNIQUE NOT NULL,
+        status VARCHAR(20) DEFAULT 'open',   -- 'open' | 'locked' | 'settling' | 'completed' | 'cancelled' | 'expired'
+        current_tier_rank INTEGER DEFAULT 0,
+        current_discount_percent INTEGER DEFAULT 0,
+        participants_count INTEGER DEFAULT 0,
+        total_pledged DECIMAL(10,6) DEFAULT 0,
+        expires_at TIMESTAMP NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS group_deal_members (
+        id SERIAL PRIMARY KEY,
+        group_id INTEGER REFERENCES group_deal_groups(id) ON DELETE CASCADE,
+        user_wallet VARCHAR(44) NOT NULL,
+        pledge_units DECIMAL(10,6) DEFAULT 1,
+        status VARCHAR(20) DEFAULT 'pledged', -- 'pledged' | 'confirmed' | 'refunded' | 'cancelled'
+        joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE (group_id, user_wallet)
+      )
+    `);
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS group_deal_settlements (
+        id SERIAL PRIMARY KEY,
+        group_id INTEGER REFERENCES group_deal_groups(id) ON DELETE CASCADE,
+        final_tier_rank INTEGER NOT NULL,
+        final_discount_percent INTEGER NOT NULL,
+        settled_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS group_deal_redemptions (
+        id SERIAL PRIMARY KEY,
+        group_id INTEGER REFERENCES group_deal_groups(id) ON DELETE CASCADE,
+        user_wallet VARCHAR(44) NOT NULL,
+        redemption_code VARCHAR(50) UNIQUE NOT NULL,
+        qr_payload TEXT,
+        status VARCHAR(20) DEFAULT 'issued', -- 'issued' | 'redeemed' | 'expired' | 'revoked'
+        issued_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        redeemed_at TIMESTAMP
+      )
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_gdg_status ON group_deal_groups(status, expires_at)
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_gdm_group ON group_deal_members(group_id, status)
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_gd_time ON group_deals(status, end_at)
+    `);
     
     client.release();
+    __dbInitialized = true;
     console.log('✅ Database initialized successfully');
   } catch (error) {
     console.error('❌ Database initialization failed:', error);
