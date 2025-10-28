@@ -5,6 +5,7 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { PublicKey } from '@solana/web3.js';
 import Link from 'next/link';
 import PaymentModal from '@/components/PaymentModal';
+import UserReputation from '@/components/social/UserReputation';
 
 interface Offer {
   id: number;
@@ -105,6 +106,15 @@ export default function ProfilePage() {
           </Link>
           <h1 className="text-4xl font-bold text-white mb-2">My Profile</h1>
           <p className="text-gray-400">Wallet: {publicKey.toString().substring(0, 8)}...{publicKey.toString().substring(publicKey.toString().length - 8)}</p>
+          <div className="mt-4 flex items-center gap-4">
+            <UserReputation userWallet={publicKey.toString()} compact />
+            <Link href={`/api/social/reputation/${publicKey.toString()}`} className="text-sm text-blue-400 hover:text-blue-300" target="_blank">
+              Refresh Reputation
+            </Link>
+            <Link href="/leaderboard" className="text-sm text-blue-400 hover:text-blue-300">
+              View Leaderboard →
+            </Link>
+          </div>
         </div>
 
         {/* Tabs */}
@@ -150,6 +160,8 @@ export default function ProfilePage() {
         )}
       </div>
 
+      <ReputationDetails wallet={publicKey.toString()} />
+
       {/* Payment Modal */}
       {paymentModal.isOpen && paymentModal.offer && (
         <PaymentModal
@@ -192,6 +204,61 @@ export default function ProfilePage() {
           }}
         />
       )}
+    </div>
+  );
+}
+function ReputationDetails({ wallet }: { wallet: string }) {
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      const res = await fetch(`/api/social/reputation/${wallet}`, { cache: 'no-store' });
+      const json = await res.json();
+      setData(json);
+      setLoading(false);
+    })();
+  }, [wallet]);
+
+  if (loading) return <div className="mt-10 text-gray-400">Loading reputation…</div>;
+  if (!data || data.error) return null;
+
+  return (
+    <div className="mt-10">
+      <h2 className="text-2xl font-bold text-white mb-2">Reputation</h2>
+      <p className="text-gray-400 mb-4">
+        Level: <span className="font-semibold text-white">{data.level}</span> — Points: <span className="font-semibold text-white">{data.points}</span>
+      </p>
+
+      {Array.isArray(data.badges) && data.badges.length > 0 && (
+        <div>
+          <h3 className="text-lg text-gray-300 mb-2">Badges</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {data.badges.map((b: any) => (
+              <div key={b.id} className="bg-gray-800 p-4 rounded-lg flex items-center gap-3">
+                <span className="text-2xl">{b.icon}</span>
+                <div>
+                  <div className="text-white font-semibold">{b.name}</div>
+                  <div className="text-xs text-gray-400">{b.description}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <div className="mt-6">
+        <h3 className="text-lg text-gray-300 mb-2">Activity Metrics</h3>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-sm text-gray-300">
+          <div className="bg-gray-800 p-3 rounded">Ratings: <span className="text-white font-semibold">{data.metrics.ratings}</span></div>
+          <div className="bg-gray-800 p-3 rounded">Comments: <span className="text-white font-semibold">{data.metrics.comments.count}</span></div>
+          <div className="bg-gray-800 p-3 rounded">Net Upvotes: <span className="text-white font-semibold">{data.metrics.comments.netUpvotes}</span></div>
+          <div className="bg-gray-800 p-3 rounded">Shares: <span className="text-white font-semibold">{data.metrics.shares}</span></div>
+          <div className="bg-gray-800 p-3 rounded">Transactions: <span className="text-white font-semibold">{data.metrics.transactions}</span></div>
+          <div className="bg-gray-800 p-3 rounded">Unique Merchants: <span className="text-white font-semibold">{data.metrics.uniqueMerchantsClaimed}</span></div>
+        </div>
+      </div>
     </div>
   );
 }
