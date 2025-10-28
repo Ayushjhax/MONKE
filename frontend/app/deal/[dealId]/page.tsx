@@ -500,10 +500,10 @@ export default function DealDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading deal details...</p>
+          <div className="w-8 h-8 border-2 border-gray-300 border-t-black rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading deal details...</p>
         </div>
       </div>
     );
@@ -511,11 +511,13 @@ export default function DealDetailPage() {
 
   if (error && !dealDetails) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-8">
-          <div className="text-red-600 text-5xl mb-4">⚠️</div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">{error}</h2>
-          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-6 text-left">
+          <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-gray-400 text-2xl">⚠️</span>
+          </div>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-4">{error}</h2>
+          <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6 text-left">
             <p className="text-sm text-gray-700 mb-2">
               <strong>💡 Tip:</strong> Deal details are lost when you refresh the page or use a direct link.
             </p>
@@ -526,13 +528,13 @@ export default function DealDetailPage() {
           <div className="space-y-3">
             <Link
               href="/marketplace"
-              className="block w-full px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+              className="block w-full px-6 py-3 bg-black text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors"
             >
               🔍 Search Deals in Marketplace
             </Link>
             <Link
               href="/community"
-              className="block w-full px-6 py-3 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 transition-colors"
+              className="block w-full px-6 py-3 bg-gray-100 text-gray-700 font-semibold rounded-xl hover:bg-gray-200 transition-colors"
             >
               🔥 Browse Trending Deals
             </Link>
@@ -544,19 +546,21 @@ export default function DealDetailPage() {
 
   if (bookingSuccess) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-        <div className="bg-white rounded-lg shadow-xl p-8 max-w-md text-center">
-          <div className="text-green-600 text-6xl mb-4">✅</div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Booking Confirmed!</h2>
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="bg-white rounded-2xl border border-gray-200 p-8 max-w-md text-center">
+          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <span className="text-green-600 text-2xl">✅</span>
+          </div>
+          <h2 className="text-2xl font-semibold text-gray-900 mb-2">Booking Confirmed!</h2>
           <p className="text-gray-600 mb-4">Your booking has been successfully simulated.</p>
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 mb-6">
             <div className="text-sm text-gray-600 mb-1">Booking Reference</div>
             <div className="text-2xl font-bold text-blue-600">{bookingReference}</div>
           </div>
           <p className="text-sm text-gray-500 mb-6">Redirecting to My Bookings...</p>
           <Link
             href="/bookings"
-            className="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+            className="inline-block px-6 py-3 bg-black text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors"
           >
             View My Bookings
           </Link>
@@ -574,17 +578,55 @@ export default function DealDetailPage() {
     : 0;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
+          <div className="flex justify-between items-center py-4">
+            {/* Logo */}
             <div className="flex items-center space-x-4">
-              <Link href="/marketplace" className="text-gray-600 hover:text-gray-900">
-                ← Back to Marketplace
+              <img 
+                src="/logo.png" 
+                alt="MonkeDao Logo" 
+                className="w-20 h-20 object-contain"
+              />
+              <div>
+                <h1 className="text-xl font-semibold text-gray-900">Deal Details</h1>
+                <p className="text-sm text-gray-500">Travel booking information</p>
+              </div>
+            </div>
+
+            {/* Center Navigation */}
+            <div className="flex-1 flex justify-center">
+              <Link
+                href="/"
+                className="bg-black text-white px-6 py-3 rounded-xl font-semibold hover:bg-gray-800 transition-colors text-sm"
+              >
+                🏠 Home
               </Link>
             </div>
-            <ClientWalletButton className="!bg-blue-600 hover:!bg-blue-700" />
+
+            {/* Right Side */}
+            <div className="flex items-center space-x-4">
+              <Link
+                href="/marketplace"
+                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+              >
+                ← Back to Marketplace
+              </Link>
+              {publicKey && (
+                <Link
+                  href={`/profile/${publicKey.toBase58()}`}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors text-sm font-medium"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  Profile
+                </Link>
+              )}
+              <ClientWalletButton className="!bg-black hover:!bg-gray-800" />
+            </div>
           </div>
         </div>
       </header>
@@ -596,7 +638,7 @@ export default function DealDetailPage() {
           <div className="lg:col-span-2 space-y-6">
             {/* Social Stats Overview */}
             {socialStats && (
-              <div className="bg-white rounded-lg shadow-md p-6">
+              <div className="bg-white rounded-2xl border border-gray-200 p-6">
                 <SocialStats
                   avgRating={socialStats.avg_rating}
                   ratingCount={socialStats.rating_count}
@@ -611,14 +653,14 @@ export default function DealDetailPage() {
             )}
 
             {/* Tab Navigation */}
-            <div className="bg-white rounded-lg shadow-md">
+            <div className="bg-white rounded-2xl border border-gray-200">
               <div className="border-b">
                 <div className="flex">
                   <button
                     onClick={() => setActiveTab('details')}
-                    className={`px-6 py-4 font-medium text-sm border-b-2 transition-colors ${
+                    className={`px-6 py-4 font-semibold text-sm border-b-2 transition-colors ${
                       activeTab === 'details'
-                        ? 'border-purple-600 text-purple-600'
+                        ? 'border-black text-black'
                         : 'border-transparent text-gray-500 hover:text-gray-700'
                     }`}
                   >
@@ -626,9 +668,9 @@ export default function DealDetailPage() {
                   </button>
                   <button
                     onClick={() => setActiveTab('reviews')}
-                    className={`px-6 py-4 font-medium text-sm border-b-2 transition-colors ${
+                    className={`px-6 py-4 font-semibold text-sm border-b-2 transition-colors ${
                       activeTab === 'reviews'
-                        ? 'border-purple-600 text-purple-600'
+                        ? 'border-black text-black'
                         : 'border-transparent text-gray-500 hover:text-gray-700'
                     }`}
                   >
@@ -646,7 +688,7 @@ export default function DealDetailPage() {
             <div className="p-6">
               <div className="mb-6">
                 <div className="flex items-center space-x-2 mb-2">
-                  <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
+                  <span className="px-3 py-1 bg-gray-100 text-gray-700 text-sm font-semibold rounded-lg">
                     {dealType === 'flight' ? '✈️ Flight' : '🏨 Hotel'}
                   </span>
                 </div>
@@ -679,15 +721,15 @@ export default function DealDetailPage() {
                           <div className="text-sm text-gray-500">{formatDateTime(dealDetails.arrivalTime)}</div>
                         </div>
                       </div>
-                      <div className="bg-gray-50 rounded-lg p-4">
+                      <div className="bg-gray-50 rounded-xl p-4">
                         <div className="grid grid-cols-2 gap-4">
                           <div>
                             <div className="text-sm text-gray-600">Airline</div>
-                            <div className="font-medium text-gray-900">{getAirlineName(dealDetails.airline)}</div>
+                            <div className="font-semibold text-gray-900">{getAirlineName(dealDetails.airline)}</div>
                           </div>
                           <div>
                             <div className="text-sm text-gray-600">Seats Available</div>
-                            <div className="font-medium text-gray-900">{dealDetails.seats}</div>
+                            <div className="font-semibold text-gray-900">{dealDetails.seats}</div>
                           </div>
                         </div>
                       </div>
@@ -701,23 +743,23 @@ export default function DealDetailPage() {
                     {dealDetails.address && (
                       <p className="text-gray-600 mb-4">{dealDetails.address}</p>
                     )}
-                    <div className="bg-gray-50 rounded-lg p-4 space-y-3">
+                    <div className="bg-gray-50 rounded-xl p-4 space-y-3">
                       <div className="flex justify-between">
                         <span className="text-sm text-gray-600">Check-in</span>
-                        <span className="font-medium text-gray-900">{formatDate(dealDetails.checkInDate)}</span>
+                        <span className="font-semibold text-gray-900">{formatDate(dealDetails.checkInDate)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-sm text-gray-600">Check-out</span>
-                        <span className="font-medium text-gray-900">{formatDate(dealDetails.checkOutDate)}</span>
+                        <span className="font-semibold text-gray-900">{formatDate(dealDetails.checkOutDate)}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-sm text-gray-600">Room Type</span>
-                        <span className="font-medium text-gray-900">{dealDetails.roomType}</span>
+                        <span className="font-semibold text-gray-900">{dealDetails.roomType}</span>
                       </div>
                       {dealDetails.rating && (
                         <div className="flex justify-between">
                           <span className="text-sm text-gray-600">Rating</span>
-                          <span className="font-medium text-gray-900">⭐ {dealDetails.rating}</span>
+                          <span className="font-semibold text-gray-900">⭐ {dealDetails.rating}</span>
                         </div>
                       )}
                     </div>
@@ -730,7 +772,7 @@ export default function DealDetailPage() {
                 <div className="p-6 space-y-8">
                   {/* Rating Section */}
                   <div>
-                    <h3 className="text-xl font-bold mb-4">Rate this Deal</h3>
+                    <h3 className="text-xl font-semibold mb-4">Rate this Deal</h3>
                     <RatingWidget
                       dealId={dealId}
                       dealType={dealType}
@@ -761,7 +803,7 @@ export default function DealDetailPage() {
 
           {/* Booking Panel */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-md p-6 sticky top-8 space-y-6">
+            <div className="bg-white rounded-2xl border border-gray-200 p-6 sticky top-8 space-y-6">
               {/* Vote & Share Actions */}
               <div className="flex items-center justify-between pb-6 border-b">
                 <VoteButtons
@@ -814,7 +856,7 @@ export default function DealDetailPage() {
               {/* Available NFTs for Burning */}
               {connected && (
                 <div className="mb-6">
-                  <h4 className="text-sm font-medium text-gray-900 mb-2">Available cNFTs (All Compressed NFTs)</h4>
+                  <h4 className="text-sm font-semibold text-gray-900 mb-2">Available cNFTs (All Compressed NFTs)</h4>
                   {nftsLoading ? (
                     <div className="text-sm text-gray-500">Loading NFTs...</div>
                   ) : nfts.length === 0 ? (
@@ -822,7 +864,7 @@ export default function DealDetailPage() {
                       <div className="text-sm text-gray-500">
                         No compressed NFTs (cNFTs) found in your wallet.
                       </div>
-                      <div className="text-xs text-gray-400 bg-gray-50 p-3 rounded-lg">
+                      <div className="text-xs text-gray-400 bg-gray-50 p-3 rounded-xl">
                         <strong>How to get cNFTs:</strong><br/>
                         1. Go to <Link href="/marketplace" className="text-blue-600 hover:underline">Marketplace</Link><br/>
                         2. Browse available collections<br/>
@@ -835,17 +877,17 @@ export default function DealDetailPage() {
                       {nfts.map((nft) => (
                         <div
                           key={nft.mint}
-                          className="w-full text-left p-3 border rounded-lg bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200"
+                          className="w-full text-left p-3 border rounded-xl bg-gray-50 border-gray-200"
                         >
                           <div className="flex justify-between items-center mb-2">
                             <div>
-                              <div className="font-medium text-sm text-gray-900">{nft.name}</div>
+                              <div className="font-semibold text-sm text-gray-900">{nft.name}</div>
                               <div className="text-xs text-gray-500">{nft.merchant}</div>
                             </div>
                             <div className="text-lg font-bold text-purple-600">{nft.discountPercent}% OFF</div>
                           </div>
                           <div className="flex gap-2 flex-wrap mb-2">
-                            <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">
+                            <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-xs">
                               {nft.category}
                             </span>
                             {nft.isCompressed && (
@@ -857,7 +899,7 @@ export default function DealDetailPage() {
                           <button
                             onClick={() => burnNFT(nft)}
                             disabled={burningNFT === nft.mint}
-                            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold py-2 px-4 rounded-lg hover:from-purple-600 hover:to-pink-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full bg-black text-white font-semibold py-2 px-4 rounded-xl hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             {burningNFT === nft.mint ? (
                               <span className="flex items-center justify-center gap-2">
@@ -877,7 +919,7 @@ export default function DealDetailPage() {
 
               {/* Burned NFT Status */}
               {burnedNFT && (
-                <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl">
                   <h4 className="text-sm font-semibold text-green-800 mb-2">✅ NFT Burned Successfully!</h4>
                   <div className="space-y-1 text-xs text-green-700">
                     <div><strong>Coupon Code:</strong> {burnedNFT.couponCode}</div>
@@ -892,20 +934,20 @@ export default function DealDetailPage() {
               {!connected ? (
                 <div className="text-center">
                   <p className="text-sm text-gray-600 mb-3">Connect your wallet to book</p>
-                  <ClientWalletButton className="!bg-blue-600 hover:!bg-blue-700 !w-full" />
+                  <ClientWalletButton className="!bg-black hover:!bg-gray-800 !w-full" />
                 </div>
               ) : (
                 <button
                   onClick={handleBooking}
                   disabled={booking}
-                  className="w-full px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:bg-gray-400 transition-colors"
+                  className="w-full px-6 py-3 bg-black text-white font-semibold rounded-xl hover:bg-gray-800 disabled:bg-gray-400 transition-colors"
                 >
                   {booking ? 'Processing...' : burnedNFT ? 'Complete Booking with Discount' : 'Simulate Booking'}
                 </button>
               )}
 
               {error && (
-                <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-xl text-red-700 text-sm">
                   {error}
                 </div>
               )}
@@ -916,4 +958,3 @@ export default function DealDetailPage() {
     </div>
   );
 }
-

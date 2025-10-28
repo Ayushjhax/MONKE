@@ -239,28 +239,63 @@ export default function VerifyPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
-      <nav className="p-6 flex justify-between items-center bg-black/20 backdrop-blur-sm">
-        <Link href="/" className="text-2xl font-bold text-white">
-          ← Back
-        </Link>
-            <ClientWalletButton />
-      </nav>
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            {/* Logo */}
+            <div className="flex items-center space-x-4">
+              <img 
+                src="/logo.png" 
+                alt="MonkeDao Logo" 
+                className="w-20 h-20 object-contain"
+              />
+              <div>
+                <h1 className="text-xl font-semibold text-gray-900">Verify Redemption</h1>
+                <p className="text-sm text-gray-500">Verify discount NFT redemptions</p>
+              </div>
+            </div>
 
-      <main className="container mx-auto px-4 py-16">
+            {/* Center Navigation */}
+            <div className="flex-1 flex justify-center">
+              <Link
+                href="/"
+                className="bg-black text-white px-6 py-3 rounded-xl font-semibold hover:bg-gray-800 transition-colors text-sm"
+              >
+                🏠 Home
+              </Link>
+            </div>
+
+            {/* Right Side */}
+            <div className="flex items-center space-x-4">
+              <Link
+                href="/marketplace"
+                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+              >
+                Marketplace
+              </Link>
+              <ClientWalletButton className="!bg-black hover:!bg-gray-800" />
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-white mb-4">
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
               🔍 Verify Redemption
             </h1>
-            <p className="text-gray-300">
+            <p className="text-gray-600">
               Verify that a discount NFT was properly redeemed and burned on-chain
             </p>
           </div>
 
           {/* Verification Input */}
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20 mb-6">
-            <label className="block text-white font-bold mb-3">
+          <div className="bg-white rounded-2xl border border-gray-200 p-8 mb-6">
+            <label className="block text-gray-900 font-semibold mb-3">
               Transaction Signature:
             </label>
             <input
@@ -268,13 +303,13 @@ export default function VerifyPage() {
               value={transactionSignature}
               onChange={(e) => setTransactionSignature(e.target.value)}
               placeholder="Enter transaction signature to verify..."
-              className="w-full bg-black/30 text-white border border-white/30 rounded-xl px-4 py-3 mb-4 focus:outline-none focus:border-blue-500"
+              className="w-full bg-gray-50 text-gray-900 border border-gray-300 rounded-xl px-4 py-3 mb-4 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
             />
             
             <button
               onClick={verifyRedemption}
               disabled={loading || !transactionSignature.trim()}
-              className="w-full bg-gradient-to-r from-green-500 to-blue-500 text-white font-bold py-3 px-6 rounded-xl hover:from-green-600 hover:to-blue-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-black text-white font-semibold py-3 px-6 rounded-xl hover:bg-gray-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <span className="flex items-center justify-center gap-2">
@@ -289,63 +324,59 @@ export default function VerifyPage() {
 
           {/* Error Display */}
           {error && (
-            <div className="bg-red-500/20 border border-red-500/50 rounded-xl p-6 mb-6">
-              <h3 className="text-red-300 font-bold mb-2">❌ Verification Failed</h3>
-              <p className="text-red-200">{error}</p>
+            <div className="bg-red-50 border border-red-200 rounded-xl p-6 mb-6">
+              <h3 className="text-red-800 font-bold mb-2">❌ Verification Failed</h3>
+              <p className="text-red-700">{error}</p>
             </div>
           )}
 
           {/* Verification Result */}
           {verificationResult && (
-            <div className={`bg-white/10 backdrop-blur-lg rounded-2xl p-8 border ${verificationResult.nftBurned ? 'border-green-500/50' : 'border-yellow-500/50'} mb-6`}>
+            <div className={`bg-white rounded-2xl border p-8 mb-6 ${verificationResult.nftBurned ? 'border-green-200' : 'border-yellow-200'}`}>
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-bold text-white">
+                <h3 className="text-2xl font-bold text-gray-900">
                   {verificationResult.nftBurned ? '✅ Valid Redemption' : '⚠️ Partial Redemption'}
                 </h3>
-                <span className={`px-4 py-2 rounded-full text-sm font-bold ${verificationResult.nftBurned ? 'bg-green-500/30 text-green-200' : 'bg-yellow-500/30 text-yellow-200'}`}>
+                <span className={`px-4 py-2 rounded-full text-sm font-bold ${verificationResult.nftBurned ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
                   {verificationResult.nftBurned ? 'NFT BURNED' : 'RECORDED'}
                 </span>
               </div>
 
-              <div className="bg-black/20 rounded-xl p-6 space-y-4">
+              <div className="bg-gray-50 rounded-xl p-6 space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <span className="text-gray-400 text-sm">Redemption Code:</span>
-                    <p className="text-white font-mono text-sm">{verificationResult.redemptionCode}</p>
+                    <span className="text-gray-600 text-sm">Redemption Code:</span>
+                    <p className="text-gray-900 font-mono text-sm">{verificationResult.redemptionCode}</p>
                   </div>
                   <div>
-                    <span className="text-gray-400 text-sm">Discount Value:</span>
-                    <p className="text-white font-bold">{verificationResult.discountValue}% OFF</p>
+                    <span className="text-gray-600 text-sm">User Wallet:</span>
+                    <p className="text-gray-900 font-mono text-xs break-all">{verificationResult.userWallet}</p>
                   </div>
                   <div>
-                    <span className="text-gray-400 text-sm">User Wallet:</span>
-                    <p className="text-white font-mono text-xs break-all">{verificationResult.userWallet}</p>
-                  </div>
-                  <div>
-                    <span className="text-gray-400 text-sm">Timestamp:</span>
-                    <p className="text-white text-sm">{new Date(verificationResult.timestamp).toLocaleString()}</p>
+                    <span className="text-gray-600 text-sm">Timestamp:</span>
+                    <p className="text-gray-900 text-sm">{new Date(verificationResult.timestamp).toLocaleString()}</p>
                   </div>
                 </div>
 
                 <div>
-                  <span className="text-gray-400 text-sm">Transaction:</span>
+                  <span className="text-gray-600 text-sm">Transaction:</span>
                   <a 
                     href={`https://explorer.solana.com/tx/${verificationResult.transactionSignature}?cluster=devnet`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-400 hover:text-blue-300 font-mono text-xs break-all block"
+                    className="text-blue-600 hover:text-blue-800 font-mono text-xs break-all block"
                   >
                     {verificationResult.transactionSignature}
                   </a>
                 </div>
               </div>
 
-              <div className={`mt-6 p-4 rounded-xl ${verificationResult.nftBurned ? 'bg-green-500/20 border border-green-500/50' : 'bg-yellow-500/20 border border-yellow-500/50'}`}>
-                <p className={verificationResult.nftBurned ? 'text-green-200' : 'text-yellow-200'}>
+              <div className={`mt-6 p-4 rounded-xl ${verificationResult.nftBurned ? 'bg-green-50 border border-green-200' : 'bg-yellow-50 border border-yellow-200'}`}>
+                <p className={verificationResult.nftBurned ? 'text-green-800' : 'text-yellow-800'}>
                   {verificationResult.message}
                 </p>
                 {verificationResult.nftBurned && (
-                  <p className="text-green-300 text-sm mt-2">
+                  <p className="text-green-700 text-sm mt-2">
                     This NFT has been permanently destroyed and cannot be reused.
                   </p>
                 )}
@@ -354,9 +385,9 @@ export default function VerifyPage() {
           )}
 
           {/* Info Box */}
-          <div className="bg-blue-500/20 border border-blue-500/50 rounded-xl p-6">
-            <h4 className="text-white font-bold mb-3">ℹ️ How Verification Works:</h4>
-            <ol className="text-sm text-gray-300 space-y-2 list-decimal list-inside">
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
+            <h4 className="text-gray-900 font-bold mb-3">ℹ️ How Verification Works:</h4>
+            <ol className="text-sm text-gray-700 space-y-2 list-decimal list-inside">
               <li>Enter the transaction signature from the redemption</li>
               <li>System fetches transaction details from Solana blockchain</li>
               <li>Extracts redemption data from transaction memo</li>

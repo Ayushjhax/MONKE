@@ -1,13 +1,17 @@
 'use client';
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useWallet } from '@solana/wallet-adapter-react';
+import ClientWalletButton from '../../../components/ClientWalletButton';
 
 function apiBase() {
   return '';
 }
 
 export default function DealDetails() {
+  const { publicKey } = useWallet();
   const params = useParams();
   const router = useRouter();
   const dealId = params?.dealId as string;
@@ -59,64 +63,145 @@ export default function DealDetails() {
     }
   }
 
-  if (!deal) return <div style={{ padding: 24 }}>Loading...</div>;
-
-  return (
-    <div style={{ padding: 24, maxWidth: 900, margin: '0 auto' }}>
-      <div style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', borderRadius: 16, padding: 24, color: 'white', marginBottom: 24 }}>
-        <h1 style={{ margin: 0, fontSize: 32 }}>{deal.deal_title}</h1>
-        <div style={{ marginTop: 8, opacity: 0.9 }}>{deal.highlight}</div>
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 24 }}>
-        <div style={{ padding: 16, border: '1px solid #ddd', borderRadius: 12 }}>
-          <div style={{ color: '#666', fontSize: 13 }}>Base Price</div>
-          <div style={{ fontSize: 24, fontWeight: 600 }}>${Number(deal.base_price).toFixed(2)}</div>
-        </div>
-        <div style={{ padding: 16, border: '1px solid #ddd', borderRadius: 12 }}>
-          <div style={{ color: '#666', fontSize: 13 }}>Ends</div>
-          <div style={{ fontSize: 16 }}>{new Date(deal.end_at).toLocaleString()}</div>
-        </div>
-      </div>
-
-      <div style={{ padding: 20, background: '#f8f9fa', borderRadius: 12, marginBottom: 24 }}>
-        <h3 style={{ margin: '0 0 12px 0', fontSize: 18 }}>Tier Breakdown</h3>
-        <div style={{ display: 'grid', gap: 12 }}>
-          {tiers.map(t => (
-            <div key={t.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 12, background: '#fff', borderRadius: 8 }}>
-              <div style={{ width: 48, height: 48, borderRadius: 999, background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 600 }}>
-                {t.rank}
+  if (!deal) {
+    return (
+      <div className="min-h-screen bg-white">
+        <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center py-4">
+              <div className="flex items-center space-x-4">
+                <img src="/logo.png" alt="MonkeDao Logo" className="w-20 h-20 object-contain" />
+                <div>
+                  <h1 className="text-xl font-semibold text-gray-900">Group Deal Details</h1>
+                  <p className="text-sm text-gray-500">Loading...</p>
+                </div>
               </div>
-              <div style={{ flex: 1 }}>
-                <div style={{ fontWeight: 600 }}>{t.discount_percent}% Off</div>
-                <div style={{ fontSize: 13, color: '#666' }}>{deal.tier_type === 'by_volume' ? 'Volume' : 'Members'} ≥ {t.threshold}</div>
+              <div className="flex items-center space-x-4">
+                <Link href="/" className="bg-black text-white px-6 py-3 rounded-xl font-semibold hover:bg-gray-800 transition-colors text-sm">
+                  🏠 Home
+                </Link>
+                <ClientWalletButton className="!bg-black hover:!bg-gray-800" />
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        </header>
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="text-center">
+            <div className="w-8 h-8 border-2 border-gray-300 border-t-black rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading...</p>
+          </div>
+        </main>
       </div>
+    );
+  }
 
-      <button 
-        onClick={startGroup} 
-        disabled={startLoading} 
-        style={{ 
-          marginTop: 12, 
-          padding: '14px 24px', 
-          fontSize: 16, 
-          fontWeight: 600,
-          background: startLoading ? '#ccc' : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          color: 'white',
-          border: 'none',
-          borderRadius: 12,
-          cursor: startLoading ? 'not-allowed' : 'pointer',
-          width: '100%'
-        }}>
-        {startLoading ? 'Creating Group…' : '🚀 Start Your Group'}
-      </button>
+  return (
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            {/* Logo */}
+            <div className="flex items-center space-x-4">
+              <img src="/logo.png" alt="MonkeDao Logo" className="w-20 h-20 object-contain" />
+              <div>
+                <h1 className="text-xl font-semibold text-gray-900">Group Deal Details</h1>
+                <p className="text-sm text-gray-500">{deal.deal_title}</p>
+              </div>
+            </div>
 
-      {error && <div style={{ color: 'red', padding: 12, background: '#ffebee', borderRadius: 8, marginTop: 16 }}>{error}</div>}
+            {/* Center Navigation */}
+            <div className="flex-1 flex justify-center">
+              <Link href="/" className="bg-black text-white px-6 py-3 rounded-xl font-semibold hover:bg-gray-800 transition-colors text-sm">
+                🏠 Home
+              </Link>
+            </div>
+
+            {/* Right Side */}
+            <div className="flex items-center space-x-4">
+              {publicKey && (
+                <Link
+                  href={`/profile/${(publicKey as any).toBase58()}`}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors text-sm font-medium"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  Profile
+                </Link>
+              )}
+              <ClientWalletButton className="!bg-black hover:!bg-gray-800" />
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Hero Section */}
+        <div className="bg-gradient-to-br from-purple-600 via-purple-700 to-indigo-800 rounded-3xl p-8 md:p-12 mb-8 text-white">
+          <h1 className="text-4xl font-bold mb-3">{deal.deal_title}</h1>
+          <p className="text-lg text-purple-100 mb-6">{deal.highlight}</p>
+          
+          {/* Stats */}
+          <div className="grid grid-cols-2 gap-6">
+            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4">
+              <div className="text-sm text-purple-200 mb-1">Base Price</div>
+              <div className="text-3xl font-bold">${Number(deal.base_price).toFixed(2)}</div>
+            </div>
+            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-4">
+              <div className="text-sm text-purple-200 mb-1">Ends</div>
+              <div className="text-lg font-semibold">{new Date(deal.end_at).toLocaleString()}</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Tier Breakdown */}
+        <div className="bg-white rounded-2xl border border-gray-200 p-6 md:p-8 mb-8">
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Tier Breakdown</h2>
+          <div className="space-y-4">
+            {tiers.map(t => (
+              <div 
+                key={t.id} 
+                className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
+              >
+                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-600 to-indigo-600 flex items-center justify-center text-white font-bold text-lg">
+                  {t.rank}
+                </div>
+                <div className="flex-1">
+                  <div className="text-lg font-bold text-gray-900">{t.discount_percent}% Off</div>
+                  <div className="text-sm text-gray-600">
+                    {deal.tier_type === 'by_volume' ? 'Volume' : 'Members'} ≥ {t.threshold}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Action Button */}
+        <button 
+          onClick={startGroup} 
+          disabled={startLoading} 
+          className="w-full py-4 px-6 bg-black text-white text-lg font-bold rounded-xl hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
+        >
+          {startLoading ? (
+            <>
+              <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+              Creating Group…
+            </>
+          ) : (
+            <>🚀 Start Your Group</>
+          )}
+        </button>
+
+        {/* Error Message */}
+        {error && (
+          <div className="mt-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl">
+            {error}
+          </div>
+        )}
+      </main>
     </div>
   );
 }
-
-

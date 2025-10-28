@@ -114,28 +114,65 @@ export default function BookingsPage() {
 
   if (!connected) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        <header className="bg-white shadow-sm border-b">
+      <div className="min-h-screen bg-white">
+        {/* Header */}
+        <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center py-6">
-              <h1 className="text-3xl font-bold text-gray-900">My Bookings</h1>
-              <ClientWalletButton className="!bg-blue-600 hover:!bg-blue-700" />
+            <div className="flex justify-between items-center py-4">
+              {/* Logo */}
+              <div className="flex items-center space-x-4">
+                <img 
+                  src="/logo.png" 
+                  alt="MonkeDao Logo" 
+                  className="w-20 h-20 object-contain"
+                />
+                <div>
+                  <h1 className="text-xl font-semibold text-gray-900">My Bookings</h1>
+                  <p className="text-sm text-gray-500">Manage your travel bookings and reservations</p>
+                </div>
+              </div>
+
+              {/* Center Navigation */}
+              <div className="flex-1 flex justify-center">
+                <Link
+                  href="/"
+                  className="bg-black text-white px-6 py-3 rounded-xl font-semibold hover:bg-gray-800 transition-colors text-sm"
+                >
+                  🏠 Home
+                </Link>
+              </div>
+
+              {/* Right Side */}
+              <div className="flex items-center space-x-4">
+                {publicKey && (
+                  <Link
+                    href={`/profile/${publicKey.toBase58()}`}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors text-sm font-medium"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    Profile
+                  </Link>
+                )}
+                <ClientWalletButton className="!bg-black hover:!bg-gray-800" />
+              </div>
             </div>
           </div>
         </header>
         
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="text-center bg-white rounded-lg shadow-md p-12">
-            <div className="mx-auto h-24 w-24 text-gray-400 mb-4">
-              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="text-center bg-white rounded-2xl border border-gray-200 p-12">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Connect Your Wallet</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Connect Your Wallet</h3>
             <p className="text-gray-600 mb-6">
               Connect your Solana wallet to view your bookings
             </p>
-            <ClientWalletButton className="!bg-blue-600 hover:!bg-blue-700" />
+            <ClientWalletButton className="!bg-black hover:!bg-gray-800" />
           </div>
         </main>
       </div>
@@ -144,20 +181,57 @@ export default function BookingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-        <header className="bg-white shadow-sm border-b">
+      <div className="min-h-screen bg-white">
+        {/* Header */}
+        <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center py-6">
-              <h1 className="text-3xl font-bold text-gray-900">My Bookings</h1>
-              <ClientWalletButton className="!bg-blue-600 hover:!bg-blue-700" />
+            <div className="flex justify-between items-center py-4">
+              {/* Logo */}
+              <div className="flex items-center space-x-4">
+                <img 
+                  src="/logo.png" 
+                  alt="MonkeDao Logo" 
+                  className="w-20 h-20 object-contain"
+                />
+                <div>
+                  <h1 className="text-xl font-semibold text-gray-900">My Bookings</h1>
+                  <p className="text-sm text-gray-500">Manage your travel bookings and reservations</p>
+                </div>
+              </div>
+
+              {/* Center Navigation */}
+              <div className="flex-1 flex justify-center">
+                <Link
+                  href="/"
+                  className="bg-black text-white px-6 py-3 rounded-xl font-semibold hover:bg-gray-800 transition-colors text-sm"
+                >
+                  🏠 Home
+                </Link>
+              </div>
+
+              {/* Right Side */}
+              <div className="flex items-center space-x-4">
+                {publicKey && (
+                  <Link
+                    href={`/profile/${publicKey.toBase58()}`}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors text-sm font-medium"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    Profile
+                  </Link>
+                )}
+                <ClientWalletButton className="!bg-black hover:!bg-gray-800" />
+              </div>
             </div>
           </div>
         </header>
         
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading your bookings...</p>
+            <div className="w-8 h-8 border-2 border-gray-300 border-t-black rounded-full animate-spin mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading your bookings...</p>
           </div>
         </main>
       </div>
@@ -165,55 +239,97 @@ export default function BookingsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
+          <div className="flex justify-between items-center py-4">
+            {/* Logo */}
             <div className="flex items-center space-x-4">
-              <h1 className="text-3xl font-bold text-gray-900">My Bookings</h1>
-              <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
-                {filteredBookings.length} {filteredBookings.length === 1 ? 'booking' : 'bookings'}
-              </span>
+              <img 
+                src="/logo.png" 
+                alt="MonkeDao Logo" 
+                className="w-20 h-20 object-contain"
+              />
+              <div>
+                <h1 className="text-xl font-semibold text-gray-900">My Bookings</h1>
+                <p className="text-sm text-gray-500">Manage your travel bookings and reservations</p>
+              </div>
             </div>
-            <div className="flex items-center space-x-4">
+
+            {/* Center Navigation */}
+            <div className="flex-1 flex justify-center">
               <Link
-                href="/marketplace"
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                href="/"
+                className="bg-black text-white px-6 py-3 rounded-xl font-semibold hover:bg-gray-800 transition-colors text-sm"
               >
-                Back to Marketplace
+                🏠 Home
               </Link>
-              <ClientWalletButton className="!bg-blue-600 hover:!bg-blue-700" />
             </div>
+
+              {/* Right Side */}
+              <div className="flex items-center space-x-4">
+                <Link
+                  href="/marketplace"
+                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+                >
+                  Back to Marketplace
+                </Link>
+                {publicKey && (
+                  <Link
+                    href={`/profile/${publicKey.toBase58()}`}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors text-sm font-medium"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    Profile
+                  </Link>
+                )}
+                <ClientWalletButton className="!bg-black hover:!bg-gray-800" />
+              </div>
           </div>
         </div>
       </header>
 
-      {/* Stats */}
-      {bookings.length > 0 && (
-        <div className="bg-white border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-blue-50 rounded-lg p-4">
-                <div className="text-sm text-gray-600 mb-1">Total Bookings</div>
-                <div className="text-2xl font-bold text-gray-900">{bookings.length}</div>
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Page Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-2">My Bookings</h1>
+          <p className="text-lg text-gray-600">
+            Manage your travel bookings and reservations
+          </p>
+        </div>
+
+        {/* Stats */}
+        {bookings.length > 0 && (
+          <div className="bg-gray-50 rounded-2xl border border-gray-200 p-6 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <div className="text-center">
+                <div className="text-3xl font-bold text-gray-900 mb-1">{bookings.length}</div>
+                <div className="text-sm text-gray-600">Total Bookings</div>
               </div>
-              <div className="bg-green-50 rounded-lg p-4">
-                <div className="text-sm text-gray-600 mb-1">Total Saved</div>
-                <div className="text-2xl font-bold text-green-600">{formatPrice(totalSaved)}</div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-green-600 mb-1">{formatPrice(totalSaved)}</div>
+                <div className="text-sm text-gray-600">Total Saved</div>
               </div>
-              <div className="bg-purple-50 rounded-lg p-4">
-                <div className="text-sm text-gray-600 mb-1">Total Spent</div>
-                <div className="text-2xl font-bold text-purple-600">{formatPrice(totalSpent)}</div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-blue-600 mb-1">{formatPrice(totalSpent)}</div>
+                <div className="text-sm text-gray-600">Total Spent</div>
+              </div>
+              <div className="text-center">
+                <div className="text-3xl font-bold text-gray-900 mb-1">
+                  {bookings.filter(b => b.status === 'confirmed').length}
+                </div>
+                <div className="text-sm text-gray-600">Active</div>
               </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Filters */}
-      <div className="bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        {/* Filters */}
+        <div className="bg-white rounded-2xl border border-gray-200 p-6 mb-8">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center space-x-4">
               <div>
@@ -221,7 +337,7 @@ export default function BookingsPage() {
                 <select
                   value={filterType}
                   onChange={(e) => setFilterType(e.target.value as any)}
-                  className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                  className="px-4 py-2 border border-gray-300 rounded-xl text-sm text-black focus:ring-2 focus:ring-black focus:border-transparent transition-all"
                 >
                   <option value="all">All</option>
                   <option value="flight">Flights</option>
@@ -233,7 +349,7 @@ export default function BookingsPage() {
                 <select
                   value={filterStatus}
                   onChange={(e) => setFilterStatus(e.target.value as any)}
-                  className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                  className="px-4 py-2 border border-gray-300 rounded-xl text-sm text-black focus:ring-2 focus:ring-black focus:border-transparent transition-all"
                 >
                   <option value="all">All</option>
                   <option value="confirmed">Confirmed</option>
@@ -245,7 +361,7 @@ export default function BookingsPage() {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as any)}
-                  className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                  className="px-4 py-2 border border-gray-300 rounded-xl text-sm text-black focus:ring-2 focus:ring-black focus:border-transparent transition-all"
                 >
                   <option value="date">Date</option>
                   <option value="price">Price</option>
@@ -255,22 +371,20 @@ export default function BookingsPage() {
             <button
               onClick={exportToCSV}
               disabled={filteredBookings.length === 0}
-              className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 disabled:bg-gray-400 transition-colors"
+              className="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-semibold rounded-xl hover:bg-gray-200 disabled:bg-gray-50 disabled:text-gray-400 transition-colors"
             >
               📥 Export CSV
             </button>
           </div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Bookings List */}
         {error && (
-          <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+          <div className="mb-6 bg-red-50 border border-red-200 rounded-2xl p-4">
             <div className="flex items-center">
               <div className="text-red-600 mr-3">⚠️</div>
               <div>
-                <h3 className="text-sm font-medium text-red-800">Error</h3>
+                <h3 className="text-sm font-semibold text-red-800">Error</h3>
                 <p className="text-sm text-red-700 mt-1">{error}</p>
               </div>
             </div>
@@ -278,9 +392,11 @@ export default function BookingsPage() {
         )}
 
         {filteredBookings.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-lg shadow">
-            <div className="text-gray-400 text-6xl mb-4">📋</div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No bookings found</h3>
+          <div className="text-center py-16 bg-white rounded-2xl border border-gray-200">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-gray-400 text-2xl">📋</span>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">No bookings found</h3>
             <p className="text-gray-600 mb-6">
               {bookings.length === 0
                 ? "You haven't made any bookings yet. Start exploring deals!"
@@ -288,7 +404,7 @@ export default function BookingsPage() {
             </p>
             <Link
               href="/marketplace"
-              className="inline-block px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+              className="inline-block bg-black text-white font-semibold py-3 px-6 rounded-xl hover:bg-gray-800 transition-colors"
             >
               Explore Marketplace
             </Link>
@@ -296,38 +412,49 @@ export default function BookingsPage() {
         ) : (
           <div className="space-y-4">
             {filteredBookings.map((booking) => (
-              <div key={booking.id} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+              <div key={booking.id} className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg transition-shadow">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <span className={`px-3 py-1 text-sm font-medium rounded-full ${
+                    <div className="flex items-center space-x-3 mb-4">
+                      <div className={`w-20 h-20 rounded-xl flex items-center justify-center ${
                         booking.dealType === 'flight'
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-purple-100 text-purple-800'
+                          ? 'bg-blue-50'
+                          : 'bg-purple-50'
                       }`}>
-                        {booking.dealType === 'flight' ? '✈️ Flight' : '🏨 Hotel'}
-                      </span>
-                      <span className={`px-3 py-1 text-sm font-medium rounded-full ${
-                        booking.status === 'confirmed'
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-red-100 text-red-800'
-                      }`}>
-                        {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
-                      </span>
+                        <span className="text-2xl">
+                          {booking.dealType === 'flight' ? '✈️' : '🏨'}
+                        </span>
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2 mb-2">
+                          <span className={`px-3 py-1 text-sm font-semibold rounded-lg ${
+                            booking.dealType === 'flight'
+                              ? 'bg-blue-100 text-blue-700'
+                              : 'bg-purple-100 text-purple-700'
+                          }`}>
+                            {booking.dealType === 'flight' ? 'Flight' : 'Hotel'}
+                          </span>
+                          <span className={`px-3 py-1 text-sm font-semibold rounded-lg ${
+                            booking.status === 'confirmed'
+                              ? 'bg-green-100 text-green-700'
+                              : 'bg-red-100 text-red-700'
+                          }`}>
+                            {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                          </span>
+                        </div>
+                        <div className="text-2xl font-bold text-gray-900 mb-1">
+                          {booking.bookingReference}
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          Booked on {formatDate(booking.bookedAt)}
+                        </div>
+                        {booking.couponCode && (
+                          <div className="inline-flex items-center px-3 py-1 bg-green-50 border border-green-200 rounded-lg text-sm text-green-800 mt-2">
+                            🎫 Coupon: <span className="ml-1 font-semibold">{booking.couponCode}</span>
+                          </div>
+                        )}
+                      </div>
                     </div>
-                    <div className="mb-2">
-                      <div className="text-2xl font-bold text-gray-900 mb-1">
-                        {booking.bookingReference}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        Booked on {formatDate(booking.bookedAt)}
-                      </div>
-                    </div>
-                    {booking.couponCode && (
-                      <div className="inline-flex items-center px-3 py-1 bg-green-50 border border-green-200 rounded-lg text-sm text-green-800">
-                        🎫 Coupon: <span className="ml-1 font-medium">{booking.couponCode}</span>
-                      </div>
-                    )}
                   </div>
                   <div className="text-right ml-6">
                     {booking.discountApplied > 0 && (
@@ -339,10 +466,18 @@ export default function BookingsPage() {
                       {formatPrice(booking.finalPrice)}
                     </div>
                     {booking.discountApplied > 0 && (
-                      <div className="text-sm text-green-600 font-medium">
+                      <div className="text-sm text-green-600 font-semibold">
                         Saved {formatPrice(booking.discountApplied)}
                       </div>
                     )}
+                    <div className="mt-4 flex space-x-2">
+                      <button className="px-4 py-2 bg-black text-white text-sm font-semibold rounded-xl hover:bg-gray-800 transition-colors">
+                        View Details
+                      </button>
+                      <button className="px-4 py-2 border border-red-500 text-red-500 text-sm font-semibold rounded-xl hover:bg-red-50 transition-colors">
+                        Cancel
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -353,4 +488,3 @@ export default function BookingsPage() {
     </div>
   );
 }
-

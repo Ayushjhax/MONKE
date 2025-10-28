@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useWallet } from '@solana/wallet-adapter-react';
+import Link from 'next/link';
 import ClientWalletButton from '../../components/ClientWalletButton';
 import PaymentModal from '@/components/PaymentModal';
 
@@ -252,52 +253,101 @@ export default function ResellPage() {
   const activeListings = listings.filter(listing => listing.status === 'active');
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
-      <div className="container mx-auto px-4 py-8">
-        {/* Header */}
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            {/* Logo */}
+            <div className="flex items-center space-x-4">
+              <img 
+                src="/logo.png" 
+                alt="MonkeDao Logo" 
+                className="w-20 h-20 object-contain"
+              />
+              <div>
+                <h1 className="text-xl font-semibold text-gray-900">Resell Marketplace</h1>
+                <p className="text-sm text-gray-500">Buy and sell discount NFTs</p>
+              </div>
+            </div>
+
+            {/* Center Navigation */}
+            <div className="flex-1 flex justify-center">
+              <Link
+                href="/"
+                className="bg-black text-white px-6 py-3 rounded-xl font-semibold hover:bg-gray-800 transition-colors text-sm"
+              >
+                🏠 Home
+              </Link>
+            </div>
+
+            {/* Right Side */}
+            <div className="flex items-center space-x-4">
+              <Link
+                href="/marketplace"
+                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+              >
+                Marketplace
+              </Link>
+              {publicKey && (
+                <Link
+                  href={`/profile/${(publicKey as any).toBase58()}`}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors text-sm font-medium"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  Profile
+                </Link>
+              )}
+              <ClientWalletButton className="!bg-black hover:!bg-gray-800" />
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        {/* Page Title */}
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold text-white mb-4">
-            🎫 NFT Resale Marketplace
-          </h1>
-          <p className="text-xl text-gray-300 mb-6">
-            List your DealCoin NFTs for resale or discover amazing deals
-          </p>
-          <ClientWalletButton className="!bg-blue-600 hover:!bg-blue-700" />
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Resell Marketplace</h1>
+          <p className="text-gray-600">Buy and sell discount NFTs from other users</p>
         </div>
 
         {!connected ? (
           <div className="text-center py-12">
-            <div className="bg-white/10 backdrop-blur-sm rounded-lg p-8 max-w-md mx-auto">
-              <h2 className="text-2xl font-semibold text-white mb-4">
+            <div className="bg-gray-50 rounded-2xl border border-gray-200 p-8 max-w-md mx-auto">
+              <h2 className="text-2xl font-semibold text-gray-900 mb-4">
                 Connect Your Wallet
               </h2>
-              <p className="text-gray-300 mb-6">
+              <p className="text-gray-600 mb-6">
                 Connect your wallet to view your NFTs and start trading
               </p>
-              <ClientWalletButton className="!bg-blue-600 hover:!bg-blue-700" />
+              <ClientWalletButton className="!bg-black hover:!bg-gray-800" />
             </div>
           </div>
         ) : (
           <>
             {/* Tabs */}
             <div className="flex justify-center mb-8">
-              <div className="bg-white/10 backdrop-blur-sm rounded-lg p-1">
+              <div className="bg-gray-100 rounded-xl p-1">
                 <button
                   onClick={() => setActiveTab('my-nfts')}
-                  className={`px-6 py-2 rounded-md transition-colors ${
+                  className={`px-6 py-2 rounded-lg transition-colors text-sm font-medium ${
                     activeTab === 'my-nfts'
-                      ? 'bg-blue-600 text-white'
-                      : 'text-gray-300 hover:text-white'
+                      ? 'bg-black text-white'
+                      : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
                   My NFTs
                 </button>
                 <button
                   onClick={() => setActiveTab('marketplace')}
-                  className={`px-6 py-2 rounded-md transition-colors ${
+                  className={`px-6 py-2 rounded-lg transition-colors text-sm font-medium ${
                     activeTab === 'marketplace'
-                      ? 'bg-blue-600 text-white'
-                      : 'text-gray-300 hover:text-white'
+                      ? 'bg-black text-white'
+                      : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
                   Marketplace
@@ -307,7 +357,7 @@ export default function ResellPage() {
 
             {/* Error Message */}
             {error && (
-              <div className="bg-red-500/20 border border-red-500 text-red-200 px-4 py-3 rounded-lg mb-6">
+              <div className="bg-red-50 border border-red-200 text-red-800 px-4 py-3 rounded-xl mb-6">
                 {error}
               </div>
             )}
@@ -315,22 +365,22 @@ export default function ResellPage() {
             {/* My NFTs Tab */}
             {activeTab === 'my-nfts' && (
               <div>
-                <h2 className="text-2xl font-semibold text-white mb-6">
+                <h2 className="text-2xl font-semibold text-gray-900 mb-6">
                   Your DealCoin NFTs ({filteredAssets.length})
                 </h2>
                 
                 {loading ? (
                   <div className="text-center py-12">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>
-                    <p className="text-gray-300 mt-4">Loading your NFTs...</p>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-300 mx-auto"></div>
+                    <p className="text-gray-600 mt-4">Loading your NFTs...</p>
                   </div>
                 ) : filteredAssets.length === 0 ? (
                   <div className="text-center py-12">
-                    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-8 max-w-md mx-auto">
-                      <h3 className="text-xl font-semibold text-white mb-2">
+                    <div className="bg-gray-50 rounded-2xl border border-gray-200 p-8 max-w-md mx-auto">
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">
                         No NFTs Found
                       </h3>
-                      <p className="text-gray-300">
+                      <p className="text-gray-600">
                         {error ? error : "You don't have any NFTs to resell yet. Visit the marketplace to claim some!"}
                       </p>
                     </div>
@@ -338,8 +388,8 @@ export default function ResellPage() {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {filteredAssets.map((asset) => (
-                      <div key={asset.id} className="bg-white/10 backdrop-blur-sm rounded-lg overflow-hidden">
-                        <div className="relative h-48 bg-gray-200">
+                      <div key={asset.id} className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
+                        <div className="relative h-48 bg-gray-100">
                           <img
                             src={asset.content?.metadata?.image || '/placeholder-nft.png'}
                             alt={asset.content?.metadata?.name || 'NFT'}
@@ -350,21 +400,21 @@ export default function ResellPage() {
                             }}
                           />
                         </div>
-                        <div className="p-4">
-                          <h3 className="text-lg font-semibold text-white mb-2">
+                        <div className="p-6">
+                          <h3 className="text-lg font-semibold text-gray-900 mb-2">
                             {asset.content?.metadata?.name || 'Unnamed NFT'}
                           </h3>
-                          <p className="text-gray-300 text-sm mb-2 line-clamp-2">
+                          <p className="text-gray-600 text-sm mb-3 line-clamp-2">
                             {asset.content?.metadata?.description || 'No description'}
                           </p>
                         {asset.collectionData ? (
-                          <div className="text-xs text-blue-300 mb-3">
+                          <div className="text-xs text-blue-600 mb-4">
                             Collection: {asset.collectionData.name}
                             <br />
                             Merchant: {asset.collectionData.merchant_name}
                           </div>
                         ) : (
-                          <div className="text-xs text-yellow-300 mb-3">
+                          <div className="text-xs text-yellow-600 mb-4">
                             Collection: Not matched
                             <br />
                             Merchant: {asset.content?.metadata?.attributes?.find(attr => attr.trait_type === 'Merchant')?.value || 'Unknown'}
@@ -372,7 +422,7 @@ export default function ResellPage() {
                         )}
                           <button
                             onClick={() => setSelectedAsset(asset)}
-                            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors"
+                            className="w-full bg-black hover:bg-gray-800 text-white py-3 px-4 rounded-xl transition-colors font-medium"
                           >
                             List for Sale
                           </button>
@@ -387,22 +437,22 @@ export default function ResellPage() {
             {/* Marketplace Tab */}
             {activeTab === 'marketplace' && (
               <div>
-                <h2 className="text-2xl font-semibold text-white mb-6">
+                <h2 className="text-2xl font-semibold text-gray-900 mb-6">
                   Resale Marketplace ({marketplaceListings.length} listings)
                 </h2>
                 
                 {marketplaceLoading ? (
                   <div className="text-center py-12">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto"></div>
-                    <p className="text-gray-300 mt-4">Loading marketplace...</p>
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-300 mx-auto"></div>
+                    <p className="text-gray-600 mt-4">Loading marketplace...</p>
                   </div>
                 ) : marketplaceListings.length === 0 ? (
                   <div className="text-center py-12">
-                    <div className="bg-white/10 backdrop-blur-sm rounded-lg p-8 max-w-md mx-auto">
-                      <h3 className="text-xl font-semibold text-white mb-2">
+                    <div className="bg-gray-50 rounded-2xl border border-gray-200 p-8 max-w-md mx-auto">
+                      <h3 className="text-xl font-semibold text-gray-900 mb-2">
                         No Listings Available
                       </h3>
-                      <p className="text-gray-300">
+                      <p className="text-gray-600">
                         No NFTs are currently listed for resale. Check back later!
                       </p>
                     </div>
@@ -410,40 +460,40 @@ export default function ResellPage() {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {marketplaceListings.map((listing) => (
-                      <div key={listing.id} className="bg-white/10 backdrop-blur-sm rounded-lg overflow-hidden">
-                        <div className="relative h-48 bg-gray-200">
+                      <div key={listing.id} className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
+                        <div className="relative h-48 bg-gray-100">
                           <img
                             src={listing.asset_data?.content?.metadata?.image || '/placeholder-nft.png'}
                             alt={listing.asset_data?.content?.metadata?.name || 'NFT'}
                             className="w-full h-full object-cover"
                           />
                           <div className="absolute top-4 right-4">
-                            <div className="bg-green-500 text-white px-2 py-1 rounded-full text-sm font-bold">
+                            <div className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-bold">
                               {listing.price} SOL
                             </div>
                           </div>
                         </div>
-                        <div className="p-4">
-                          <h3 className="text-lg font-semibold text-white mb-2">
+                        <div className="p-6">
+                          <h3 className="text-lg font-semibold text-gray-900 mb-2">
                             {listing.asset_data?.content?.metadata?.name || 'Unnamed NFT'}
                           </h3>
-                          <p className="text-gray-300 text-sm mb-4 line-clamp-2">
+                          <p className="text-gray-600 text-sm mb-4 line-clamp-2">
                             {listing.asset_data?.content?.metadata?.description || 'No description'}
                           </p>
-                          <div className="flex flex-col space-y-2">
-                            <span className="text-sm text-gray-400">
+                          <div className="flex flex-col space-y-3">
+                            <span className="text-sm text-gray-500">
                               Seller: {listing.seller_wallet.slice(0, 8)}...
                             </span>
                             <div className="flex space-x-2">
                               <button
                                 onClick={() => setSelectedListing(listing)}
-                                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors text-sm"
+                                className="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-900 py-2 px-4 rounded-xl transition-colors text-sm font-medium"
                               >
                                 Make Offer
                               </button>
                               <button
                                 onClick={() => handlePurchase(listing)}
-                                className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-lg transition-colors text-sm"
+                                className="flex-1 bg-black hover:bg-gray-800 text-white py-2 px-4 rounded-xl transition-colors text-sm font-medium"
                               >
                                 Buy Now
                               </button>
@@ -460,39 +510,39 @@ export default function ResellPage() {
             {/* Listing Modal */}
             {selectedAsset && (
               <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-                <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-                  <h3 className="text-xl font-semibold mb-4">List NFT for Sale</h3>
+                <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-4">List NFT for Sale</h3>
                   <div className="mb-4">
                     <img
                       src={selectedAsset.content?.metadata?.image || '/placeholder-nft.png'}
                       alt={selectedAsset.content?.metadata?.name || 'NFT'}
-                      className="w-full h-32 object-cover rounded-lg mb-2"
+                      className="w-full h-32 object-cover rounded-xl mb-3"
                     />
-                    <p className="font-medium">{selectedAsset.content?.metadata?.name}</p>
+                    <p className="font-medium text-gray-900">{selectedAsset.content?.metadata?.name}</p>
                   </div>
-                  <div className="mb-4">
-                    <label className="block text-sm font-medium mb-2">Price (SOL)</label>
+                  <div className="mb-6">
+                    <label className="block text-sm font-medium text-gray-900 mb-2">Price (SOL)</label>
                     <input
                       type="number"
                       step="0.01"
                       min="0"
                       value={listingPrice}
                       onChange={(e) => setListingPrice(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                       placeholder="0.01"
                     />
                   </div>
                   <div className="flex space-x-3">
                     <button
                       onClick={() => setSelectedAsset(null)}
-                      className="flex-1 py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50"
+                      className="flex-1 py-3 px-4 border border-gray-300 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={handleListAsset}
                       disabled={isListing || !listingPrice}
-                      className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white py-2 px-4 rounded-lg"
+                      className="flex-1 bg-black hover:bg-gray-800 disabled:bg-gray-400 text-white py-3 px-4 rounded-xl font-medium transition-colors"
                     >
                       {isListing ? 'Listing...' : 'List for Sale'}
                     </button>
@@ -502,46 +552,46 @@ export default function ResellPage() {
             )}
           </>
         )}
-      </div>
+      </main>
 
       {/* Make Offer Modal */}
       {selectedListing && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-            <h3 className="text-xl font-semibold mb-4">Make Offer</h3>
+          <div className="bg-white rounded-2xl p-6 max-w-md w-full mx-4">
+            <h3 className="text-xl font-semibold text-gray-900 mb-4">Make Offer</h3>
             <div className="mb-4">
               <img
                 src={selectedListing.asset_data?.content?.metadata?.image || '/placeholder-nft.png'}
                 alt={selectedListing.asset_data?.content?.metadata?.name || 'NFT'}
-                className="w-full h-32 object-cover rounded-lg mb-2"
+                className="w-full h-32 object-cover rounded-xl mb-3"
               />
-              <p className="font-medium">{selectedListing.asset_data?.content?.metadata?.name || 'NFT'}</p>
-              <p className="text-sm text-gray-500">Listed at: {selectedListing.price} SOL</p>
+              <p className="font-medium text-gray-900">{selectedListing.asset_data?.content?.metadata?.name || 'NFT'}</p>
+              <p className="text-sm text-gray-600">Listed at: {selectedListing.price} SOL</p>
             </div>
-            <div className="mb-4">
-              <label className="block text-sm font-medium mb-2">Your Offer (SOL)</label>
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-900 mb-2">Your Offer (SOL)</label>
               <input
                 type="number"
                 step="0.01"
                 min="0"
                 value={offerAmount}
                 onChange={(e) => setOfferAmount(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent text-gray-900"
                 placeholder="0.8"
               />
-              <p className="text-xs text-gray-500 mt-1">Enter your offer amount in SOL</p>
+              <p className="text-xs text-gray-500 mt-2">Enter your offer amount in SOL</p>
             </div>
             <div className="flex space-x-3">
               <button
                 onClick={() => setSelectedListing(null)}
-                className="flex-1 py-2 px-4 border border-gray-300 rounded-lg hover:bg-gray-50"
+                className="flex-1 py-3 px-4 border border-gray-300 rounded-xl hover:bg-gray-50 text-gray-700 font-medium transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleMakeOffer}
                 disabled={isMakingOffer || !offerAmount || parseFloat(offerAmount) <= 0}
-                className="flex-1 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white py-2 px-4 rounded-lg"
+                className="flex-1 bg-black hover:bg-gray-800 disabled:bg-gray-400 text-white py-3 px-4 rounded-xl font-medium transition-colors"
               >
                 {isMakingOffer ? 'Submitting...' : 'Submit Offer'}
               </button>

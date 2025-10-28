@@ -22,6 +22,7 @@ export default function DashboardLoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
+  const [newUserPublicKey, setNewUserPublicKey] = useState('');
 
   // Check if already logged in
   useEffect(() => {
@@ -30,6 +31,16 @@ export default function DashboardLoginPage() {
       router.push('/dashboard');
     }
   }, [router]);
+
+  // Copy to clipboard function
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      console.log('Copied to clipboard:', text);
+    } catch (err) {
+      console.error('Failed to copy: ', err);
+    }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -104,7 +115,8 @@ export default function DashboardLoginPage() {
       users.push(newUser);
       saveMerchantUsers(users);
 
-      setSuccess(`Account created successfully! Your wallet: ${newUser.publicKey}`);
+      setSuccess(`Account created successfully!`);
+      setNewUserPublicKey(newUser.publicKey);
       
       // Auto-login after registration
       setTimeout(() => {
@@ -120,153 +132,222 @@ export default function DashboardLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
-      <nav className="p-6 flex justify-between items-center bg-black/20 backdrop-blur-sm">
-        <Link href="/" className="text-2xl font-bold text-white">
-          ← Back to Home
-        </Link>
-      </nav>
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <div className="border-b border-gray-200 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-6">
+            <Link href="/" className="flex items-center space-x-3">
+              <div className="w-8 h-8 bg-black rounded-full flex items-center justify-center">
+                <span className="text-white font-bold text-sm">M</span>
+              </div>
+              <span className="text-xl font-semibold text-gray-900">Merchant</span>
+            </Link>
+            <Link 
+              href="/" 
+              className="text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+            >
+              ← Back to Home
+            </Link>
+          </div>
+        </div>
+      </div>
 
-      <main className="container mx-auto px-4 py-16">
-        <div className="max-w-md mx-auto">
-          {/* Header */}
-          <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-white mb-2">
-              🏪 Merchant Dashboard
-            </h1>
-            <p className="text-gray-300">
-              {isLogin ? 'Login to manage your promotions' : 'Create your merchant account'}
-            </p>
+      {/* Main Content */}
+      <main className="max-w-md mx-auto px-4 py-16">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="w-16 h-16 bg-black rounded-2xl flex items-center justify-center mx-auto mb-4">
+            <span className="text-white text-2xl">🏪</span>
+          </div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            Merchant Dashboard
+          </h1>
+          <p className="text-gray-600">
+            {isLogin ? 'Sign in to manage your promotions' : 'Create your merchant account'}
+          </p>
+        </div>
+
+        {/* Login/Register Form */}
+        <div className="bg-white rounded-2xl border border-gray-200 p-8 shadow-sm">
+          {/* Toggle */}
+          <div className="flex bg-gray-100 rounded-xl p-1 mb-8">
+            <button
+              onClick={() => {
+                setIsLogin(true);
+                setError('');
+                setSuccess('');
+                setNewUserPublicKey('');
+              }}
+              className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all duration-200 ${
+                isLogin
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Sign In
+            </button>
+            <button
+              onClick={() => {
+                setIsLogin(false);
+                setError('');
+                setSuccess('');
+                setNewUserPublicKey('');
+              }}
+              className={`flex-1 py-2 px-4 rounded-lg font-medium transition-all duration-200 ${
+                !isLogin
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              Sign Up
+            </button>
           </div>
 
-          {/* Login/Register Form */}
-          <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
-            {/* Toggle */}
-            <div className="flex gap-2 mb-6">
-              <button
-                onClick={() => {
-                  setIsLogin(true);
-                  setError('');
-                  setSuccess('');
-                }}
-                className={`flex-1 py-2 px-4 rounded-lg font-medium transition ${
-                  isLogin
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-white/10 text-gray-300 hover:bg-white/20'
-                }`}
-              >
-                Login
-              </button>
-              <button
-                onClick={() => {
-                  setIsLogin(false);
-                  setError('');
-                  setSuccess('');
-                }}
-                className={`flex-1 py-2 px-4 rounded-lg font-medium transition ${
-                  !isLogin
-                    ? 'bg-blue-500 text-white'
-                    : 'bg-white/10 text-gray-300 hover:bg-white/20'
-                }`}
-              >
-                Register
-              </button>
+          {/* Error/Success Messages */}
+          {error && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+              <div className="flex items-center space-x-2">
+                <div className="w-5 h-5 bg-red-100 rounded-full flex items-center justify-center">
+                  <span className="text-red-600 text-xs">!</span>
+                </div>
+                <p className="text-red-800 text-sm">{error}</p>
+              </div>
+            </div>
+          )}
+
+          {success && (
+            <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl">
+              <div className="flex items-center space-x-2 mb-3">
+                <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
+                  <span className="text-green-600 text-xs">✓</span>
+                </div>
+                <p className="text-green-800 text-sm">{success}</p>
+              </div>
+              
+              {newUserPublicKey && (
+                <div className="mt-3 p-3 bg-white rounded-lg border border-green-200">
+                  <p className="text-sm text-gray-700 mb-2">Your Solana Wallet Address:</p>
+                  <div className="flex items-center gap-2">
+                    <code className="flex-1 bg-gray-100 px-3 py-2 rounded-lg font-mono text-xs break-all text-black">
+                      {newUserPublicKey}
+                    </code>
+                    <button
+                      onClick={() => copyToClipboard(newUserPublicKey)}
+                      className="px-3 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors text-sm"
+                      title="Copy wallet address"
+                    >
+                      📋 Copy
+                    </button>
+                  </div>
+                  <p className="text-xs text-gray-600 mt-2">
+                    💡 Send SOL to this address to fund your merchant wallet for minting NFTs
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Form */}
+          <form onSubmit={isLogin ? handleLogin : handleRegister} className="space-y-6">
+            {/* Username */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Username
+              </label>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all placeholder-gray-500 text-black"
+                placeholder="Enter your username"
+                required
+              />
             </div>
 
-            {/* Error/Success Messages */}
-            {error && (
-              <div className="mb-4 p-3 bg-red-500/20 border border-red-500/50 rounded-lg">
-                <p className="text-red-200 text-sm">{error}</p>
-              </div>
-            )}
+            {/* Password */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Password
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all placeholder-gray-500 text-black"
+                placeholder="Enter your password"
+                required
+              />
+            </div>
 
-            {success && (
-              <div className="mb-4 p-3 bg-green-500/20 border border-green-500/50 rounded-lg">
-                <p className="text-green-200 text-sm">{success}</p>
-              </div>
-            )}
-
-            {/* Form */}
-            <form onSubmit={isLogin ? handleLogin : handleRegister}>
-              <div className="space-y-4">
-                {/* Username */}
-                <div>
-                  <label className="block text-white font-medium mb-2">
-                    Username
-                  </label>
-                  <input
-                    type="text"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
-                    placeholder="Enter your username"
-                    required
-                  />
-                </div>
-
-                {/* Password */}
-                <div>
-                  <label className="block text-white font-medium mb-2">
-                    Password
-                  </label>
-                  <input
-                    type="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
-                    placeholder="Enter your password"
-                    required
-                  />
-                </div>
-
-                {/* Confirm Password (Register only) */}
-                {!isLogin && (
-                  <div>
-                    <label className="block text-white font-medium mb-2">
-                      Confirm Password
-                    </label>
-                    <input
-                      type="password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
-                      placeholder="Confirm your password"
-                      required
-                    />
-                  </div>
-                )}
-
-                {/* Submit Button */}
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="w-full bg-gradient-to-r from-blue-500 to-purple-500 text-white font-bold py-3 px-6 rounded-lg hover:from-blue-600 hover:to-purple-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loading
-                    ? 'Processing...'
-                    : isLogin
-                    ? 'Login'
-                    : 'Create Account'}
-                </button>
-              </div>
-            </form>
-
-            {/* Info */}
+            {/* Confirm Password (Register only) */}
             {!isLogin && (
-              <div className="mt-6 p-4 bg-blue-500/20 border border-blue-500/50 rounded-lg">
-                <h4 className="text-white font-bold mb-2">🔑 What happens when you register?</h4>
-                <ul className="text-sm text-gray-300 space-y-1">
-                  <li>✓ A unique Solana wallet is created for you</li>
-                  <li>✓ Your credentials are stored locally (secure)</li>
-                  <li>✓ You can download your private key anytime</li>
-                  <li>✓ Use your wallet to mint NFT coupons</li>
-                </ul>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Confirm Password
+                </label>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all placeholder-gray-500 text-black"
+                  placeholder="Confirm your password"
+                  required
+                />
               </div>
             )}
-          </div>
+
+            {/* Submit Button */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-black text-white font-semibold py-4 px-6 rounded-xl hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? (
+                <div className="flex items-center justify-center space-x-2">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span>Processing...</span>
+                </div>
+              ) : (
+                isLogin ? 'Sign In' : 'Create Account'
+              )}
+            </button>
+          </form>
+
+          {/* Info */}
+          {!isLogin && (
+            <div className="mt-8 p-6 bg-gray-50 rounded-xl">
+              <h4 className="font-semibold text-gray-900 mb-3">What happens when you register?</h4>
+              <ul className="space-y-2 text-sm text-gray-600">
+                <li className="flex items-center space-x-2">
+                  <div className="w-4 h-4 bg-green-100 rounded-full flex items-center justify-center">
+                    <span className="text-green-600 text-xs">✓</span>
+                  </div>
+                  <span>A unique Solana wallet is created for you</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <div className="w-4 h-4 bg-green-100 rounded-full flex items-center justify-center">
+                    <span className="text-green-600 text-xs">✓</span>
+                  </div>
+                  <span>Your credentials are stored locally (secure)</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <div className="w-4 h-4 bg-green-100 rounded-full flex items-center justify-center">
+                    <span className="text-green-600 text-xs">✓</span>
+                  </div>
+                  <span>You can download your private key anytime</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <div className="w-4 h-4 bg-green-100 rounded-full flex items-center justify-center">
+                    <span className="text-green-600 text-xs">✓</span>
+                  </div>
+                  <span>Use your wallet to mint NFT coupons</span>
+                </li>
+              </ul>
+            </div>
+          )}
         </div>
       </main>
     </div>
   );
 }
-

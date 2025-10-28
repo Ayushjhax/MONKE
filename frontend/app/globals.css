@@ -27,24 +27,28 @@ body {
 
 /* Wallet Adapter Styles */
 .wallet-adapter-button {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: #000000;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   color: white;
   cursor: pointer;
-  font-weight: 600;
-  padding: 12px 24px;
+  font-weight: 500;
+  padding: 8px 16px;
   transition: all 0.2s ease;
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.4;
   text-align: center;
   text-decoration: none;
-  display: inline-block;
-  min-width: 120px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: auto;
+  height: 40px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
 .wallet-adapter-button:hover {
-  background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+  background: #333333;
   transform: translateY(-1px);
 }
 
@@ -54,8 +58,216 @@ body {
   transform: none;
 }
 
+/* Wallet button icon styling */
+.wallet-adapter-button-start-icon {
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+}
+
+.wallet-adapter-button-end-icon {
+  width: 16px;
+  height: 16px;
+  margin-left: 8px;
+}
+
+/* Connected wallet styling */
+.wallet-adapter-button[data-state="connected"] {
+  background: #000000;
+  padding: 6px 12px;
+  height: 36px;
+}
+
+.wallet-adapter-button[data-state="connected"]:hover {
+  background: #333333;
+}
+
+/* Hide "Change wallet" text when not connected */
+.wallet-adapter-button-trigger:not([data-state="connected"]) .wallet-adapter-button-text,
+.wallet-adapter-button-trigger:not([data-state="connected"]) .wallet-adapter-button-end-icon,
+.wallet-adapter-button-trigger:not([data-state="connected"]) [class*="wallet-adapter-button-end"],
+.wallet-adapter-button-trigger:not([data-state="connected"]) [class*="wallet-adapter-button-text"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+}
+
+/* Ensure connected state shows proper text */
+.wallet-adapter-button-trigger[data-state="connected"] .wallet-adapter-button-text {
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Ensure the wallet button container doesn't overflow */
+.wallet-adapter-button-trigger {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  overflow: visible;
+}
+
+/* Make sure the header can contain the dropdown */
+nav {
+  position: relative;
+  z-index: 50;
+  overflow: visible;
+  background: white;
+}
+
+/* Ensure header flex container allows overflow */
+nav > div {
+  overflow: visible;
+  position: relative;
+  z-index: 50;
+}
+
+/* Force dropdown to stay within viewport */
+.wallet-adapter-dropdown-list {
+  max-height: 200px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* Ensure dropdown appears above content but below header */
+.wallet-adapter-dropdown-list {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding: 4px;
+  margin-top: 4px;
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 160px;
+  z-index: 1000;
+  font-size: 14px;
+  transform: translateY(0);
+}
+
+.wallet-adapter-dropdown-list-item {
+  background: none;
+  border: none;
+  color: #374151;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.15s ease;
+  font-size: 14px;
+  font-weight: 400;
+  width: 100%;
+  text-align: left;
+  display: block;
+  margin: 1px 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+.wallet-adapter-dropdown-list-item:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+/* Hide ONLY dropdown elements, not the modal */
+.wallet-adapter-dropdown-list,
+.wallet-adapter-dropdown-list-item,
+[class*="wallet-adapter-dropdown"] {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  height: 0 !important;
+  width: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Allow wallet modal to show */
+.wallet-adapter-modal {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Hide dropdown completely */
+.wallet-adapter-button-trigger .wallet-adapter-dropdown-list {
+  display: none !important;
+}
+
+/* Hide dropdown items when not connected */
+.wallet-adapter-button-trigger:not([data-state="connected"]) .wallet-adapter-dropdown-list {
+  display: none !important;
+}
+
+/* Show dropdown only when connected - but we're hiding it */
+.wallet-adapter-button-trigger[data-state="connected"] .wallet-adapter-dropdown-list {
+  display: none !important;
+}
+
+/* Simple wallet button styling */
+.wallet-adapter-button-trigger {
+  height: 40px !important;
+  padding: 8px 16px !important;
+  font-size: 14px !important;
+  border-radius: 12px !important;
+  background: #000000 !important;
+  color: white !important;
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  overflow: visible !important;
+}
+
+/* Force dropdown positioning within header */
+.wallet-adapter-button-trigger .wallet-adapter-dropdown-list {
+  position: absolute !important;
+  top: calc(100% + 4px) !important;
+  right: 0 !important;
+  left: auto !important;
+  transform: none !important;
+  margin: 0 !important;
+  z-index: 1001 !important;
+}
+
+/* Ensure dropdown appears above content but below header */
+.wallet-adapter-dropdown-list {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding: 4px;
+  margin-top: 0 !important;
+  position: absolute !important;
+  top: calc(100% + 4px) !important;
+  right: 0 !important;
+  min-width: 160px;
+  z-index: 1001 !important;
+  font-size: 14px;
+  transform: none !important;
+}
+
+.wallet-adapter-button-trigger img {
+  width: 20px !important;
+  height: 20px !important;
+  object-fit: contain !important;
+}
+
+/* Connected state styling */
+.wallet-adapter-button-trigger[data-state="connected"] {
+  height: 36px !important;
+  padding: 6px 12px !important;
+  background: #000000 !important;
+}
+
+.wallet-adapter-button-trigger[data-state="connected"] img {
+  width: 18px !important;
+  height: 18px !important;
+}
+
+
 .wallet-adapter-modal-wrapper {
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
   position: fixed;
   top: 0;
   left: 0;
@@ -69,73 +281,178 @@ body {
 }
 
 .wallet-adapter-modal {
-  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-  border-radius: 16px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  padding: 24px;
-  max-width: 400px;
+  background: #ffffff;
+  border-radius: 24px;
+  border: 1px solid #e5e7eb;
+  padding: 0;
+  max-width: 500px;
   width: 100%;
   max-height: 80vh;
-  overflow-y: auto;
+  overflow: hidden;
+  box-shadow: 0 32px 64px -12px rgba(0, 0, 0, 0.25);
+  position: relative;
 }
 
 .wallet-adapter-modal-title {
-  color: white;
-  font-weight: 700;
-  font-size: 20px;
-  margin: 0 0 20px 0;
-  text-align: center;
+  color: #111827;
+  font-weight: 600;
+  font-size: 18px;
+  margin: 0;
+  padding: 24px 24px 16px 24px;
+  text-align: left;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  border-bottom: 1px solid #f3f4f6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.wallet-adapter-modal-title-text {
+  flex: 1;
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+  line-height: 1.3;
+}
+
+.wallet-adapter-modal-more-options {
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 14px;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  margin-left: 16px;
+}
+
+.wallet-adapter-modal-more-options:hover {
+  background: #e5e7eb;
+  border-color: #9ca3af;
 }
 
 .wallet-adapter-modal-list {
   margin: 0;
-  padding: 0;
+  padding: 16px 24px 24px 24px;
   list-style: none;
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .wallet-adapter-modal-list-item {
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 8px;
-  margin: 8px 0;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  margin: 0;
   transition: all 0.2s ease;
+  overflow: hidden;
+  flex: 1;
+  min-width: 120px;
+  max-width: 140px;
 }
 
 .wallet-adapter-modal-list-item:hover {
-  background: rgba(255, 255, 255, 0.2);
-  transform: translateY(-1px);
+  background: #f8fafc;
+  border-color: #3b82f6;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(59, 130, 246, 0.15);
 }
 
 .wallet-adapter-modal-list-item button {
   background: none;
   border: none;
-  color: white;
+  color: #374151;
   font-weight: 500;
-  padding: 16px;
+  padding: 20px 16px;
   width: 100%;
   cursor: pointer;
-  text-align: left;
-  font-size: 16px;
+  text-align: center;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  transition: all 0.2s ease;
+}
+
+.wallet-adapter-modal-list-item button img {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #f8fafc;
+  padding: 6px;
 }
 
 .wallet-adapter-modal-button-close {
   background: none;
   border: none;
-  color: white;
+  color: #6b7280;
   cursor: pointer;
-  font-size: 24px;
+  font-size: 20px;
   position: absolute;
-  top: 16px;
-  right: 16px;
-  padding: 0;
-  width: 32px;
-  height: 32px;
+  top: 20px;
+  right: 20px;
+  padding: 8px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  z-index: 10;
 }
 
 .wallet-adapter-modal-button-close:hover {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
+  background: #f3f4f6;
+  color: #374151;
+}
+
+/* Additional styling for proper text alignment */
+.wallet-adapter-modal-list-item button span {
+  flex: 1;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.wallet-adapter-modal-list-item button div {
+  font-size: 12px;
+  opacity: 0.8;
+  margin-top: 4px;
+  text-align: center;
+  color: #6b7280;
+}
+
+/* Ensure proper spacing in the header */
+.wallet-adapter-modal-title {
+  min-height: 60px;
+  align-items: center;
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 480px) {
+  .wallet-adapter-modal-title {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 20px 20px 16px 20px;
+  }
+  
+  .wallet-adapter-modal-more-options {
+    margin-left: 0;
+    align-self: flex-end;
+  }
+  
+  .wallet-adapter-modal {
+    max-width: 95vw;
+    margin: 0 10px;
+  }
 }

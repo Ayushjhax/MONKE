@@ -173,48 +173,55 @@ export default function MarketplacePage() {
   const categories = ['all', 'flight', 'hotel', 'restaurant', 'travel', 'shopping', 'experience'];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="bg-white shadow-sm border-b">
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-6">
+          <div className="flex justify-between items-center py-4">
+            {/* Logo */}
             <div className="flex items-center space-x-4">
-              <Link href="/" className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 transition-all">
-                🎫 DealCoin
-              </Link>
-              <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
-                Marketplace
-              </span>
+              <img 
+                src="/logo.png" 
+                alt="MonkeDao Logo" 
+                className="w-20 h-20 object-contain"
+              />
+              <div>
+                <h1 className="text-xl font-semibold text-gray-900">Marketplace</h1>
+              </div>
             </div>
+
+            {/* Navigation */}
             <div className="flex items-center space-x-4">
               <Link
                 href="/"
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                </svg>
                 Home
               </Link>
               <Link
                 href="/community"
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-purple-700 bg-purple-50 hover:bg-purple-100 rounded-lg transition-colors"
+                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
                 Community
               </Link>
               <Link
                 href="/bookings"
-                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
               >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                </svg>
                 My Bookings
               </Link>
-              <ClientWalletButton className="!bg-blue-600 hover:!bg-blue-700" />
+              {publicKey && (
+                <Link
+                  href={`/profile/${publicKey.toBase58()}`}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors text-sm font-medium"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  Profile
+                </Link>
+              )}
+              <ClientWalletButton className="!bg-black hover:!bg-gray-800" />
             </div>
           </div>
         </div>
@@ -327,47 +334,49 @@ export default function MarketplacePage() {
         </div>
       )}
 
-      {/* Main Tabs */}
-      <div className="bg-white border-b">
+      {/* Main Navigation Tabs */}
+      <div className="bg-gray-50 border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center py-4">
-            <div className="flex space-x-8">
+            {/* Tab Navigation */}
+            <div className="flex space-x-2">
               <button
                 onClick={() => setActiveTab('static')}
-                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
                   activeTab === 'static'
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-600 hover:bg-gray-100'
+                    ? 'bg-black text-white shadow-sm'
+                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                 }`}
               >
                 Static Deals
               </button>
               <button
                 onClick={() => setActiveTab('flights')}
-                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
                   activeTab === 'flights'
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-600 hover:bg-gray-100'
+                    ? 'bg-black text-white shadow-sm'
+                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                 }`}
               >
                 ✈️ Live Flights
               </button>
               <button
                 onClick={() => setActiveTab('hotels')}
-                className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                className={`px-6 py-3 rounded-xl font-medium transition-all duration-200 ${
                   activeTab === 'hotels'
-                    ? 'bg-blue-600 text-white'
-                    : 'text-gray-600 hover:bg-gray-100'
+                    ? 'bg-black text-white shadow-sm'
+                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                 }`}
               >
                 🏨 Live Hotels
               </button>
             </div>
 
+            {/* Action Buttons */}
             <div className="flex gap-3">
               <Link 
                 href="/nearby" 
-                className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition flex items-center gap-2"
+                className="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-xl hover:bg-gray-200 transition-colors flex items-center gap-2"
               >
                 <span>📍</span>
                 <span>Deals Near Me</span>
@@ -375,10 +384,18 @@ export default function MarketplacePage() {
 
               <Link 
                 href="/events" 
-                className="px-4 py-2 bg-purple-600 text-white text-sm font-medium rounded-lg hover:bg-purple-700 transition flex items-center gap-2"
+                className="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-xl hover:bg-gray-200 transition-colors flex items-center gap-2"
               >
                 <span>🎪</span>
                 <span>Crypto Events</span>
+              </Link>
+
+              <Link 
+                href="/resell" 
+                className="px-4 py-2 bg-gray-100 text-gray-700 text-sm font-medium rounded-xl hover:bg-gray-200 transition-colors flex items-center gap-2"
+              >
+                <span>🎫</span>
+                <span>Resell NFTs</span>
               </Link>
             </div>
           </div>
@@ -388,19 +405,17 @@ export default function MarketplacePage() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {!connected && (
-          <div className="text-center py-12 bg-white rounded-lg shadow">
-            <div className="mx-auto h-24 w-24 text-gray-400">
-              <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="text-center py-16 bg-white rounded-2xl border border-gray-200">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
             </div>
-            <h3 className="mt-2 text-sm font-medium text-gray-900">Connect Your Wallet</h3>
-            <p className="mt-1 text-sm text-gray-500">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Connect Your Wallet</h3>
+            <p className="text-gray-600 mb-6">
               Connect your Solana wallet to start exploring deals
             </p>
-            <div className="mt-6">
-              <ClientWalletButton className="!bg-blue-600 hover:!bg-blue-700" />
-            </div>
+            <ClientWalletButton className="!bg-black hover:!bg-gray-800" />
           </div>
         )}
 
@@ -410,10 +425,10 @@ export default function MarketplacePage() {
             {activeTab === 'static' && (
               <div>
                 {/* Search Bar */}
-                <div className="mb-6">
-                  <div className="max-w-md mx-auto">
+                <div className="mb-8">
+                  <div className="max-w-2xl mx-auto">
                     <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                         <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                         </svg>
@@ -423,37 +438,43 @@ export default function MarketplacePage() {
                         placeholder="Search deals, merchants, locations..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
-                        className="block w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                        className="block w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-black"
                       />
                     </div>
                   </div>
                 </div>
 
                 {/* Category Filters */}
-                <div className="mb-6 flex flex-wrap gap-2 justify-center">
-                  {categories.map((category) => (
-                    <button
-                      key={category}
-                      onClick={() => setFilter(category)}
-                      className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                        filter === category
-                          ? 'bg-blue-100 text-blue-700'
-                          : 'bg-white text-gray-600 hover:bg-gray-100'
-                      }`}
-                    >
-                      {category.charAt(0).toUpperCase() + category.slice(1)}
-                    </button>
-                  ))}
+                <div className="mb-8">
+                  <div className="flex flex-wrap gap-3 justify-center">
+                    {categories.map((category) => (
+                      <button
+                        key={category}
+                        onClick={() => setFilter(category)}
+                        className={`px-4 py-2 text-sm font-medium rounded-xl transition-all duration-200 ${
+                          filter === category
+                            ? 'bg-black text-white'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900'
+                        }`}
+                      >
+                        {category.charAt(0).toUpperCase() + category.slice(1)}
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
                 {loading ? (
-                  <div className="text-center py-12">
-                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto"></div>
-                    <p className="mt-4 text-gray-600">Loading deals...</p>
+                  <div className="text-center py-16">
+                    <div className="w-8 h-8 border-2 border-gray-300 border-t-black rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-gray-600">Loading deals...</p>
                   </div>
                 ) : filteredCollections.length === 0 ? (
-                  <div className="text-center py-12 bg-white rounded-lg shadow">
-                    <p className="text-gray-600">No deals found</p>
+                  <div className="text-center py-16 bg-white rounded-2xl border border-gray-200">
+                    <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <span className="text-gray-400 text-2xl">🔍</span>
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900 mb-2">No deals found</h3>
+                    <p className="text-gray-600">Try adjusting your search or filters</p>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -474,55 +495,55 @@ export default function MarketplacePage() {
             {activeTab === 'flights' && (
               <div>
                 {/* Flight Search Form */}
-                <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-                  <h2 className="text-xl font-bold text-gray-900 mb-4">Search Flights</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="bg-white rounded-2xl border border-gray-200 p-8 mb-8">
+                  <h2 className="text-2xl font-semibold text-gray-900 mb-6">Search Flights</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Origin (IATA)</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Origin (IATA)</label>
                       <input
                         type="text"
                         placeholder="JFK, LAX, etc."
                         value={flightOrigin}
                         onChange={(e) => setFlightOrigin(e.target.value.toUpperCase())}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all text-black"
                         maxLength={3}
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Destination (IATA)</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Destination (IATA)</label>
                       <input
                         type="text"
                         placeholder="NRT, LHR, etc."
                         value={flightDestination}
                         onChange={(e) => setFlightDestination(e.target.value.toUpperCase())}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all text-black"
                         maxLength={3}
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Departure Date</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Departure Date</label>
                       <input
                         type="date"
                         value={flightDepartureDate}
                         onChange={(e) => setFlightDepartureDate(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all text-black"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Return Date (Optional)</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Return Date (Optional)</label>
                       <input
                         type="date"
                         value={flightReturnDate}
                         onChange={(e) => setFlightReturnDate(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all text-black"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Adults</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Adults</label>
                       <select
                         value={flightAdults}
                         onChange={(e) => setFlightAdults(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all text-black"
                       >
                         {[1, 2, 3, 4, 5, 6].map(n => (
                           <option key={n} value={n}>{n}</option>
@@ -533,32 +554,39 @@ export default function MarketplacePage() {
                       <button
                         onClick={searchFlights}
                         disabled={flightsLoading}
-                        className="w-full px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:bg-gray-400 transition-colors"
+                        className="w-full bg-black text-white font-semibold py-4 px-6 rounded-xl hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        {flightsLoading ? 'Searching...' : 'Search Flights'}
+                        {flightsLoading ? (
+                          <div className="flex items-center justify-center space-x-2">
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            <span>Searching...</span>
+                          </div>
+                        ) : (
+                          'Search Flights'
+                        )}
                       </button>
                     </div>
                   </div>
                   {flightsError && (
-                    <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-                      {flightsError}
+                    <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+                      <p className="text-red-800 text-sm">{flightsError}</p>
                     </div>
                   )}
                 </div>
 
                 {/* Flight Results */}
                 {flightsLoading ? (
-                  <div className="text-center py-12">
-                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto"></div>
-                    <p className="mt-4 text-gray-600">Searching flights...</p>
+                  <div className="text-center py-16">
+                    <div className="w-8 h-8 border-2 border-gray-300 border-t-black rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-gray-600">Searching flights...</p>
                   </div>
                 ) : flights.length > 0 ? (
                   <div className="space-y-4">
                     {flights.map((flight) => (
-                      <div key={flight.id} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
+                      <div key={flight.id} className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg transition-shadow">
                         <div className="flex justify-between items-start mb-4">
                           <div className="flex-1">
-                            <div className="flex items-center space-x-4 mb-2">
+                            <div className="flex items-center space-x-6 mb-3">
                               <div className="text-center">
                                 <div className="text-2xl font-bold text-gray-900">{flight.origin}</div>
                                 <div className="text-sm text-gray-500">{formatDateTime(flight.departureTime)}</div>
@@ -577,7 +605,7 @@ export default function MarketplacePage() {
                             </div>
                           </div>
                           <div className="text-right ml-6">
-                            <div className="text-3xl font-bold text-blue-600">{formatPrice(flight.price, flight.currency)}</div>
+                            <div className="text-3xl font-bold text-gray-900">{formatPrice(flight.price, flight.currency)}</div>
                             <Link
                               href={`/deal/flight-${flight.id}`}
                               onClick={() => {
@@ -587,7 +615,7 @@ export default function MarketplacePage() {
                                   data: flight
                                 }));
                               }}
-                              className="mt-2 inline-block px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
+                              className="mt-3 inline-block px-6 py-3 bg-black text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors"
                             >
                               View Details
                             </Link>
@@ -604,44 +632,44 @@ export default function MarketplacePage() {
             {activeTab === 'hotels' && (
               <div>
                 {/* Hotel Search Form */}
-                <div className="bg-white rounded-lg shadow-md p-6 mb-8">
-                  <h2 className="text-xl font-bold text-gray-900 mb-4">Search Hotels</h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="bg-white rounded-2xl border border-gray-200 p-8 mb-8">
+                  <h2 className="text-2xl font-semibold text-gray-900 mb-6">Search Hotels</h2>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">City Code (IATA)</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">City Code (IATA)</label>
                       <input
                         type="text"
                         placeholder="NYC, PAR, LON, etc."
                         value={hotelCityCode}
                         onChange={(e) => setHotelCityCode(e.target.value.toUpperCase())}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all text-black"
                         maxLength={3}
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Check-in Date</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Check-in Date</label>
                       <input
                         type="date"
                         value={hotelCheckIn}
                         onChange={(e) => setHotelCheckIn(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all text-black"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Check-out Date</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Check-out Date</label>
                       <input
                         type="date"
                         value={hotelCheckOut}
                         onChange={(e) => setHotelCheckOut(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all text-black"
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Guests</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Guests</label>
                       <select
                         value={hotelAdults}
                         onChange={(e) => setHotelAdults(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all text-black"
                       >
                         {[1, 2, 3, 4, 5, 6].map(n => (
                           <option key={n} value={n}>{n}</option>
@@ -649,11 +677,11 @@ export default function MarketplacePage() {
                       </select>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Rooms</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Rooms</label>
                       <select
                         value={hotelRooms}
                         onChange={(e) => setHotelRooms(e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all text-black"
                       >
                         {[1, 2, 3, 4].map(n => (
                           <option key={n} value={n}>{n}</option>
@@ -664,37 +692,44 @@ export default function MarketplacePage() {
                       <button
                         onClick={searchHotels}
                         disabled={hotelsLoading}
-                        className="w-full px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 disabled:bg-gray-400 transition-colors"
+                        className="w-full bg-black text-white font-semibold py-4 px-6 rounded-xl hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        {hotelsLoading ? 'Searching...' : 'Search Hotels'}
+                        {hotelsLoading ? (
+                          <div className="flex items-center justify-center space-x-2">
+                            <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            <span>Searching...</span>
+                          </div>
+                        ) : (
+                          'Search Hotels'
+                        )}
                       </button>
                     </div>
                   </div>
                   {hotelsError && (
-                    <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
-                      {hotelsError}
+                    <div className="mt-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+                      <p className="text-red-800 text-sm">{hotelsError}</p>
                     </div>
                   )}
                 </div>
 
                 {/* Hotel Results */}
                 {hotelsLoading ? (
-                  <div className="text-center py-12">
-                    <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto"></div>
-                    <p className="mt-4 text-gray-600">Searching hotels...</p>
+                  <div className="text-center py-16">
+                    <div className="w-8 h-8 border-2 border-gray-300 border-t-black rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-gray-600">Searching hotels...</p>
                   </div>
                 ) : hotels.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {hotels.map((hotel) => (
-                      <div key={hotel.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                      <div key={hotel.id} className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow">
                         {hotel.imageUrl && (
                           <img src={hotel.imageUrl} alt={hotel.name} className="w-full h-48 object-cover" />
                         )}
                         <div className="p-6">
-                          <div className="flex items-start justify-between mb-2">
+                          <div className="flex items-start justify-between mb-3">
                             <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">{hotel.name}</h3>
                             {hotel.rating && (
-                              <div className="ml-2 px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded">
+                              <div className="ml-2 px-2 py-1 bg-gray-100 text-gray-800 text-xs font-medium rounded-lg">
                                 ⭐ {hotel.rating}
                               </div>
                             )}
@@ -702,11 +737,11 @@ export default function MarketplacePage() {
                           {hotel.address && (
                             <p className="text-sm text-gray-600 mb-3 line-clamp-2">{hotel.address}</p>
                           )}
-                          <div className="text-sm text-gray-500 mb-3">
+                          <div className="text-sm text-gray-500 mb-4">
                             {hotel.roomType} • {hotel.checkInDate} to {hotel.checkOutDate}
                           </div>
                           <div className="flex items-center justify-between">
-                            <div className="text-2xl font-bold text-blue-600">{formatPrice(hotel.price, hotel.currency)}</div>
+                            <div className="text-2xl font-bold text-gray-900">{formatPrice(hotel.price, hotel.currency)}</div>
                             <Link
                               href={`/deal/hotel-${hotel.id}`}
                               onClick={() => {
@@ -716,7 +751,7 @@ export default function MarketplacePage() {
                                   data: hotel
                                 }));
                               }}
-                              className="px-4 py-2 bg-blue-600 text-white font-medium text-sm rounded-lg hover:bg-blue-700 transition-colors"
+                              className="px-4 py-2 bg-black text-white font-semibold text-sm rounded-xl hover:bg-gray-800 transition-colors"
                             >
                               View Details
                             </Link>
@@ -731,6 +766,13 @@ export default function MarketplacePage() {
           </>
         )}
       </main>
+
+      {/* Floating Action Button */}
+      <div className="fixed bottom-8 right-8">
+        <button className="w-14 h-14 bg-black text-white rounded-full shadow-lg hover:bg-gray-800 transition-colors flex items-center justify-center">
+          <span className="text-xl">+</span>
+        </button>
+      </div>
     </div>
   );
 }

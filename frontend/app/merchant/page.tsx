@@ -17,7 +17,6 @@ export default function MerchantPage() {
   const [redemptionData, setRedemptionData] = useState<any>(null);
   const [testResult, setTestResult] = useState<string>('');
 
-  // Sample merchant wallet (in production, this would be the merchant's actual wallet)
   const merchantWallet = 'aPi7gR9c3s7eUvtWu7HVFRakW1e9rZz59ZNzrGbkKZ3';
 
   const generateRedemptionQR = async () => {
@@ -142,31 +141,77 @@ export default function MerchantPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900">
-      <nav className="p-6 flex justify-between items-center bg-black/20 backdrop-blur-sm">
-        <Link href="/" className="text-2xl font-bold text-white">
-          ← Back
-        </Link>
-        <ClientWalletButton />
-      </nav>
+    <div className="min-h-screen bg-white">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            {/* Logo */}
+            <div className="flex items-center space-x-4">
+              <img 
+                src="/logo.png" 
+                alt="MonkeDao Logo" 
+                className="w-20 h-20 object-contain"
+              />
+              <div>
+                <h1 className="text-xl font-semibold text-gray-900">Merchant Dashboard</h1>
+                <p className="text-sm text-gray-500">Generate redemption QR codes</p>
+              </div>
+            </div>
 
-      <main className="container mx-auto px-4 py-16">
+            {/* Center Navigation */}
+            <div className="flex-1 flex justify-center">
+              <Link
+                href="/"
+                className="bg-black text-white px-6 py-3 rounded-xl font-semibold hover:bg-gray-800 transition-colors text-sm"
+              >
+                🏠 Home
+              </Link>
+            </div>
+
+            {/* Right Side */}
+            <div className="flex items-center space-x-4">
+              <Link
+                href="/marketplace"
+                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+              >
+                Marketplace
+              </Link>
+              {publicKey && (
+                <Link
+                  href={`/profile/${(publicKey as any).toBase58()}`}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors text-sm font-medium"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  Profile
+                </Link>
+              )}
+              <ClientWalletButton className="!bg-black hover:!bg-gray-800" />
+            </div>
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-8">
-            <h1 className="text-4xl font-bold text-white mb-4">
-              🏪 Merchant: Generate Redemption QR
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              🏪 Merchant Dashboard
             </h1>
-            <p className="text-gray-300">
+            <p className="text-gray-600">
               Generate a Solana Pay QR code for customers to redeem their discount NFTs
             </p>
           </div>
 
           {!publicKey ? (
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 text-center">
-              <p className="text-white text-lg mb-4">
+            <div className="bg-gray-50 rounded-2xl border border-gray-200 p-8 text-center">
+              <p className="text-gray-900 text-lg mb-4">
                 Please connect your wallet to continue
               </p>
-              <ClientWalletButton />
+              <ClientWalletButton className="!bg-black hover:!bg-gray-800" />
             </div>
           ) : (
             <div className="space-y-6">
@@ -175,7 +220,7 @@ export default function MerchantPage() {
                 <button
                   onClick={generateRedemptionQR}
                   disabled={loading}
-                  className="w-full bg-gradient-to-r from-purple-500 to-blue-500 text-white font-bold py-4 px-6 rounded-xl hover:from-purple-600 hover:to-blue-600 transition disabled:opacity-50"
+                  className="w-full bg-black text-white font-semibold py-4 px-6 rounded-xl hover:bg-gray-800 transition disabled:opacity-50"
                 >
                   {loading ? 'Generating...' : 'Generate Redemption QR Code'}
                 </button>
@@ -185,27 +230,27 @@ export default function MerchantPage() {
               <button
                 onClick={createManualTransaction}
                 disabled={loading}
-                className="w-full bg-gradient-to-r from-green-500 to-teal-500 text-white font-bold py-3 px-6 rounded-xl hover:from-green-600 hover:to-teal-600 transition disabled:opacity-50"
+                className="w-full bg-gray-100 text-gray-900 font-semibold py-3 px-6 rounded-xl hover:bg-gray-200 transition disabled:opacity-50"
               >
                 {loading ? 'Creating...' : 'Create Redemption Transaction'}
               </button>
 
               {/* Test Result */}
               {testResult && (
-                <div className={`p-4 rounded-xl ${testResult.includes('✅') ? 'bg-green-500/20 border border-green-500/50' : 'bg-red-500/20 border border-red-500/50'}`}>
-                  <p className="text-white text-sm font-mono break-all">{testResult}</p>
+                <div className={`p-4 rounded-xl ${testResult.includes('✅') ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
+                  <p className={`text-sm font-mono break-all ${testResult.includes('✅') ? 'text-green-800' : 'text-red-800'}`}>{testResult}</p>
                 </div>
               )}
 
               {/* QR Code Display */}
               {qrCodeDataURL && (
-                <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
-                  <h3 className="text-2xl font-bold text-white mb-4 text-center">
+                <div className="bg-white rounded-2xl border border-gray-200 p-8">
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4 text-center">
                     Scan to Redeem
                   </h3>
                   
                   {/* QR Code */}
-                  <div className="bg-white p-6 rounded-xl mb-6">
+                  <div className="bg-gray-50 p-6 rounded-xl mb-6">
                     <img 
                       src={qrCodeDataURL} 
                       alt="Redemption QR Code"
@@ -215,14 +260,14 @@ export default function MerchantPage() {
 
                   {/* Solana Pay URL */}
                   {solanaPayUrl && (
-                    <div className="bg-black/20 rounded-xl p-6 mb-6">
-                      <h4 className="text-lg font-bold text-white mb-3">Solana Pay URL:</h4>
-                      <div className="bg-gray-800 rounded-lg p-3 mb-3">
-                        <code className="text-green-400 text-xs break-all">{solanaPayUrl}</code>
+                    <div className="bg-gray-50 rounded-xl p-6 mb-6">
+                      <h4 className="text-lg font-bold text-gray-900 mb-3">Solana Pay URL:</h4>
+                      <div className="bg-gray-100 rounded-lg p-3 mb-3">
+                        <code className="text-gray-800 text-xs break-all">{solanaPayUrl}</code>
                       </div>
                       <button
                         onClick={() => navigator.clipboard.writeText(solanaPayUrl)}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm"
+                        className="bg-black hover:bg-gray-800 text-white px-4 py-2 rounded-lg text-sm font-medium"
                       >
                         Copy URL
                       </button>
@@ -231,38 +276,38 @@ export default function MerchantPage() {
 
                   {/* Redemption Details */}
                   {redemptionData && (
-                    <div className="bg-black/20 rounded-xl p-6 mb-6">
-                      <h4 className="text-lg font-bold text-white mb-3">Redemption Details:</h4>
+                    <div className="bg-gray-50 rounded-xl p-6 mb-6">
+                      <h4 className="text-lg font-bold text-gray-900 mb-3">Redemption Details:</h4>
                       <div className="space-y-2 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-gray-400">Discount:</span>
-                          <span className="text-white font-bold">{redemptionData.discountName}</span>
+                          <span className="text-gray-600">Discount:</span>
+                          <span className="text-gray-900 font-bold">{redemptionData.discountName}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-400">Merchant:</span>
-                          <span className="text-white">{redemptionData.merchant}</span>
+                          <span className="text-gray-600">Merchant:</span>
+                          <span className="text-gray-900">{redemptionData.merchant}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-400">Value:</span>
-                          <span className="text-white">{redemptionData.discountValue}% off</span>
+                          <span className="text-gray-600">Value:</span>
+                          <span className="text-gray-900">{redemptionData.discountValue}% off</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-gray-400">Code:</span>
-                          <span className="text-white font-mono text-xs">{redemptionData.redemptionCode}</span>
+                          <span className="text-gray-600">Code:</span>
+                          <span className="text-gray-900 font-mono text-xs">{redemptionData.redemptionCode}</span>
                         </div>
                       </div>
                     </div>
                   )}
 
                   {/* Instructions */}
-                  <div className="bg-blue-500/20 border border-blue-500/50 rounded-xl p-4">
-                    <h4 className="text-white font-bold mb-2">📱 How it works:</h4>
-                    <ol className="text-sm text-gray-300 space-y-1 list-decimal list-inside">
+                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                    <h4 className="text-gray-900 font-bold mb-2">📱 How it works:</h4>
+                    <ol className="text-sm text-gray-700 space-y-1 list-decimal list-inside">
                       <li><strong>Option 1:</strong> Customer scans QR code with Solana wallet</li>
                       <li><strong>Option 2:</strong> Customer clicks "Create Redemption Transaction" button</li>
                       <li>Customer approves transaction in wallet</li>
                       <li>Customer gets transaction signature</li>
-                      <li>Customer uses signature to redeem discount at <code className="bg-black/30 px-1 rounded">/redeem</code></li>
+                      <li>Customer uses signature to redeem discount at <code className="bg-gray-200 px-1 rounded">/redeem</code></li>
                     </ol>
                   </div>
 
@@ -274,13 +319,13 @@ export default function MerchantPage() {
                         setSolanaPayUrl('');
                         setRedemptionData(null);
                       }}
-                      className="bg-gray-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-gray-700 transition"
+                      className="bg-gray-100 text-gray-900 font-semibold py-3 px-4 rounded-xl hover:bg-gray-200 transition"
                     >
                       Generate New QR
                     </button>
                     <button
                       onClick={() => window.print()}
-                      className="bg-purple-600 text-white font-bold py-3 px-4 rounded-xl hover:bg-purple-700 transition"
+                      className="bg-black text-white font-semibold py-3 px-4 rounded-xl hover:bg-gray-800 transition"
                     >
                       Print QR Code
                     </button>
@@ -289,9 +334,9 @@ export default function MerchantPage() {
               )}
 
               {/* Info Box */}
-              <div className="bg-green-500/20 border border-green-500/50 rounded-xl p-6">
-                <h4 className="text-white font-bold mb-2">✅ Benefits of Solana Pay:</h4>
-                <ul className="text-sm text-gray-300 space-y-1">
+              <div className="bg-green-50 border border-green-200 rounded-xl p-6">
+                <h4 className="text-gray-900 font-bold mb-2">✅ Benefits of Solana Pay:</h4>
+                <ul className="text-sm text-gray-700 space-y-1">
                   <li>• Immutable on-chain proof of redemption</li>
                   <li>• Cannot be faked or screenshot</li>
                   <li>• Automatic single-use enforcement via NFT burn</li>

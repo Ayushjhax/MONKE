@@ -152,7 +152,7 @@ export default function NearbyDealsMap() {
         </Link>
       </div>
       
-      <h2 className="text-3xl font-bold mb-2">🌍 Deals Near You</h2>
+      <h2 className="text-3xl font-bold mb-2 text-gray-900">🌍 Deals Near You</h2>
       <p className="text-gray-600 mb-6">
         Discover travel deals starting from your location with blockchain-verified proof
       </p>
@@ -203,14 +203,14 @@ export default function NearbyDealsMap() {
 
           <div className="mb-6 flex items-center gap-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Search Radius</label>
+              <label className="block text-sm font-medium mb-2 text-gray-900">Search Radius</label>
               <select
                 value={radius}
                 onChange={(e) => {
                   setRadius(parseInt(e.target.value));
                   fetchNearbyDeals();
                 }}
-                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-gray-900 bg-white"
               >
                 <option value={25}>25 km (Local)</option>
                 <option value={50}>50 km (Nearby)</option>
@@ -233,7 +233,7 @@ export default function NearbyDealsMap() {
             </button>
           </div>
 
-          <h3 className="font-semibold text-xl mb-4">
+          <h3 className="font-semibold text-xl mb-4 text-gray-900">
             {nearbyDeals.length > 0 ? (
               <span>
                 ✈️ {nearbyDeals.length} Deals Found Within {radius >= 1000 ? `${(radius/1000).toLocaleString()}k` : radius}km

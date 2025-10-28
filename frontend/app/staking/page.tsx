@@ -320,75 +320,148 @@ export default function StakingPage() {
 
   if (!publicKey) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md w-full text-center">
-          <Link 
-            href="/" 
-            className="inline-block text-gray-600 hover:text-gray-800 font-semibold mb-4"
-          >
-            ← Back to Home
-          </Link>
-          <h1 className="text-3xl font-bold text-gray-800 mb-4">Connect Your Wallet</h1>
-          <p className="text-gray-600 mb-6">
-            Please connect your wallet to view your staking dashboard.
-          </p>
-            <ClientWalletButton />
-        </div>
+      <div className="min-h-screen bg-white">
+        {/* Header */}
+        <header className="bg-white border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center py-4">
+              {/* Logo */}
+              <div className="flex items-center space-x-4">
+                <img 
+                  src="/logo.png" 
+                  alt="MonkeDao Logo" 
+                  className="w-20 h-20 object-contain"
+                />
+                <div>
+                  <h1 className="text-xl font-semibold text-gray-900">Staking</h1>
+                </div>
+              </div>
+
+              {/* Navigation */}
+              <div className="flex items-center space-x-4">
+                <Link
+                  href="/"
+                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+                >
+                  Home
+                </Link>
+                {publicKey && (
+                  <Link
+                    href={`/profile/${(publicKey as any).toBase58()}`}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors text-sm font-medium"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                    </svg>
+                    Profile
+                  </Link>
+                )}
+                <ClientWalletButton className="!bg-black hover:!bg-gray-800" />
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Main Content */}
+        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="text-center py-16 bg-white rounded-2xl border border-gray-200">
+            <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            </div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">Connect Your Wallet</h3>
+            <p className="text-gray-600 mb-6">
+              Connect your Solana wallet to view your staking dashboard
+            </p>
+            <ClientWalletButton className="!bg-black hover:!bg-gray-800" />
+          </div>
+        </main>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-800">Staking Dashboard</h1>
-              <p className="text-gray-600 mt-1">Earn rewards by holding your discount NFTs</p>
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center py-4">
+            {/* Logo */}
+            <div className="flex items-center space-x-4">
+              <img 
+                src="/logo.png" 
+                alt="MonkeDao Logo" 
+                className="w-20 h-20 object-contain"
+              />
+              <div>
+                <h1 className="text-xl font-semibold text-gray-900">Staking</h1>
+                <p className="text-sm text-gray-500">Earn rewards by holding your discount NFTs</p>
+              </div>
             </div>
-            <div className="flex items-center gap-4">
+
+            {/* Navigation */}
+            <div className="flex items-center space-x-4">
               <Link
                 href="/"
-                className="bg-gradient-to-r from-gray-500 to-gray-600 text-white font-semibold py-2 px-6 rounded-lg hover:from-gray-600 hover:to-gray-700 transition-all flex items-center gap-2"
+                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
               >
-                ← Back to Home
+                Home
               </Link>
+              <Link
+                href="/marketplace"
+                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors"
+              >
+                Marketplace
+              </Link>
+              {publicKey && (
+                <Link
+                  href={`/profile/${(publicKey as any).toBase58()}`}
+                  className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors text-sm font-medium"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                  </svg>
+                  Profile
+                </Link>
+              )}
               <button
                 onClick={() => setShowClaimModal(true)}
                 disabled={totalPendingRewards === 0}
-                className="bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold py-2 px-6 rounded-lg hover:from-green-600 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-xl hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Claim All ({totalPendingRewards.toFixed(6)})
               </button>
             </div>
           </div>
         </div>
-      </div>
+      </header>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Main Content */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats */}
         {stats && <StakingStats stats={stats} />}
 
         {/* Stakes */}
         <div className="mt-8">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-800">Your Staked NFTs</h2>
-            <span className="text-sm text-gray-600">
+            <h2 className="text-2xl font-semibold text-gray-900">Your Staked NFTs</h2>
+            <span className="text-sm text-gray-500">
               {stakes.filter(s => s.status === 'active').length} Active
             </span>
           </div>
 
           {loading ? (
-            <div className="text-center py-12">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-              <p className="mt-4 text-gray-600">Loading stakes...</p>
+            <div className="text-center py-16">
+              <div className="w-8 h-8 border-2 border-gray-300 border-t-black rounded-full animate-spin mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading stakes...</p>
             </div>
           ) : stakes.length === 0 ? (
-            <div className="bg-white rounded-lg shadow-lg p-12 text-center">
-              <div className="text-6xl mb-4">📊</div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">No Stakes Found</h3>
+            <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-gray-400 text-2xl">📊</span>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">No Stakes Found</h3>
               <p className="text-gray-600 mb-6">
                 Start staking your discount NFTs to earn rewards! Scroll down to see available NFTs.
               </p>
@@ -410,27 +483,29 @@ export default function StakingPage() {
         {/* Available NFTs for Staking */}
         <div className="mt-12">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-800">Available NFTs to Stake</h2>
-            <span className="text-sm text-gray-600">
+            <h2 className="text-2xl font-semibold text-gray-900">Available NFTs to Stake</h2>
+            <span className="text-sm text-gray-500">
               {availableNFTs.length} Available
             </span>
           </div>
 
           {nftsLoading ? (
-            <div className="text-center py-12">
-              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600"></div>
-              <p className="mt-4 text-gray-600">Loading available NFTs...</p>
+            <div className="text-center py-16">
+              <div className="w-8 h-8 border-2 border-gray-300 border-t-black rounded-full animate-spin mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading available NFTs...</p>
             </div>
           ) : availableNFTs.length === 0 ? (
-            <div className="bg-white rounded-lg shadow-lg p-12 text-center">
-              <div className="text-6xl mb-4">🎨</div>
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">No NFTs Available</h3>
+            <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-gray-400 text-2xl">🎨</span>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">No NFTs Available</h3>
               <p className="text-gray-600 mb-6">
                 No compressed NFTs found in your wallet to stake.
               </p>
               <Link
                 href="/marketplace"
-                className="inline-block bg-gradient-to-r from-purple-500 to-pink-600 text-white font-semibold py-3 px-6 rounded-lg hover:from-purple-600 hover:to-pink-700 transition-all"
+                className="inline-block bg-black text-white font-semibold py-3 px-6 rounded-xl hover:bg-gray-800 transition-colors"
               >
                 Browse Marketplace
               </Link>
@@ -440,22 +515,22 @@ export default function StakingPage() {
               {availableNFTs.map((nft) => (
                 <div
                   key={nft.mint}
-                  className="bg-white rounded-lg shadow-lg p-6 border border-gray-200 hover:shadow-xl transition-shadow"
+                  className="bg-white rounded-2xl border border-gray-200 p-6 hover:shadow-lg transition-shadow"
                 >
                   <div className="flex justify-between items-start mb-4">
                     <div>
-                      <h3 className="text-lg font-bold text-gray-900 mb-1">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
                         {nft.name}
                       </h3>
                       <div className="flex gap-2 flex-wrap">
-                        <span className="bg-purple-100 text-purple-700 px-2 py-1 rounded text-xs">
+                        <span className="bg-gray-100 text-gray-700 px-2 py-1 rounded-lg text-xs font-medium">
                           {nft.category}
                         </span>
-                        <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs">
+                        <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded-lg text-xs font-medium">
                           {nft.discountPercent}% OFF
                         </span>
                         {nft.isCompressed && (
-                          <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs">
+                          <span className="bg-green-100 text-green-700 px-2 py-1 rounded-lg text-xs font-medium">
                             cNFT
                           </span>
                         )}
@@ -463,11 +538,11 @@ export default function StakingPage() {
                     </div>
                   </div>
 
-                  <div className="bg-gray-50 rounded-lg p-4 mb-4">
+                  <div className="bg-gray-50 rounded-xl p-4 mb-4">
                     <div className="grid grid-cols-2 gap-3 text-sm">
                       <div>
                         <span className="text-gray-500">Merchant:</span>
-                        <p className="text-gray-900 font-semibold">{nft.merchant}</p>
+                        <p className="text-gray-900 font-medium">{nft.merchant}</p>
                       </div>
                       <div>
                         <span className="text-gray-500">Code:</span>
@@ -479,14 +554,14 @@ export default function StakingPage() {
                       </div>
                       <div>
                         <span className="text-gray-500">Status:</span>
-                        <p className="text-green-600 font-semibold">✓ Available</p>
+                        <p className="text-green-600 font-medium">✓ Available</p>
                       </div>
                     </div>
                   </div>
 
                   <button
                     onClick={() => handleStakeNFT(nft)}
-                    className="w-full bg-gradient-to-r from-purple-500 to-pink-600 text-white font-bold py-3 px-4 rounded-lg hover:from-purple-600 hover:to-pink-700 transition"
+                    className="w-full bg-black text-white font-semibold py-3 px-4 rounded-xl hover:bg-gray-800 transition-colors"
                   >
                     ⭐ Stake NFT
                   </button>
@@ -501,33 +576,39 @@ export default function StakingPage() {
         </div>
 
         {/* Info Section */}
-        <div className="mt-12 bg-white rounded-xl shadow-lg p-8">
-          <h3 className="text-xl font-bold text-gray-800 mb-4">How Staking Works</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="mt-12 bg-white rounded-2xl border border-gray-200 p-8">
+          <h3 className="text-xl font-semibold text-gray-900 mb-6">How Staking Works</h3>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="text-4xl mb-3">🎯</div>
-              <h4 className="font-semibold text-gray-800 mb-2">Proof-of-Hold</h4>
+              <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-gray-600 text-xl">🎯</span>
+              </div>
+              <h4 className="font-semibold text-gray-900 mb-2">Proof-of-Hold</h4>
               <p className="text-sm text-gray-600">
                 Keep your cNFTs in your wallet. We verify ownership every 6 hours.
               </p>
             </div>
             <div className="text-center">
-              <div className="text-4xl mb-3">💰</div>
-              <h4 className="font-semibold text-gray-800 mb-2">Earn Rewards</h4>
+              <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-gray-600 text-xl">💰</span>
+              </div>
+              <h4 className="font-semibold text-gray-900 mb-2">Earn Rewards</h4>
               <p className="text-sm text-gray-600">
                 Earn rewards based on your tier (Bronze to Platinum) and time held.
               </p>
             </div>
             <div className="text-center">
-              <div className="text-4xl mb-3">⏰</div>
-              <h4 className="font-semibold text-gray-800 mb-2">7-Day Cooldown</h4>
+              <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <span className="text-gray-600 text-xl">⏰</span>
+              </div>
+              <h4 className="font-semibold text-gray-900 mb-2">7-Day Cooldown</h4>
               <p className="text-sm text-gray-600">
                 Unstaking requires a 7-day cooldown to prevent gaming.
               </p>
             </div>
           </div>
         </div>
-      </div>
+      </main>
 
       {/* Claim Modal */}
       <RewardClaimModal
@@ -539,4 +620,3 @@ export default function StakingPage() {
     </div>
   );
 }
-
