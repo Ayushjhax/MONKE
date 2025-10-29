@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { useWallet } from '@solana/wallet-adapter-react';
@@ -19,6 +19,53 @@ export default function GroupLobby() {
   const [pledge, setPledge] = useState<string>('1');
   const [joining, setJoining] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showCoupon, setShowCoupon] = useState(false);
+  const [couponCode, setCouponCode] = useState<string>('');
+  const lastDiscountRef = useRef<number>(0);
+  const celebratedRanksRef = useRef<Set<number>>(new Set());
+
+  function launchConfetti() {
+    const container = document.createElement('div');
+    container.style.position = 'fixed';
+    container.style.top = '0';
+    container.style.left = '0';
+    container.style.width = '100%';
+    container.style.height = '100%';
+    container.style.pointerEvents = 'none';
+    container.style.zIndex = '9999';
+    document.body.appendChild(container);
+
+    const colors = ['#FF3860', '#23D160', '#3273DC', '#FFDD57', '#7941B6', '#FF8A00'];
+    const pieceCount = 120;
+    for (let i = 0; i < pieceCount; i++) {
+      const piece = document.createElement('div');
+      const size = Math.random() * 8 + 6;
+      piece.style.position = 'absolute';
+      piece.style.width = `${size}px`;
+      piece.style.height = `${size * 0.4}px`;
+      piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+      piece.style.top = '-10px';
+      piece.style.left = `${Math.random() * 100}%`;
+      piece.style.opacity = '0.9';
+      piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+      piece.style.borderRadius = '2px';
+
+      const duration = 2000 + Math.random() * 1500;
+      const translateX = (Math.random() - 0.5) * 300;
+      const translateY = window.innerHeight + 100;
+
+      piece.animate([
+        { transform: piece.style.transform, opacity: 1 },
+        { transform: `translate(${translateX}px, ${translateY}px) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+      ], { duration, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' });
+
+      container.appendChild(piece);
+    }
+
+    setTimeout(() => {
+      if (container.parentNode) container.parentNode.removeChild(container);
+    }, 3800);
+  }
 
   const tierType = data?.group?.deal?.tier_type as 'by_count' | 'by_volume' | undefined;
   const isMock = (() => {
@@ -30,7 +77,23 @@ export default function GroupLobby() {
     try {
       const res = await fetch(`${apiBase()}/api/group-deals/${dealId}/groups/${groupId}`, { cache: 'no-store' });
       const json = await res.json();
-      if (res.ok) setData(json);
+      if (res.ok) {
+        setData(json);
+        const currentDiscount = Number(json?.progress?.current_discount_percent || 0);
+        const currentRank = Number(json?.progress?.current_tier_rank || 0);
+        // Fire celebration once per rank increase
+        if (currentRank > 0 && !celebratedRanksRef.current.has(currentRank) && currentDiscount > lastDiscountRef.current) {
+          celebratedRanksRef.current.add(currentRank);
+          lastDiscountRef.current = currentDiscount;
+          // Create a friendly coupon code for the team demo
+          const mk = `PIZZA-${groupId}-${currentRank}`.toUpperCase();
+          setCouponCode(mk);
+          setShowCoupon(true);
+          launchConfetti();
+        } else {
+          lastDiscountRef.current = Math.max(lastDiscountRef.current, currentDiscount);
+        }
+      }
       else setError(json.error || 'Failed to load group');
     } catch (e: any) {
       setError(e.message);
@@ -298,6 +361,31 @@ export default function GroupLobby() {
                 })}
               </div>
             </div>
+
+      {/* Celebration Coupon Modal */}
+      {showCoupon && (
+        <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/40" onClick={() => setShowCoupon(false)}>
+          <div className="bg-white rounded-2xl shadow-xl max-w-md w-full mx-4 p-6 text-center" onClick={e => e.stopPropagation()}>
+            <div className="text-5xl mb-3">🎉</div>
+            <h3 className="text-2xl font-bold text-gray-900 mb-2">Threshold Reached!</h3>
+            <p className="text-gray-600 mb-4">Use this coupon to claim pizza:</p>
+            <div className="font-mono text-lg bg-gray-100 border border-gray-200 rounded-xl px-4 py-3 inline-block select-all text-gray-900">{couponCode}</div>
+            <div className="mt-5 flex gap-3 justify-center">
+              <button
+                className="px-4 py-2 rounded-xl bg-black text-white font-semibold hover:bg-gray-800"
+                onClick={() => {
+                  navigator.clipboard.writeText(couponCode);
+                  setShowCoupon(false);
+                }}
+              >Copy & Close</button>
+              <button
+                className="px-4 py-2 rounded-xl bg-gray-100 text-gray-800 font-semibold hover:bg-gray-200"
+                onClick={() => setShowCoupon(false)}
+              >Close</button>
+            </div>
+          </div>
+        </div>
+      )}
           </div>
 
           {/* Right Column - Join & Share */}
