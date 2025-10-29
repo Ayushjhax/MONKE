@@ -260,7 +260,7 @@ export default function CommentSection({
                   onChange={(e) => setEditText(e.target.value)}
                   maxLength={500}
                   rows={3}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 resize-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 resize-none text-gray-900 placeholder-gray-500"
                 />
                 <div className="flex gap-2">
                   <button
@@ -362,7 +362,7 @@ export default function CommentSection({
                   placeholder="Write a reply..."
                   maxLength={500}
                   rows={2}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 resize-none"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 resize-none text-gray-900 placeholder-gray-500"
                 />
                 <div className="flex gap-2">
                   <button
@@ -412,7 +412,7 @@ export default function CommentSection({
           maxLength={500}
           rows={3}
           disabled={!publicKey}
-          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none disabled:bg-gray-100"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none disabled:bg-gray-100 text-gray-900 placeholder-gray-500"
         />
         
         <div className="flex items-center justify-between">

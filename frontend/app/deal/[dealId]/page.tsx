@@ -772,7 +772,7 @@ export default function DealDetailPage() {
                 <div className="p-6 space-y-8">
                   {/* Rating Section */}
                   <div>
-                    <h3 className="text-xl font-semibold mb-4">Rate this Deal</h3>
+                    <h3 className="text-xl font-semibold mb-4 text-gray-900">Rate this Deal</h3>
                     <RatingWidget
                       dealId={dealId}
                       dealType={dealType}
