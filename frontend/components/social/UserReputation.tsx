@@ -118,7 +118,7 @@ export default function UserReputation({ userWallet, compact = false }: UserRepu
       {/* All Badges */}
       {profile.badges && profile.badges.length > 0 && (
         <div className="pt-4 border-t">
-          <h4 className="text-sm font-semibold mb-3">Badges Earned</h4>
+          <h4 className="text-sm font-semibold mb-3 text-gray-900">Badges Earned</h4>
           <div className="grid grid-cols-2 gap-3">
             {profile.badges.map((badge) => (
               <div
@@ -127,8 +127,8 @@ export default function UserReputation({ userWallet, compact = false }: UserRepu
               >
                 <span className="text-2xl">{badge.icon}</span>
                 <div>
-                  <div className="text-sm font-medium">{badge.name}</div>
-                  <div className="text-xs text-gray-500">{badge.description}</div>
+                  <div className="text-sm font-medium text-gray-900">{badge.name}</div>
+                  <div className="text-xs text-gray-600">{badge.description}</div>
                 </div>
               </div>
             ))}

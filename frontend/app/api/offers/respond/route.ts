@@ -35,12 +35,9 @@ export async function POST(request: NextRequest) {
         nft_transfer_status: 'pending'
       });
 
-      // Update listing status
-      await updateResaleListingStatus(
-        offer.listing_id,
-        'sold',
-        offer.buyer_wallet
-      );
+      // Do NOT mark listing as sold yet. Keep it available for the payment step.
+      // The listing will be marked as 'sold' only after successful payment verification
+      // in /api/resell/purchase. Optionally, you could set a 'reserved' status here.
 
       return NextResponse.json({
         success: true,

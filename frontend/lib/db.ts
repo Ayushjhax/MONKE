@@ -844,14 +844,15 @@ export async function createResaleListing(
     }
     
     const query = `
-      INSERT INTO resale_listings (nft_address, seller_wallet, price)
-      VALUES ($1, $2, $3)
+      INSERT INTO resale_listings (nft_address, seller_wallet, price, status)
+      VALUES ($1, $2, $3, 'active')
       RETURNING *
     `;
     
     const result = await client.query(query, [assetId, sellerWallet, priceSol]);
     client.release();
     
+    console.log(`✅ Created resale listing: ${assetId} by ${sellerWallet} for ${priceSol} SOL`);
     return result.rows[0];
   } catch (error) {
     console.error('Error creating resale listing:', error);
@@ -872,6 +873,7 @@ export async function getResaleListings(): Promise<ResaleListing[]> {
     const result = await client.query(query);
     client.release();
     
+    console.log(`📊 getResaleListings: Found ${result.rows.length} active listings`);
     return result.rows;
   } catch (error) {
     console.error('Error fetching resale listings:', error);

@@ -6,7 +6,7 @@ export const AMADEUS_CONFIG = {
   apiKey: process.env.AMADEUS_API_KEY || '1jPC5E3hCAUHDSeipXCS6ohdaOOBnFTg',
   apiSecret: process.env.AMADEUS_API_SECRET || 'baIYpyFtohMS0jtd',
   
-  // Environment detection
+  // Environment detectio
   // Set AMADEUS_ENV=production in .env.local when you have production credentials
   environment: process.env.AMADEUS_ENV || 'test',
   

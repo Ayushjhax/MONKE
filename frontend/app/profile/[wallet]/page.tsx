@@ -9,6 +9,7 @@ import { UserSocialProfile } from '@/lib/social-types';
 import UserReputation from '@/components/social/UserReputation';
 import ActivityFeed from '@/components/social/ActivityFeed';
 import NotificationBell from '@/components/social/NotificationBell';
+import PaymentModal from '@/components/PaymentModal';
 
 export default function ProfilePage() {
   const params = useParams();
@@ -23,6 +24,15 @@ export default function ProfilePage() {
   const [displayName, setDisplayName] = useState('');
   const [avatarUrl, setAvatarUrl] = useState('');
   const [saving, setSaving] = useState(false);
+
+  // Resale offers state (only shown for own profile)
+  const [myOffers, setMyOffers] = useState<any[]>([]);
+  const [receivedOffers, setReceivedOffers] = useState<any[]>([]);
+  const [offersLoading, setOffersLoading] = useState(false);
+  const [paymentModal, setPaymentModal] = useState<{
+    isOpen: boolean;
+    offer: any | null;
+  }>({ isOpen: false, offer: null });
 
   useEffect(() => {
     fetchProfile();
@@ -46,6 +56,32 @@ export default function ProfilePage() {
       setIsLoading(false);
     }
   };
+
+  const fetchOffers = async () => {
+    if (!isOwnProfile || !publicKey) return;
+    try {
+      setOffersLoading(true);
+      const [sentRes, recvRes] = await Promise.all([
+        fetch(`/api/offers/my-offers?wallet=${publicKey.toBase58()}&tab=sent`, { cache: 'no-store' }),
+        fetch(`/api/offers/my-offers?wallet=${publicKey.toBase58()}&tab=received`, { cache: 'no-store' })
+      ]);
+      const sentJson = await sentRes.json();
+      const recvJson = await recvRes.json();
+      setMyOffers(sentJson.offers || []);
+      setReceivedOffers(recvJson.offers || []);
+    } catch (e) {
+      console.error('Error fetching offers:', e);
+    } finally {
+      setOffersLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isOwnProfile) {
+      fetchOffers();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOwnProfile, publicKey]);
 
   const handleSaveProfile = async () => {
     if (!publicKey || !isOwnProfile) return;
@@ -182,7 +218,7 @@ export default function ProfilePage() {
                       onChange={(e) => setDisplayName(e.target.value)}
                       maxLength={100}
                       placeholder="Enter your name"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all text-gray-900 placeholder-gray-500"
                     />
                   </div>
 
@@ -195,7 +231,7 @@ export default function ProfilePage() {
                       value={avatarUrl}
                       onChange={(e) => setAvatarUrl(e.target.value)}
                       placeholder="https://example.com/avatar.png"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-xl focus:ring-2 focus:ring-black focus:border-transparent transition-all text-gray-900 placeholder-gray-500"
                     />
                   </div>
 
@@ -276,9 +312,208 @@ export default function ProfilePage() {
               </h2>
               <ActivityFeed userWallet={walletAddress} limit={20} />
             </div>
+
+            {isOwnProfile && (
+              <div className="bg-white rounded-2xl border border-gray-200 p-6 mt-8">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Resale Offers</h2>
+                <OffersPanel 
+                  offers={myOffers} 
+                  receivedOffers={receivedOffers} 
+                  loading={offersLoading} 
+                  onChanged={fetchOffers}
+                  onPayNow={(offer) => setPaymentModal({ isOpen: true, offer })}
+                />
+              </div>
+            )}
           </div>
         </div>
       </main>
+
+      {/* Payment Modal */}
+      {paymentModal.isOpen && paymentModal.offer && (
+        <PaymentModal
+          isOpen={paymentModal.isOpen}
+          onClose={() => {
+            setPaymentModal({ isOpen: false, offer: null });
+            // Refresh offers after closing to see updated status
+            setTimeout(() => fetchOffers(), 500);
+          }}
+          listing={{
+            id: paymentModal.offer.listing_id,
+            nft_address: paymentModal.offer.nft_address,
+            seller_wallet: paymentModal.offer.seller_wallet,
+            price: paymentModal.offer.offer_amount,
+            status: 'active'
+          } as any}
+          onPaymentSuccess={async (signature) => {
+            try {
+              // Call API to process offer payment and confirm transaction
+              const res = await fetch('/api/offers/pay-accepted', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  offerId: paymentModal.offer.id,
+                  paymentSignature: signature
+                })
+              });
+              
+              const data = await res.json();
+              if (res.ok) {
+                alert('Payment successful! The seller will be notified to release the NFT.');
+                // Close modal immediately to prevent duplicate payments
+                setPaymentModal({ isOpen: false, offer: null });
+                // Refresh offers to show updated status
+                setTimeout(() => fetchOffers(), 500);
+              } else {
+                alert(`Payment processing failed: ${data.error}`);
+                // Don't close modal if payment processing failed - let user see the error
+              }
+            } catch (error) {
+              console.error('Error processing payment:', error);
+              alert('Failed to process payment. Please try again.');
+              // Don't close modal on error
+            }
+          }}
+        />
+      )}
+    </div>
+  );
+}
+
+function OffersPanel({ 
+  offers, 
+  receivedOffers, 
+  loading, 
+  onChanged,
+  onPayNow
+}: { 
+  offers: any[]; 
+  receivedOffers: any[]; 
+  loading: boolean; 
+  onChanged: () => void;
+  onPayNow: (offer: any) => void;
+}) {
+  const [subTab, setSubTab] = useState<'received' | 'sent'>('received');
+
+  const handleRespond = async (offerId: number, action: 'accept' | 'reject') => {
+    try {
+      const res = await fetch('/api/offers/respond', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ offerId, action })
+      });
+      if (res.ok) {
+        onChanged();
+      }
+    } catch (e) {
+      console.error('Error responding to offer:', e);
+    }
+  };
+
+  return (
+    <div>
+      <div className="flex space-x-3 mb-4">
+        <button
+          onClick={() => setSubTab('received')}
+          className={`px-3 py-2 rounded-lg font-semibold transition-colors ${
+            subTab === 'received' ? 'bg-black text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          }`}
+        >
+          Received ({receivedOffers.length})
+        </button>
+        <button
+          onClick={() => setSubTab('sent')}
+          className={`px-3 py-2 rounded-lg font-semibold transition-colors ${
+            subTab === 'sent' ? 'bg-black text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+          }`}
+        >
+          Sent ({offers.length})
+        </button>
+      </div>
+
+      {loading ? (
+        <div className="text-gray-600">Loading offers…</div>
+      ) : (
+        <div className="space-y-3">
+          {/* Seller notification banner when any offer is paid */}
+          {subTab === 'received' && receivedOffers.some((o: any) => o.status === 'paid') && (
+            <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-semibold text-yellow-900">Payment received</p>
+                  <p className="text-xs text-yellow-800 mt-1">Buyer has paid. Please release the NFT to the buyer.</p>
+                </div>
+                <button
+                  onClick={async () => {
+                    try {
+                      const paid = receivedOffers.find((o: any) => o.status === 'paid');
+                      if (!paid) return;
+                      const res = await fetch('/api/offers/mark-transferred', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ offerId: paid.id })
+                      });
+                      if (res.ok) {
+                        onChanged();
+                      }
+                    } catch (e) {
+                      console.error('Error marking transferred:', e);
+                    }
+                  }}
+                  className="px-3 py-2 bg-black text-white text-xs font-semibold rounded-md hover:bg-gray-800"
+                >
+                  Release NFT
+                </button>
+              </div>
+            </div>
+          )}
+          {(subTab === 'received' ? receivedOffers : offers).map((offer: any) => (
+            <div key={offer.id} className="bg-gray-50 rounded-xl p-4">
+              <div className="flex justify-between items-start">
+                <div>
+                  <div className="text-green-700 font-semibold">{offer.offer_amount} SOL</div>
+                  <div className="text-xs text-gray-600 mt-1">
+                    {subTab === 'received' ? 'From' : 'To'}: {offer.buyer_wallet?.slice(0,8)}...
+                  </div>
+                  {subTab === 'sent' && offer.status === 'accepted' && (
+                    <div className="mt-3">
+                      <button
+                        onClick={() => {
+                          // Double check offer is still accepted before opening payment modal
+                          if (offer.status === 'accepted') {
+                            onPayNow(offer);
+                          } else {
+                            alert('This offer is no longer available for payment. Please refresh the page.');
+                            onChanged();
+                          }
+                        }}
+                        className="w-full bg-black hover:bg-gray-800 text-white rounded-lg px-4 py-2 font-semibold transition-colors"
+                      >
+                        💳 Pay {offer.offer_amount} SOL
+                      </button>
+                      <p className="text-xs text-gray-500 mt-1 text-center">Click to pay the seller</p>
+                    </div>
+                  )}
+                </div>
+                <span className={`px-2 py-1 rounded text-xs font-semibold ${
+                  offer.status === 'accepted' ? 'bg-green-100 text-green-700' :
+                  offer.status === 'rejected' ? 'bg-red-100 text-red-700' :
+                  'bg-yellow-100 text-yellow-700'
+                }`}>
+                  {offer.status}
+                </span>
+              </div>
+
+              {subTab === 'received' && offer.status === 'pending' && (
+                <div className="flex gap-2 mt-3">
+                  <button onClick={() => handleRespond(offer.id, 'accept')} className="flex-1 bg-green-600 hover:bg-green-700 text-white rounded-lg px-3 py-2 font-semibold">Accept</button>
+                  <button onClick={() => handleRespond(offer.id, 'reject')} className="flex-1 bg-red-600 hover:bg-red-700 text-white rounded-lg px-3 py-2 font-semibold">Reject</button>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

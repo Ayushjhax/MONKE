@@ -17,8 +17,11 @@ export async function GET(request: NextRequest) {
 
     const listings = await getResaleListings();
     
-    // Filter only active listings
+    // Note: getResaleListings() already filters for active status
+    // But we keep this filter as a safety check
     const activeListings = listings.filter(listing => listing.status === 'active');
+    
+    console.log(`📊 Marketplace: Found ${activeListings.length} active listings out of ${listings.length} total`);
 
     // Fetch NFT metadata for each listing
     const listingsWithMetadata = await Promise.all(
@@ -41,11 +44,11 @@ export async function GET(request: NextRequest) {
           const data = await response.json();
           const asset = data.result;
 
-          if (asset && asset.content?.metadata) {
+          if (asset) {
             // Fetch complete metadata from IPFS if needed
-            let completeMetadata = asset.content.metadata;
+            let completeMetadata = asset.content?.metadata || {};
             
-            if (!asset.content.metadata.attributes || asset.content.metadata.attributes.length === 0) {
+            if (!asset.content?.metadata || !asset.content.metadata.attributes || asset.content.metadata.attributes.length === 0) {
               const jsonUri = asset.content?.json_uri;
               if (jsonUri) {
                 try {
@@ -71,7 +74,12 @@ export async function GET(request: NextRequest) {
             };
           }
 
-          return listing;
+          // Return listing even if asset fetch failed (so it still shows in marketplace)
+          console.warn(`⚠️ Could not fetch asset data for ${listing.nft_address}, but returning listing anyway`);
+          return {
+            ...listing,
+            asset_data: null
+          };
         } catch (error) {
           console.error(`Error fetching metadata for ${listing.nft_address}:`, error);
           return listing;
