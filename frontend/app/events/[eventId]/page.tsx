@@ -174,7 +174,7 @@ export default function EventDetailPage() {
         </div>
 
         {/* Travel Deals Section */}
-        <h2 className="text-3xl font-bold mb-2">✈️ Travel Deals for This Event</h2>
+        <h2 className="text-3xl font-bold mb-2 text-gray-900">✈️ Travel Deals for This Event</h2>
         <p className="text-gray-600 mb-6">
           {deals.length > 0
             ? `${deals.length} deals found matching this event's dates and location`

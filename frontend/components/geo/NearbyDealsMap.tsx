@@ -315,7 +315,7 @@ export default function NearbyDealsMap() {
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
                           <span className="text-2xl">🎪</span>
-                          <h4 className="font-bold text-lg">{event.event_name}</h4>
+                          <h4 className="font-bold text-lg text-gray-900">{event.event_name}</h4>
                         </div>
 
                         <p className="text-sm text-purple-600 font-medium mb-1">
