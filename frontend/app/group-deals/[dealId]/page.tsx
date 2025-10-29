@@ -48,7 +48,7 @@ export default function DealDetails() {
       const res = await fetch(`${apiBase()}/api/group-deals/${deal.id}/groups`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ wallet: 'host_wallet_demo', expires_at: expiresAt })
+        body: JSON.stringify({ wallet: publicKey ? (publicKey as any).toBase58() : 'anonymous', expires_at: expiresAt })
       });
       const data = await res.json();
       if (res.ok) {

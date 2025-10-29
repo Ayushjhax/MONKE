@@ -1,71 +1,102 @@
-import { NextResponse } from 'next/server';
-import { getGroupStatus, lockGroup, cancelOrExpireGroup } from '../../../../../../lib/group-deal-service';
-import { initializeDatabase } from '../../../../../../lib/db';
-import { MOCK_DEALS } from '../../../../../../lib/group-deals-mock';
+import { NextRequest, NextResponse } from 'next/server';
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+import { pool, initializeDatabase } from '@/lib/db';
 
-export async function GET(_req: Request, ctx: { params: Promise<{ dealId: string; groupId: string }> }) {
+async function getDealWithTiers(dealId: number) {
+  const client = await pool.connect();
   try {
-    const { dealId, groupId } = await ctx.params;
-    const idNum = Number(dealId);
-    const grpNum = Number(groupId);
-    if (idNum >= 1000 && idNum <= 2000) {
-      const deal = MOCK_DEALS.find(d => d.id === idNum);
-      const now = Date.now();
-      const expiresAt = new Date(now + 1000 * 60 * 30).toISOString();
-      return NextResponse.json({
-        group: {
-          id: grpNum,
-          status: 'open',
-          expires_at: expiresAt,
-          created_at: new Date(now - 1000 * 60 * 5).toISOString(),
-          current_tier_rank: 1,
-          current_discount_percent: (deal?.tiers?.[0]?.discount_percent || 5),
-          participants_count: 4,
-          total_pledged: 4,
-          deal
-        },
-        tiers: deal?.tiers || [],
-        members: [
-          { user_wallet: 'demo_user_1', pledge_units: 1, status: 'pledged', joined_at: new Date(now - 1000 * 60 * 4).toISOString() },
-          { user_wallet: 'demo_user_2', pledge_units: 1, status: 'pledged', joined_at: new Date(now - 1000 * 60 * 3).toISOString() },
-          { user_wallet: 'demo_user_3', pledge_units: 1, status: 'pledged', joined_at: new Date(now - 1000 * 60 * 2).toISOString() },
-          { user_wallet: 'demo_user_4', pledge_units: 1, status: 'pledged', joined_at: new Date(now - 1000 * 60 * 1).toISOString() }
-        ],
-        progress: {
-          participants_count: 4,
-          total_pledged: 4,
-          current_tier_rank: 1,
-          current_discount_percent: (deal?.tiers?.[0]?.discount_percent || 5),
-          next_threshold: deal?.tiers?.[1]?.threshold,
-          time_left_seconds: 60 * 30
+    const dealRes = await client.query('SELECT * FROM group_deals WHERE id = $1', [dealId]);
+    if (!dealRes.rows[0]) throw new Error('Group deal not found');
+    const tiersRes = await client.query('SELECT * FROM group_deal_tiers WHERE group_deal_id = $1 ORDER BY rank ASC', [dealId]);
+    return { deal: dealRes.rows[0], tiers: tiersRes.rows };
+  } finally {
+    client.release();
+  }
+}
+
+async function recomputeGroupProgress(groupId: number) {
+  const client = await pool.connect();
+  try {
+    const grp = await client.query('SELECT * FROM group_deal_groups WHERE id = $1', [groupId]);
+    if (!grp.rows[0]) throw new Error('Group not found');
+    const group = grp.rows[0];
+    const { deal, tiers } = await getDealWithTiers(group.group_deal_id);
+
+    const membersRes = await client.query(
+      `SELECT m.user_wallet, m.pledge_units
+       FROM group_deal_members m
+       WHERE m.group_id = $1 AND m.status IN ('pledged','confirmed')`,
+      [groupId]
+    );
+    const members = membersRes.rows;
+
+    const participantsCount = members.length;
+    let totalPledged = 0;
+    for (const mem of members) totalPledged += Number(mem.pledge_units || 1);
+
+    let currentRank = 0;
+    let currentDiscount = 0;
+    if ((tiers?.length || 0) > 0) {
+      for (const t of tiers) {
+        const ok = deal.tier_type === 'by_volume' ? totalPledged >= t.threshold : participantsCount >= t.threshold;
+        if (ok && t.rank > currentRank) {
+          currentRank = t.rank;
+          currentDiscount = t.discount_percent;
         }
-      });
+      }
     }
-    await initializeDatabase();
-    const result = await getGroupStatus(grpNum);
-    return NextResponse.json(result);
-  } catch (e: any) {
-    return NextResponse.json({ error: e.message || 'Failed to fetch group' }, { status: 400 });
+
+    await client.query(
+      `UPDATE group_deal_groups SET current_tier_rank = $1, current_discount_percent = $2,
+       participants_count = $3, total_pledged = $4 WHERE id = $5`,
+      [currentRank, currentDiscount, participantsCount, totalPledged, groupId]
+    );
+
+    return { current_tier_rank: currentRank, current_discount_percent: currentDiscount, participants_count: participantsCount, total_pledged: totalPledged };
+  } finally {
+    client.release();
   }
 }
 
-export async function POST(req: Request, ctx: { params: Promise<{ dealId: string; groupId: string }> }) {
-  const path = new URL(req.url).pathname;
+export async function GET(
+  _request: NextRequest,
+  { params }: { params: Promise<{ dealId: string; groupId: string }> }
+) {
   try {
     await initializeDatabase();
-    const { groupId } = await ctx.params;
-    if (path.endsWith('/lock')) {
-      const result = await lockGroup(Number(groupId));
-      return NextResponse.json(result);
+    const { groupId } = await params;
+    const client = await pool.connect();
+    try {
+      const grp = await client.query('SELECT * FROM group_deal_groups WHERE id = $1', [Number(groupId)]);
+      if (!grp.rows[0]) return NextResponse.json({ error: 'Group not found' }, { status: 404 });
+      const group = grp.rows[0];
+      const { deal, tiers } = await getDealWithTiers(group.group_deal_id);
+      const memRes = await client.query(
+        `SELECT user_wallet, pledge_units, status, joined_at FROM group_deal_members WHERE group_id = $1 ORDER BY joined_at ASC`,
+        [Number(groupId)]
+      );
+      const progress = await recomputeGroupProgress(Number(groupId));
+      let nextThreshold: number | undefined = undefined;
+      const sortedTiers = [...tiers].sort((a: any, b: any) => a.rank - b.rank);
+      for (const t of sortedTiers) {
+        if (t.rank > progress.current_tier_rank) { nextThreshold = t.threshold; break; }
+      }
+      const timeLeft = Math.max(0, Math.floor((new Date(group.expires_at).getTime() - Date.now()) / 1000));
+      const res = NextResponse.json({
+        group: { ...group, deal },
+        tiers: sortedTiers,
+        members: memRes.rows,
+        progress: { ...progress, next_threshold: nextThreshold, time_left_seconds: timeLeft }
+      });
+      res.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+      return res;
+    } finally {
+      client.release();
     }
-    if (path.endsWith('/cancel')) {
-      const result = await cancelOrExpireGroup(Number(groupId));
-      return NextResponse.json(result);
-    }
-    return NextResponse.json({ error: 'Unsupported action' }, { status: 404 });
   } catch (e: any) {
-    return NextResponse.json({ error: e.message || 'Failed to process' }, { status: 400 });
+    return NextResponse.json({ error: e.message || 'Failed to fetch group status' }, { status: 400 });
   }
 }
-
 

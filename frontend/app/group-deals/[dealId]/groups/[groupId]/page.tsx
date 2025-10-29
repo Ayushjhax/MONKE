@@ -85,7 +85,7 @@ export default function GroupLobby() {
           };
         });
       } else {
-        const body: any = { wallet: 'demo_user_wallet' };
+        const body: any = { wallet: publicKey ? (publicKey as any).toBase58() : 'anonymous' };
         if (tierType === 'by_volume') body.pledge_units = Number(pledge || '1');
         const res = await fetch(`${apiBase()}/api/group-deals/${dealId}/groups/${groupId}/join`, {
           method: 'POST',
@@ -384,11 +384,13 @@ export default function GroupLobby() {
 function LockedCodes({ dealId, groupId }: { dealId: string; groupId: string }) {
   const [codes, setCodes] = useState<any[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const { publicKey } = useWallet();
   
   useEffect(() => {
     async function load() {
       try {
-        const res = await fetch(`/api/group-deals/${dealId}/groups/${groupId}/redemptions?wallet=demo_user_wallet`, { cache: 'no-store' });
+        const qp = publicKey ? (publicKey as any).toBase58() : '';
+        const res = await fetch(`/api/group-deals/${dealId}/groups/${groupId}/redemptions?wallet=${encodeURIComponent(qp)}`, { cache: 'no-store' });
         const json = await res.json();
         if (res.ok) setCodes(json.redemptions || []);
         else setError(json.error || 'Failed to load redemptions');
@@ -397,7 +399,7 @@ function LockedCodes({ dealId, groupId }: { dealId: string; groupId: string }) {
       }
     }
     load();
-  }, [dealId, groupId]);
+  }, [dealId, groupId, publicKey]);
 
   if (error) return <div className="text-red-600">Error loading redemptions</div>;
   if (codes.length === 0) return <div className="text-gray-600">No redemptions yet</div>;
