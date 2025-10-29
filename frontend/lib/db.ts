@@ -645,6 +645,34 @@ export async function initializeDatabase() {
       CREATE INDEX IF NOT EXISTS idx_gd_time ON group_deals(status, end_at)
     `);
     
+    // ===== STAKING: ensure tables exist =====
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS staking_records (
+        stake_id VARCHAR(64) PRIMARY KEY,
+        asset_id VARCHAR(255) NOT NULL,
+        owner_address VARCHAR(44) NOT NULL,
+        nft_name VARCHAR(255),
+        discount_percent INTEGER DEFAULT 0,
+        merchant VARCHAR(255),
+        tier VARCHAR(20) DEFAULT 'bronze',
+        staked_at TIMESTAMP NOT NULL,
+        last_verified_at TIMESTAMP NOT NULL,
+        status VARCHAR(20) DEFAULT 'active',
+        consecutive_days INTEGER DEFAULT 1,
+        verification_failures INTEGER DEFAULT 0,
+        total_rewards_earned DECIMAL(18,6) DEFAULT 0,
+        total_rewards_claimed DECIMAL(18,6) DEFAULT 0,
+        pending_rewards DECIMAL(18,6) DEFAULT 0,
+        cooldown_ends_at TIMESTAMP,
+        metadata JSONB,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    await client.query(`
+      CREATE INDEX IF NOT EXISTS idx_staking_owner ON staking_records(owner_address)
+    `);
+    
     client.release();
     __dbInitialized = true;
     console.log('✅ Database initialized successfully');
@@ -654,6 +682,136 @@ export async function initializeDatabase() {
   }
 }
 
+// ====== STAKING HELPERS ======
+export interface StakingRecordRow {
+  stake_id: string;
+  asset_id: string;
+  owner_address: string;
+  nft_name: string | null;
+  discount_percent: number;
+  merchant: string | null;
+  tier: string;
+  staked_at: string;
+  last_verified_at: string;
+  status: string;
+  consecutive_days: number;
+  verification_failures: number;
+  total_rewards_earned: string;
+  total_rewards_claimed: string;
+  pending_rewards: string;
+  cooldown_ends_at: string | null;
+  metadata: any;
+  created_at: string;
+  updated_at: string;
+}
+
+export async function createStakingRecord(row: Omit<StakingRecordRow, 'created_at' | 'updated_at'>): Promise<StakingRecordRow> {
+  const client = await pool.connect();
+  try {
+    const result = await client.query(
+      `INSERT INTO staking_records (
+        stake_id, asset_id, owner_address, nft_name, discount_percent, merchant, tier, staked_at,
+        last_verified_at, status, consecutive_days, verification_failures, total_rewards_earned,
+        total_rewards_claimed, pending_rewards, cooldown_ends_at, metadata
+      ) VALUES (
+        $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17
+      ) RETURNING *`,
+      [
+        row.stake_id, row.asset_id, row.owner_address, row.nft_name, row.discount_percent, row.merchant,
+        row.tier, row.staked_at, row.last_verified_at, row.status, row.consecutive_days,
+        row.verification_failures, row.total_rewards_earned, row.total_rewards_claimed,
+        row.pending_rewards, row.cooldown_ends_at, row.metadata
+      ]
+    );
+    return result.rows[0];
+  } finally {
+    client.release();
+  }
+}
+
+export async function getStakesByOwner(ownerAddress: string): Promise<StakingRecordRow[]> {
+  const client = await pool.connect();
+  try {
+    const result = await client.query(`SELECT * FROM staking_records WHERE owner_address = $1 ORDER BY staked_at DESC`, [ownerAddress]);
+    return result.rows;
+  } finally {
+    client.release();
+  }
+}
+
+export async function setStakePendingUnstake(stakeId: string, cooldownEndsAt: string): Promise<void> {
+  const client = await pool.connect();
+  try {
+    await client.query(
+      `UPDATE staking_records SET status = 'pending_unstake', cooldown_ends_at = $1, updated_at = CURRENT_TIMESTAMP WHERE stake_id = $2`,
+      [cooldownEndsAt, stakeId]
+    );
+  } finally {
+    client.release();
+  }
+}
+
+export async function claimAllRewardsForOwner(ownerAddress: string): Promise<number> {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const { rows } = await client.query<StakingRecordRow>(
+      `SELECT * FROM staking_records WHERE owner_address = $1 AND (status = 'active' OR status = 'pending_unstake') FOR UPDATE`,
+      [ownerAddress]
+    );
+    let total = 0;
+    for (const r of rows) {
+      const pending = parseFloat(r.pending_rewards || '0');
+      total += pending;
+      await client.query(
+        `UPDATE staking_records SET 
+           total_rewards_earned = (total_rewards_earned + $1),
+           total_rewards_claimed = (total_rewards_claimed + $1),
+           pending_rewards = 0,
+           last_verified_at = CURRENT_TIMESTAMP,
+           updated_at = CURRENT_TIMESTAMP
+         WHERE stake_id = $2`,
+        [pending, r.stake_id]
+      );
+    }
+    await client.query('COMMIT');
+    return Math.round(total * 1000000) / 1000000;
+  } catch (e) {
+    await client.query('ROLLBACK');
+    throw e;
+  } finally {
+    client.release();
+  }
+}
+
+export async function getStakingStatsForOwner(ownerAddress: string) {
+  const client = await pool.connect();
+  try {
+    const { rows } = await client.query(`SELECT * FROM staking_records WHERE owner_address = $1`, [ownerAddress]);
+    const active = rows.filter(r => r.status === 'active');
+    const totalNFTsStaked = active.length;
+    const totalRewardsEarned = rows.reduce((s, r) => s + parseFloat(r.total_rewards_earned || '0'), 0);
+    const totalRewardsClaimed = rows.reduce((s, r) => s + parseFloat(r.total_rewards_claimed || '0'), 0);
+    const totalDaysStaked = rows.length > 0 ? Math.floor((Date.now() - new Date(rows[0].staked_at).getTime()) / (1000*60*60*24)) : 0;
+    const tierDistribution = {
+      bronze: active.filter(r => r.tier === 'bronze').length,
+      silver: active.filter(r => r.tier === 'silver').length,
+      gold: active.filter(r => r.tier === 'gold').length,
+      platinum: active.filter(r => r.tier === 'platinum').length,
+    };
+    return {
+      userAddress: ownerAddress,
+      totalNFTsStaked,
+      totalRewardsEarned,
+      totalRewardsClaimed,
+      totalDaysStaked,
+      averageAPY: totalNFTsStaked > 0 && totalDaysStaked > 0 ? (totalRewardsEarned / totalDaysStaked) * 365 : 0,
+      tierDistribution
+    };
+  } finally {
+    client.release();
+  }
+}
 // Create a new merchant
 export async function createMerchant(merchantData: Omit<Merchant, 'id' | 'created_at'>): Promise<Merchant> {
   try {

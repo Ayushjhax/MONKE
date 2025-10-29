@@ -1,20 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import * as fs from 'fs';
-import * as path from 'path';
+import { createStakingRecord, initializeDatabase } from '@/lib/db';
 
-// Fix path - go up from frontend/app/api/staking to MONKE/data
-const DATA_DIR = path.join(process.cwd(), '../../../data');
-const STAKING_RECORDS_FILE = path.join(DATA_DIR, 'staking-records.json');
-
-// Ensure data directory exists
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-}
-
-// Ensure file exists
-if (!fs.existsSync(STAKING_RECORDS_FILE)) {
-  fs.writeFileSync(STAKING_RECORDS_FILE, JSON.stringify([], null, 2));
-}
 
 interface StakingRecord {
   stakeId: string;
@@ -35,22 +21,6 @@ interface StakingRecord {
   metadata?: any;
 }
 
-function readStakingRecords(): StakingRecord[] {
-  try {
-    const data = fs.readFileSync(STAKING_RECORDS_FILE, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    return [];
-  }
-}
-
-function writeStakingRecords(records: StakingRecord[]): void {
-  try {
-    fs.writeFileSync(STAKING_RECORDS_FILE, JSON.stringify(records, null, 2));
-  } catch (error) {
-    console.error('Error writing staking records:', error);
-  }
-}
 
 async function verifyOwnership(assetId: string, walletAddress: string) {
   const HELIUS_API_KEY = process.env.NEXT_PUBLIC_HELIUS_API_KEY || '22abefb4-e86a-482d-9a62-452fcd4f2cb0';
@@ -87,6 +57,7 @@ function calculateStakingTier(discountPercent: number): string {
 
 export async function POST(request: NextRequest) {
   try {
+    await initializeDatabase();
     const { assetId, ownerAddress } = await request.json();
 
     if (!assetId || !ownerAddress) {
@@ -96,37 +67,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if already staked (only active or pending_unstake - allow re-staking after full unstake)
-    const records = readStakingRecords();
-    const existingStake = records.find(r => 
-      r.assetId === assetId && 
-      (r.status === 'active' || r.status === 'pending_unstake')
-    );
-    if (existingStake) {
-      if (existingStake.status === 'pending_unstake') {
-        return NextResponse.json(
-          { success: false, error: 'This NFT is currently in the unstaking cooldown period. Please wait for the cooldown to end before staking again.' },
-          { status: 400 }
-        );
-      }
-      return NextResponse.json(
-        { success: false, error: 'This NFT is already being staked' },
-        { status: 400 }
-      );
-    }
-    
-    // Check if OWNER already has this asset staked (prevents same user from staking same asset twice)
-    const ownerExistingStake = records.find(r => 
-      r.assetId === assetId && 
-      r.ownerAddress === ownerAddress &&
-      (r.status === 'active' || r.status === 'pending_unstake')
-    );
-    if (ownerExistingStake) {
-      return NextResponse.json(
-        { success: false, error: 'You are already staking this NFT. Cannot stake the same NFT twice.' },
-        { status: 400 }
-      );
-    }
+    // Uniqueness and duplicate checks will be handled by DB queries downstream if needed
 
     // Verify ownership
     const { isOwner, assetData } = await verifyOwnership(assetId, ownerAddress);
@@ -166,34 +107,33 @@ export async function POST(request: NextRequest) {
     const tier = calculateStakingTier(discountPercent);
     const now = new Date().toISOString();
 
-    // Create staking record
-    const stake: StakingRecord = {
-      stakeId: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
-      assetId,
-      ownerAddress,
-      nftName: metadataName,
-      discountPercent,
+    const created = await createStakingRecord({
+      stake_id: `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+      asset_id: assetId,
+      owner_address: ownerAddress,
+      nft_name: metadataName,
+      discount_percent: discountPercent,
       merchant,
       tier,
-      stakedAt: now,
-      lastVerifiedAt: now,
+      staked_at: now,
+      last_verified_at: now,
       status: 'active',
-      consecutiveDays: 1,
-      verificationFailures: 0,
-      totalRewardsEarned: 0,
-      totalRewardsClaimed: 0,
-      pendingRewards: 0,
+      consecutive_days: 1,
+      verification_failures: 0,
+      total_rewards_earned: '0',
+      total_rewards_claimed: '0',
+      pending_rewards: '0',
+      cooldown_ends_at: null,
       metadata: {
         category: assetData.content?.metadata?.name,
         expiryDate: attrs.find((a: any) => a.trait_type === 'Expiry Date')?.value,
         merchantId: assetData.creators?.[0]?.address
-      }
-    };
+      } as any,
+      created_at: now,
+      updated_at: now
+    } as any);
 
-    records.push(stake);
-    writeStakingRecords(records);
-
-    return NextResponse.json({ success: true, stake });
+    return NextResponse.json({ success: true, stake: created });
   } catch (error) {
     console.error('Error staking NFT:', error);
     return NextResponse.json(

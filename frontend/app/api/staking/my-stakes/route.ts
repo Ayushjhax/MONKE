@@ -1,49 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import * as fs from 'fs';
-import * as path from 'path';
+import { getStakesByOwner, initializeDatabase, StakingRecordRow } from '@/lib/db';
 
-// Fix path - go up from frontend/app/api/staking to MONKE/data
-const DATA_DIR = path.join(process.cwd(), '../../../data');
-const STAKING_RECORDS_FILE = path.join(DATA_DIR, 'staking-records.json');
-
-// Ensure data directory exists
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-}
-
-// Ensure file exists
-if (!fs.existsSync(STAKING_RECORDS_FILE)) {
-  fs.writeFileSync(STAKING_RECORDS_FILE, JSON.stringify([], null, 2));
-}
-
-interface StakingRecord {
-  stakeId: string;
-  assetId: string;
-  ownerAddress: string;
-  nftName: string;
-  discountPercent: number;
-  merchant: string;
-  tier: string;
-  stakedAt: string;
-  lastVerifiedAt: string;
-  status: string;
-  consecutiveDays: number;
-  verificationFailures: number;
-  totalRewardsEarned: number;
-  totalRewardsClaimed: number;
-  pendingRewards: number;
-}
-
-function readStakingRecords(): StakingRecord[] {
-  try {
-    const data = fs.readFileSync(STAKING_RECORDS_FILE, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    return [];
-  }
-}
-
-function calculatePendingRewards(stake: StakingRecord): number {
+function calculatePendingRewards(stake: { tier: string; lastVerifiedAt: string; consecutiveDays: number }): number {
   const REWARD_RATES: { [key: string]: number } = {
     bronze: 10,
     silver: 15,
@@ -70,6 +28,7 @@ function calculatePendingRewards(stake: StakingRecord): number {
 
 export async function GET(request: NextRequest) {
   try {
+    await initializeDatabase();
     const { searchParams } = new URL(request.url);
     const ownerAddress = searchParams.get('ownerAddress');
 
@@ -80,12 +39,33 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const records = readStakingRecords();
-    const stakes = records.filter(r => r.ownerAddress === ownerAddress);
+    const rows = await getStakesByOwner(ownerAddress);
+    const stakes = rows.map((r: StakingRecordRow) => ({
+      stakeId: r.stake_id,
+      assetId: r.asset_id,
+      ownerAddress: r.owner_address,
+      nftName: r.nft_name,
+      discountPercent: r.discount_percent,
+      merchant: r.merchant,
+      tier: r.tier,
+      stakedAt: r.staked_at,
+      lastVerifiedAt: r.last_verified_at,
+      status: r.status,
+      consecutiveDays: r.consecutive_days,
+      verificationFailures: r.verification_failures,
+      totalRewardsEarned: parseFloat(r.total_rewards_earned || '0'),
+      totalRewardsClaimed: parseFloat(r.total_rewards_claimed || '0'),
+      pendingRewards: parseFloat(r.pending_rewards || '0')
+    }));
     
     const enrichedStakes = stakes.map(stake => ({
       ...stake,
-      pendingRewards: calculatePendingRewards(stake)
+      // Compute fresh pending rewards based on last verification time
+      pendingRewards: calculatePendingRewards({
+        tier: stake.tier,
+        lastVerifiedAt: stake.lastVerifiedAt,
+        consecutiveDays: stake.consecutiveDays
+      })
     }));
 
     const totalPendingRewards = enrichedStakes
