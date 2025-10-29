@@ -172,7 +172,6 @@ export default function Home() {
             <div className="max-w-7xl mx-auto px-6">
               <div className="text-center mb-16">
                 <h2 className="text-4xl font-bold text-gray-900 mb-4">Additional Features</h2>
-                <p className="text-xl text-gray-600">Complete ecosystem for Web3 discount management</p>
               </div>
               
               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -273,8 +272,8 @@ export default function Home() {
           <div className="bg-gray-900 py-20">
             <div className="max-w-7xl mx-auto px-6">
               <div className="text-center mb-16">
-                <h2 className="text-4xl font-bold text-white mb-4">Blockchain-Powered Security</h2>
-                <p className="text-xl text-gray-300">Immutable verification and fraud prevention</p>
+                <h2 className="text-4xl font-bold text-white mb-4">Trustless by design</h2>
+                <p className="text-xl text-gray-300">Security that scales: on-chain proofs, off-chain speed.</p>
               </div>
               
               <div className="grid md:grid-cols-3 gap-8">
@@ -363,6 +362,7 @@ export default function Home() {
                 <li><Link href="/ai-agent" className="text-gray-600 hover:text-gray-900 transition-colors">AI Agent</Link></li>
                 <li><Link href="/staking" className="text-gray-600 hover:text-gray-900 transition-colors">Staking</Link></li>
                 <li><Link href="/resell" className="text-gray-600 hover:text-gray-900 transition-colors">Resell</Link></li>
+                <li><Link href="/resell" className="text-gray-600 hover:text-gray-900 transition-colors">Globe</Link></li>
               </ul>
             </div>
             
@@ -373,6 +373,7 @@ export default function Home() {
                 <li><Link href="/redeem" className="text-gray-600 hover:text-gray-900 transition-colors">Redeem NFTs</Link></li>
                 <li><Link href="/verify" className="text-gray-600 hover:text-gray-900 transition-colors">Verify Redemption</Link></li>
                 <li><Link href="/merchant" className="text-gray-600 hover:text-gray-900 transition-colors">QR Generator</Link></li>
+                <li><Link href="/resell" className="text-gray-600 hover:text-gray-900 transition-colors">Group-deals</Link></li>
               </ul>
             </div>
           </div>
