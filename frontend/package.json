@@ -25,6 +25,7 @@
     "bignumber.js": "^9.3.1",
     "bs58": "^6.0.0",
     "cohere-ai": "^7.14.0",
+    "mapbox-gl": "^3.16.0",
     "next": "16.0.0",
     "pg": "^8.16.3",
     "qrcode-generator": "^2.0.4",

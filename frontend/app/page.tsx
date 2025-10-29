@@ -220,6 +220,51 @@ export default function Home() {
                     </p>
                   </div>
                 </Link>
+
+                {/* Crypto Events Globe */}
+                <Link href="/globe">
+                  <div className="bg-white rounded-2xl p-8 hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 group cursor-pointer">
+                    <div className="w-12 h-12 bg-sky-100 rounded-xl flex items-center justify-center mb-6 group-hover:bg-sky-200 transition-colors">
+                      <svg className="w-6 h-6 text-sky-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3c4.97 0 9 4.03 9 9s-4.03 9-9 9-9-4.03-9-9 4.03-9 9-9zm0 0c2.5 2.5 2.5 15.5 0 18m0-18c-2.5 2.5-2.5 15.5 0 18M3 12h18" />
+                      </svg>
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-3">Crypto Events Globe</h3>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      Explore global crypto events on a 3D Mapbox globe
+                    </p>
+                  </div>
+                </Link>
+
+                {/* Verify Redemptions */}
+                <Link href="/verify">
+                  <div className="bg-white rounded-2xl p-8 hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 group cursor-pointer">
+                    <div className="w-12 h-12 bg-teal-100 rounded-xl flex items-center justify-center mb-6 group-hover:bg-teal-200 transition-colors">
+                      <svg className="w-6 h-6 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-3">Verify Redemption</h3>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      Validate coupon usage and prevent fraud with on-chain checks
+                    </p>
+                  </div>
+                </Link>
+
+                {/* Leaderboard */}
+                <Link href="/leaderboard">
+                  <div className="bg-white rounded-2xl p-8 hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 group cursor-pointer">
+                    <div className="w-12 h-12 bg-pink-100 rounded-xl flex items-center justify-center mb-6 group-hover:bg-pink-200 transition-colors">
+                      <svg className="w-6 h-6 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 20h18M6 20V8m6 12V4m6 16v-6" />
+                      </svg>
+                    </div>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-3">Leaderboard</h3>
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      Track top community contributors and event engagement
+                    </p>
+                  </div>
+                </Link>
               </div>
             </div>
           </div>
