@@ -51,10 +51,23 @@ export default function BookingsPage() {
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
     script.async = true;
-    document.body.appendChild(script);
+    script.onload = () => {
+      console.log('✅ Razorpay script loaded successfully');
+    };
+    script.onerror = () => {
+      console.error('❌ Failed to load Razorpay script');
+    };
+    
+    // Check if script already exists
+    const existingScript = document.querySelector('script[src="https://checkout.razorpay.com/v1/checkout.js"]');
+    if (!existingScript) {
+      document.body.appendChild(script);
+    } else {
+      console.log('✅ Razorpay script already exists');
+    }
     
     return () => {
-      document.body.removeChild(script);
+      // Don't remove script on cleanup to avoid reloading
     };
   }, []);
 
@@ -130,6 +143,14 @@ export default function BookingsPage() {
           color: '#000000'
         }
       };
+
+      // Check if Razorpay is loaded
+      if (typeof window === 'undefined' || !window.Razorpay) {
+        console.error('Razorpay is not loaded');
+        alert('Payment gateway is not ready. Please refresh the page and try again.');
+        setProcessingPayment(false);
+        return;
+      }
 
       const razorpay = new window.Razorpay(options);
       razorpay.open();
