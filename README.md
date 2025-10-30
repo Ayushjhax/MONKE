@@ -34,7 +34,7 @@ Why cNFTs: ultra-low minting cost, massive scalability (Merkle-compressed), on-c
   - Secondary markets unlock liquidity and price discovery for promotions and memberships.
 
 
-💡 Hackathon teams: see [`MONKE/template/README.md`](https://github.com/Ayushjhax/MONKE/blob/main/MONKE/template/README.md) to integrate Driftly’s cNFT module directly.
+💡 Hackathon teams: see [`MONKE/template/README.md`](https://github.com/Ayushjhax/MONKE/tree/main/template)) to integrate Driftly’s cNFT module directly.
 
 [ Demo to Integrate cNFT into your dAPP under 60 seconds](https://youtu.be/fQk5rVYCtSw?si=GBtXv7hzTNg0Nz-D)
 
