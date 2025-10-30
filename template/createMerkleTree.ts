@@ -57,16 +57,33 @@ const run = async () => {
     });
     await builder.sendAndConfirm(umi);
 
-    let cluster = ""; if (process.env.NODE_ENV !== 'production') { cluster = '?cluster=devnet';}
-    const txLink = addrToLink( merkleTree.publicKey, cluster);
-    console.log(txLink);
-
+    // Persist immediately so downstream scripts can proceed, even if RPC is lagging
     fs.writeFileSync(
       `./data/merkleTree${
         process.env.NODE_ENV === 'production' ? 'Mainnet' : 'Devnet'
       }.txt`,
       merkleTree.publicKey
     );
+
+    // Best-effort verification with retries, but do not fail the script if it can't be fetched yet
+    try {
+      const { fetchMerkleTree } = await import('@metaplex-foundation/mpl-bubblegum');
+      for (let attempt = 1; attempt <= 5; attempt++) {
+        try {
+          await fetchMerkleTree(umi, merkleTree.publicKey);
+          break;
+        } catch (err) {
+          if (attempt === 5) break;
+          await new Promise(r => setTimeout(r, 2000));
+        }
+      }
+    } catch (_) {
+      // ignore
+    }
+
+    let cluster: string | undefined = undefined; if (process.env.NODE_ENV !== 'production') { cluster = 'devnet';}
+    const txLink = addrToLink( merkleTree.publicKey, cluster);
+    console.log(txLink);
   } catch (e) {
     console.error(e);
   }

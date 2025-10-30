@@ -99,7 +99,7 @@ const run = async () => {
 
       const nftItemMintExplolerUrl = `https://explorer.solana.com/tx/${bs58.encode(
         mint.signature
-      )}${process.env.NODE_ENV !== 'production' && '?cluster=devnet'}`;
+      )}${process.env.NODE_ENV !== 'production' ? '?cluster=devnet' : ''}`;
 
       console.log('nftItemMint:', nftItemMintExplolerUrl)
       fs.writeFileSync(

@@ -154,8 +154,19 @@ const run = async () => {
     }
 
     // Get merkle tree and collection
-    const merkleTreeTxt     = fs.readFileSync("./data/merkleTree"+nodeEnv+".txt", 'utf8');
-    const merkleTreeAccount = await fetchMerkleTree(umi, publicKey(merkleTreeTxt));
+    const merkleTreeTxt = fs.readFileSync("./data/merkleTree"+nodeEnv+".txt", 'utf8');
+    // Retry fetch a few times to avoid eventual consistency/rpc lag
+    const treePk = publicKey(merkleTreeTxt);
+    let merkleTreeAccount: any | null = null;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      try {
+        merkleTreeAccount = await fetchMerkleTree(umi, treePk);
+        break;
+      } catch (err) {
+        if (attempt === 3) throw err;
+        await new Promise(_ => setTimeout(_, 1500));
+      }
+    }
     console.log("merkleTreeAccount:", merkleTreeAccount.publicKey);
 
     const collectionMintTxt     = fs.readFileSync("./data/collectionMint"+nodeEnv+".txt", 'utf8');
@@ -209,7 +220,7 @@ const run = async () => {
 
         const nftItemMintExplolerUrl = `https://explorer.solana.com/tx/${bs58.encode(
           mint.signature
-        )}${process.env.NODE_ENV !== 'production' && '?cluster=devnet'}`;
+        )}${process.env.NODE_ENV !== 'production' ? '?cluster=devnet' : ''}`;
 
         console.log(`   ✅ Minted: ${nftItemMintExplolerUrl}`);
         

@@ -1,0 +1,2121 @@
+{
+  "reportId": "VR-1761775561962",
+  "timestamp": 1761775561962,
+  "network": "devnet",
+  "totalAddresses": 4,
+  "validPromotions": 4,
+  "invalidPromotions": 0,
+  "averageScore": 92.5,
+  "results": [
+    {
+      "address": "AGwipQYLn9K2yTqQepjdUMUV6ukjXH2UPNrZw4GoCyBD",
+      "isValid": true,
+      "score": 100,
+      "maxScore": 100,
+      "percentage": 100,
+      "totalNFTs": 11,
+      "validNFTs": 7,
+      "nftDetails": [
+        {
+          "mintAddress": "HDsjeJjfzF4fcM5wws9gm96BeF6acqbU6PT57T9MEPiS",
+          "name": "20% Off Chelsea",
+          "symbol": "",
+          "uri": "https://turquoise-rational-tick-663.mypinata.cloud/ipfs/QmVMxwfZNJTVi9Du49a4motX4KDMm587eSQuvP8jU2uHbs",
+          "metadata": [
+            {
+              "value": 20,
+              "trait_type": "Discount Percentage"
+            },
+            {
+              "value": "$800",
+              "trait_type": "Original Price"
+            },
+            {
+              "value": "$640",
+              "trait_type": "Discounted Price"
+            },
+            {
+              "value": "$160",
+              "trait_type": "Savings"
+            },
+            {
+              "value": "Luxury Hotels",
+              "trait_type": "Merchant"
+            },
+            {
+              "value": "luxury-hotels",
+              "trait_type": "Merchant ID"
+            },
+            {
+              "value": "Hotel",
+              "trait_type": "Category"
+            },
+            {
+              "value": "Singapore",
+              "trait_type": "Location"
+            },
+            {
+              "value": "2025-12-31",
+              "trait_type": "Expiry Date"
+            },
+            {
+              "value": "12/31/2025",
+              "trait_type": "Valid Until"
+            },
+            {
+              "value": "HOTEL20-2024",
+              "trait_type": "Redemption Code"
+            },
+            {
+              "value": 999999,
+              "trait_type": "Max Uses"
+            },
+            {
+              "value": 0,
+              "trait_type": "Current Uses"
+            },
+            {
+              "value": "Active",
+              "trait_type": "Status"
+            },
+            {
+              "value": "Yes",
+              "trait_type": "Transferable"
+            },
+            {
+              "value": "DealCoin",
+              "trait_type": "Platform"
+            },
+            {
+              "value": "Solana Pay",
+              "trait_type": "Verification Method"
+            },
+            {
+              "value": "Compressed NFT",
+              "trait_type": "NFT Type"
+            }
+          ],
+          "collection": "Au7LFBxfUYWyVZzHr2kd61c29bJGE3qbUzoqmgm3Wh1c",
+          "owner": "AGwipQYLn9K2yTqQepjdUMUV6ukjXH2UPNrZw4GoCyBD",
+          "category": "Hotel",
+          "discountPercent": 20,
+          "merchant": "Luxury Hotels",
+          "redemptionCode": "HOTEL20-2024",
+          "expiryDate": "2025-12-31",
+          "isCompressed": true
+        },
+        {
+          "mintAddress": "8jBycGyAsjnSz7owEayQLoV9Wg38jvHdrkXD65PB2QXv",
+          "name": "20% Off Hotel Stay in Singapore",
+          "symbol": "",
+          "uri": "https://ayushjhax.github.io/discount-MBS-20OFF-2024.json",
+          "metadata": [
+            {
+              "value": 20,
+              "trait_type": "Discount Percentage"
+            },
+            {
+              "value": "$800",
+              "trait_type": "Original Price"
+            },
+            {
+              "value": "$640",
+              "trait_type": "Discounted Price"
+            },
+            {
+              "value": "$160",
+              "trait_type": "Savings"
+            },
+            {
+              "value": "Marina Bay Sands",
+              "trait_type": "Merchant"
+            },
+            {
+              "value": "mbs-singapore",
+              "trait_type": "Merchant ID"
+            },
+            {
+              "value": "Hotel",
+              "trait_type": "Category"
+            },
+            {
+              "value": "Singapore",
+              "trait_type": "Location"
+            },
+            {
+              "value": "2024-12-31",
+              "trait_type": "Expiry Date"
+            },
+            {
+              "value": "12/31/2024",
+              "trait_type": "Valid Until"
+            },
+            {
+              "value": "MBS-20OFF-2024",
+              "trait_type": "Redemption Code"
+            },
+            {
+              "value": 1,
+              "trait_type": "Max Uses"
+            },
+            {
+              "value": 0,
+              "trait_type": "Current Uses"
+            },
+            {
+              "value": "Active",
+              "trait_type": "Status"
+            },
+            {
+              "value": "Yes",
+              "trait_type": "Transferable"
+            },
+            {
+              "value": "DealCoin",
+              "trait_type": "Platform"
+            },
+            {
+              "value": "Solana Pay",
+              "trait_type": "Verification Method"
+            },
+            {
+              "value": "Compressed NFT",
+              "trait_type": "NFT Type"
+            }
+          ],
+          "collection": "7RVa6hDFbX23BMVk8qDzXKLMEss9jZjqo5gpYoo8Jd4t",
+          "owner": "AGwipQYLn9K2yTqQepjdUMUV6ukjXH2UPNrZw4GoCyBD",
+          "category": "Hotel",
+          "discountPercent": 20,
+          "merchant": "Marina Bay Sands",
+          "redemptionCode": "MBS-20OFF-2024",
+          "expiryDate": "2024-12-31",
+          "isCompressed": true
+        },
+        {
+          "mintAddress": "73M7BjcrYeva9wbXUoM9QXfdvCzCWhDEskA1SUgVDPcT",
+          "name": "15% Off Flight to Tokyo",
+          "symbol": "",
+          "uri": "https://ayushjhax.github.io/discount-SKY-TOKYO15-2024.json",
+          "metadata": [
+            {
+              "value": 15,
+              "trait_type": "Discount Percentage"
+            },
+            {
+              "value": "$1200",
+              "trait_type": "Original Price"
+            },
+            {
+              "value": "$1020",
+              "trait_type": "Discounted Price"
+            },
+            {
+              "value": "$180",
+              "trait_type": "Savings"
+            },
+            {
+              "value": "SkyTravel Airlines",
+              "trait_type": "Merchant"
+            },
+            {
+              "value": "sky-travel",
+              "trait_type": "Merchant ID"
+            },
+            {
+              "value": "Flight",
+              "trait_type": "Category"
+            },
+            {
+              "value": "Tokyo, Japan",
+              "trait_type": "Location"
+            },
+            {
+              "value": "2024-11-30",
+              "trait_type": "Expiry Date"
+            },
+            {
+              "value": "11/30/2024",
+              "trait_type": "Valid Until"
+            },
+            {
+              "value": "SKY-TOKYO15-2024",
+              "trait_type": "Redemption Code"
+            },
+            {
+              "value": 1,
+              "trait_type": "Max Uses"
+            },
+            {
+              "value": 0,
+              "trait_type": "Current Uses"
+            },
+            {
+              "value": "Active",
+              "trait_type": "Status"
+            },
+            {
+              "value": "Yes",
+              "trait_type": "Transferable"
+            },
+            {
+              "value": "DealCoin",
+              "trait_type": "Platform"
+            },
+            {
+              "value": "Solana Pay",
+              "trait_type": "Verification Method"
+            },
+            {
+              "value": "Compressed NFT",
+              "trait_type": "NFT Type"
+            }
+          ],
+          "collection": "7RVa6hDFbX23BMVk8qDzXKLMEss9jZjqo5gpYoo8Jd4t",
+          "owner": "AGwipQYLn9K2yTqQepjdUMUV6ukjXH2UPNrZw4GoCyBD",
+          "category": "Flight",
+          "discountPercent": 15,
+          "merchant": "SkyTravel Airlines",
+          "redemptionCode": "SKY-TOKYO15-2024",
+          "expiryDate": "2024-11-30",
+          "isCompressed": true
+        },
+        {
+          "mintAddress": "6nozcdtUBuEjR3uSe9Up4GujaGD396bbctTDgoAM8brJ",
+          "name": "20% Off Hotel Stay in Singapore",
+          "symbol": "",
+          "uri": "https://ayushjhax.github.io/discount-MBS-20OFF-2024.json",
+          "metadata": [
+            {
+              "value": 20,
+              "trait_type": "Discount Percentage"
+            },
+            {
+              "value": "$800",
+              "trait_type": "Original Price"
+            },
+            {
+              "value": "$640",
+              "trait_type": "Discounted Price"
+            },
+            {
+              "value": "$160",
+              "trait_type": "Savings"
+            },
+            {
+              "value": "Marina Bay Sands",
+              "trait_type": "Merchant"
+            },
+            {
+              "value": "mbs-singapore",
+              "trait_type": "Merchant ID"
+            },
+            {
+              "value": "Hotel",
+              "trait_type": "Category"
+            },
+            {
+              "value": "Singapore",
+              "trait_type": "Location"
+            },
+            {
+              "value": "2024-12-31",
+              "trait_type": "Expiry Date"
+            },
+            {
+              "value": "12/31/2024",
+              "trait_type": "Valid Until"
+            },
+            {
+              "value": "MBS-20OFF-2024",
+              "trait_type": "Redemption Code"
+            },
+            {
+              "value": 1,
+              "trait_type": "Max Uses"
+            },
+            {
+              "value": 0,
+              "trait_type": "Current Uses"
+            },
+            {
+              "value": "Active",
+              "trait_type": "Status"
+            },
+            {
+              "value": "Yes",
+              "trait_type": "Transferable"
+            },
+            {
+              "value": "DealCoin",
+              "trait_type": "Platform"
+            },
+            {
+              "value": "Solana Pay",
+              "trait_type": "Verification Method"
+            },
+            {
+              "value": "Compressed NFT",
+              "trait_type": "NFT Type"
+            }
+          ],
+          "collection": "21VVmpR8AeS9f7ed7Kmmrgsq9ut3X9pjQgj4hUnKkNk2",
+          "owner": "AGwipQYLn9K2yTqQepjdUMUV6ukjXH2UPNrZw4GoCyBD",
+          "category": "Hotel",
+          "discountPercent": 20,
+          "merchant": "Marina Bay Sands",
+          "redemptionCode": "MBS-20OFF-2024",
+          "expiryDate": "2024-12-31",
+          "isCompressed": true
+        },
+        {
+          "mintAddress": "5W5NN6NVZdvQmw2AhXwRCmqWcvLJJ514pQfwRDUEb4R6",
+          "name": "30% Off Fine Dining Experience",
+          "symbol": "",
+          "uri": "https://ayushjhax.github.io/discount-LCB-DINING30-2024.json",
+          "metadata": [
+            {
+              "value": 30,
+              "trait_type": "Discount Percentage"
+            },
+            {
+              "value": "$200",
+              "trait_type": "Original Price"
+            },
+            {
+              "value": "$140",
+              "trait_type": "Discounted Price"
+            },
+            {
+              "value": "$60",
+              "trait_type": "Savings"
+            },
+            {
+              "value": "Le Cordon Bleu",
+              "trait_type": "Merchant"
+            },
+            {
+              "value": "le-cordon-bleu",
+              "trait_type": "Merchant ID"
+            },
+            {
+              "value": "Restaurant",
+              "trait_type": "Category"
+            },
+            {
+              "value": "Paris, France",
+              "trait_type": "Location"
+            },
+            {
+              "value": "2024-10-31",
+              "trait_type": "Expiry Date"
+            },
+            {
+              "value": "10/31/2024",
+              "trait_type": "Valid Until"
+            },
+            {
+              "value": "LCB-DINING30-2024",
+              "trait_type": "Redemption Code"
+            },
+            {
+              "value": 1,
+              "trait_type": "Max Uses"
+            },
+            {
+              "value": 0,
+              "trait_type": "Current Uses"
+            },
+            {
+              "value": "Active",
+              "trait_type": "Status"
+            },
+            {
+              "value": "Yes",
+              "trait_type": "Transferable"
+            },
+            {
+              "value": "DealCoin",
+              "trait_type": "Platform"
+            },
+            {
+              "value": "Solana Pay",
+              "trait_type": "Verification Method"
+            },
+            {
+              "value": "Compressed NFT",
+              "trait_type": "NFT Type"
+            }
+          ],
+          "collection": "7RVa6hDFbX23BMVk8qDzXKLMEss9jZjqo5gpYoo8Jd4t",
+          "owner": "AGwipQYLn9K2yTqQepjdUMUV6ukjXH2UPNrZw4GoCyBD",
+          "category": "Restaurant",
+          "discountPercent": 30,
+          "merchant": "Le Cordon Bleu",
+          "redemptionCode": "LCB-DINING30-2024",
+          "expiryDate": "2024-10-31",
+          "isCompressed": true
+        },
+        {
+          "mintAddress": "4BavNdxXs7uFJJv3fdJcWgYUK4i39A6rkp92neiaLyw9",
+          "name": "30% Off Fine Dining Experience",
+          "symbol": "",
+          "uri": "https://ayushjhax.github.io/discount-LCB-DINING30-2024.json",
+          "metadata": [
+            {
+              "value": 30,
+              "trait_type": "Discount Percentage"
+            },
+            {
+              "value": "$200",
+              "trait_type": "Original Price"
+            },
+            {
+              "value": "$140",
+              "trait_type": "Discounted Price"
+            },
+            {
+              "value": "$60",
+              "trait_type": "Savings"
+            },
+            {
+              "value": "Le Cordon Bleu",
+              "trait_type": "Merchant"
+            },
+            {
+              "value": "le-cordon-bleu",
+              "trait_type": "Merchant ID"
+            },
+            {
+              "value": "Restaurant",
+              "trait_type": "Category"
+            },
+            {
+              "value": "Paris, France",
+              "trait_type": "Location"
+            },
+            {
+              "value": "2024-10-31",
+              "trait_type": "Expiry Date"
+            },
+            {
+              "value": "10/31/2024",
+              "trait_type": "Valid Until"
+            },
+            {
+              "value": "LCB-DINING30-2024",
+              "trait_type": "Redemption Code"
+            },
+            {
+              "value": 1,
+              "trait_type": "Max Uses"
+            },
+            {
+              "value": 0,
+              "trait_type": "Current Uses"
+            },
+            {
+              "value": "Active",
+              "trait_type": "Status"
+            },
+            {
+              "value": "Yes",
+              "trait_type": "Transferable"
+            },
+            {
+              "value": "DealCoin",
+              "trait_type": "Platform"
+            },
+            {
+              "value": "Solana Pay",
+              "trait_type": "Verification Method"
+            },
+            {
+              "value": "Compressed NFT",
+              "trait_type": "NFT Type"
+            }
+          ],
+          "collection": "21VVmpR8AeS9f7ed7Kmmrgsq9ut3X9pjQgj4hUnKkNk2",
+          "owner": "AGwipQYLn9K2yTqQepjdUMUV6ukjXH2UPNrZw4GoCyBD",
+          "category": "Restaurant",
+          "discountPercent": 30,
+          "merchant": "Le Cordon Bleu",
+          "redemptionCode": "LCB-DINING30-2024",
+          "expiryDate": "2024-10-31",
+          "isCompressed": true
+        },
+        {
+          "mintAddress": "3Qkjf27LQNBnqWgTtWBqE8rejK69pPw22pfrvvxCcfaJ",
+          "name": "15% Off Flight to Tokyo",
+          "symbol": "",
+          "uri": "https://ayushjhax.github.io/discount-SKY-TOKYO15-2024.json",
+          "metadata": [
+            {
+              "value": 15,
+              "trait_type": "Discount Percentage"
+            },
+            {
+              "value": "$1200",
+              "trait_type": "Original Price"
+            },
+            {
+              "value": "$1020",
+              "trait_type": "Discounted Price"
+            },
+            {
+              "value": "$180",
+              "trait_type": "Savings"
+            },
+            {
+              "value": "SkyTravel Airlines",
+              "trait_type": "Merchant"
+            },
+            {
+              "value": "sky-travel",
+              "trait_type": "Merchant ID"
+            },
+            {
+              "value": "Flight",
+              "trait_type": "Category"
+            },
+            {
+              "value": "Tokyo, Japan",
+              "trait_type": "Location"
+            },
+            {
+              "value": "2024-11-30",
+              "trait_type": "Expiry Date"
+            },
+            {
+              "value": "11/30/2024",
+              "trait_type": "Valid Until"
+            },
+            {
+              "value": "SKY-TOKYO15-2024",
+              "trait_type": "Redemption Code"
+            },
+            {
+              "value": 1,
+              "trait_type": "Max Uses"
+            },
+            {
+              "value": 0,
+              "trait_type": "Current Uses"
+            },
+            {
+              "value": "Active",
+              "trait_type": "Status"
+            },
+            {
+              "value": "Yes",
+              "trait_type": "Transferable"
+            },
+            {
+              "value": "DealCoin",
+              "trait_type": "Platform"
+            },
+            {
+              "value": "Solana Pay",
+              "trait_type": "Verification Method"
+            },
+            {
+              "value": "Compressed NFT",
+              "trait_type": "NFT Type"
+            }
+          ],
+          "collection": "21VVmpR8AeS9f7ed7Kmmrgsq9ut3X9pjQgj4hUnKkNk2",
+          "owner": "AGwipQYLn9K2yTqQepjdUMUV6ukjXH2UPNrZw4GoCyBD",
+          "category": "Flight",
+          "discountPercent": 15,
+          "merchant": "SkyTravel Airlines",
+          "redemptionCode": "SKY-TOKYO15-2024",
+          "expiryDate": "2024-11-30",
+          "isCompressed": true
+        }
+      ],
+      "checks": {
+        "addressValid": true,
+        "hasNFTBalance": true,
+        "hasValidNFTs": true,
+        "collectionMatch": true,
+        "promotionAttributes": true,
+        "redemptionCode": true,
+        "expiryValid": true,
+        "typeVerification": true
+      },
+      "provenanceData": {},
+      "fraudDetection": {
+        "isForged": false,
+        "isWrapped": false,
+        "isProxy": false,
+        "hasAlterations": false,
+        "warnings": []
+      },
+      "errors": [],
+      "warnings": [
+        "Promotion 20% Off Hotel Stay in Singapore has expired",
+        "Promotion 15% Off Flight to Tokyo has expired",
+        "Promotion 20% Off Hotel Stay in Singapore has expired",
+        "Promotion 30% Off Fine Dining Experience has expired",
+        "Promotion 30% Off Fine Dining Experience has expired",
+        "Promotion 15% Off Flight to Tokyo has expired"
+      ],
+      "verifiedAt": 1761775555860
+    },
+    {
+      "address": "79YxpnhDfXpKSvA85HLUKRcgzNE97fCx8juMomegVW4X",
+      "isValid": true,
+      "score": 90,
+      "maxScore": 100,
+      "percentage": 90,
+      "totalNFTs": 5,
+      "validNFTs": 5,
+      "nftDetails": [
+        {
+          "mintAddress": "H1vVhhJHHgVoRJyjnz5S84gyfAQxbJBbrb7Tr9JKUdy9",
+          "name": "20% Off Hotel Stay in Singapore",
+          "symbol": "",
+          "uri": "https://ayushjhax.github.io/discount-MBS-20OFF-2024.json",
+          "metadata": [
+            {
+              "value": 20,
+              "trait_type": "Discount Percentage"
+            },
+            {
+              "value": "$800",
+              "trait_type": "Original Price"
+            },
+            {
+              "value": "$640",
+              "trait_type": "Discounted Price"
+            },
+            {
+              "value": "$160",
+              "trait_type": "Savings"
+            },
+            {
+              "value": "Marina Bay Sands",
+              "trait_type": "Merchant"
+            },
+            {
+              "value": "mbs-singapore",
+              "trait_type": "Merchant ID"
+            },
+            {
+              "value": "Hotel",
+              "trait_type": "Category"
+            },
+            {
+              "value": "Singapore",
+              "trait_type": "Location"
+            },
+            {
+              "value": "2024-12-31",
+              "trait_type": "Expiry Date"
+            },
+            {
+              "value": "12/31/2024",
+              "trait_type": "Valid Until"
+            },
+            {
+              "value": "MBS-20OFF-2024",
+              "trait_type": "Redemption Code"
+            },
+            {
+              "value": 1,
+              "trait_type": "Max Uses"
+            },
+            {
+              "value": 0,
+              "trait_type": "Current Uses"
+            },
+            {
+              "value": "Active",
+              "trait_type": "Status"
+            },
+            {
+              "value": "Yes",
+              "trait_type": "Transferable"
+            },
+            {
+              "value": "DealCoin",
+              "trait_type": "Platform"
+            },
+            {
+              "value": "Solana Pay",
+              "trait_type": "Verification Method"
+            },
+            {
+              "value": "Compressed NFT",
+              "trait_type": "NFT Type"
+            }
+          ],
+          "collection": "7RVa6hDFbX23BMVk8qDzXKLMEss9jZjqo5gpYoo8Jd4t",
+          "owner": "79YxpnhDfXpKSvA85HLUKRcgzNE97fCx8juMomegVW4X",
+          "category": "Hotel",
+          "discountPercent": 20,
+          "merchant": "Marina Bay Sands",
+          "redemptionCode": "MBS-20OFF-2024",
+          "expiryDate": "2024-12-31",
+          "isCompressed": true
+        },
+        {
+          "mintAddress": "EDgjuNsKKX4F518WiLnajozqzb79VDCeuvqyiUAWUWym",
+          "name": "20% Off Hotel Stay in Singapore",
+          "symbol": "",
+          "uri": "https://ayushjhax.github.io/discount-MBS-20OFF-2024.json",
+          "metadata": [
+            {
+              "value": 20,
+              "trait_type": "Discount Percentage"
+            },
+            {
+              "value": "$800",
+              "trait_type": "Original Price"
+            },
+            {
+              "value": "$640",
+              "trait_type": "Discounted Price"
+            },
+            {
+              "value": "$160",
+              "trait_type": "Savings"
+            },
+            {
+              "value": "Marina Bay Sands",
+              "trait_type": "Merchant"
+            },
+            {
+              "value": "mbs-singapore",
+              "trait_type": "Merchant ID"
+            },
+            {
+              "value": "Hotel",
+              "trait_type": "Category"
+            },
+            {
+              "value": "Singapore",
+              "trait_type": "Location"
+            },
+            {
+              "value": "2024-12-31",
+              "trait_type": "Expiry Date"
+            },
+            {
+              "value": "12/31/2024",
+              "trait_type": "Valid Until"
+            },
+            {
+              "value": "MBS-20OFF-2024",
+              "trait_type": "Redemption Code"
+            },
+            {
+              "value": 1,
+              "trait_type": "Max Uses"
+            },
+            {
+              "value": 0,
+              "trait_type": "Current Uses"
+            },
+            {
+              "value": "Active",
+              "trait_type": "Status"
+            },
+            {
+              "value": "Yes",
+              "trait_type": "Transferable"
+            },
+            {
+              "value": "DealCoin",
+              "trait_type": "Platform"
+            },
+            {
+              "value": "Solana Pay",
+              "trait_type": "Verification Method"
+            },
+            {
+              "value": "Compressed NFT",
+              "trait_type": "NFT Type"
+            }
+          ],
+          "collection": "G37i2dA2Xj863hovh2454yBkqcSK89EAjmP2nu6T4A3J",
+          "owner": "79YxpnhDfXpKSvA85HLUKRcgzNE97fCx8juMomegVW4X",
+          "category": "Hotel",
+          "discountPercent": 20,
+          "merchant": "Marina Bay Sands",
+          "redemptionCode": "MBS-20OFF-2024",
+          "expiryDate": "2024-12-31",
+          "isCompressed": true
+        },
+        {
+          "mintAddress": "E5LzuH86dmkZnakVe4wfHLfhXqFpf9KxTXny9EFR4w9E",
+          "name": "20% Off Hotel Stay in Singapore",
+          "symbol": "",
+          "uri": "https://ayushjhax.github.io/discount-MBS-20OFF-2024.json",
+          "metadata": [
+            {
+              "value": 20,
+              "trait_type": "Discount Percentage"
+            },
+            {
+              "value": "$800",
+              "trait_type": "Original Price"
+            },
+            {
+              "value": "$640",
+              "trait_type": "Discounted Price"
+            },
+            {
+              "value": "$160",
+              "trait_type": "Savings"
+            },
+            {
+              "value": "Marina Bay Sands",
+              "trait_type": "Merchant"
+            },
+            {
+              "value": "mbs-singapore",
+              "trait_type": "Merchant ID"
+            },
+            {
+              "value": "Hotel",
+              "trait_type": "Category"
+            },
+            {
+              "value": "Singapore",
+              "trait_type": "Location"
+            },
+            {
+              "value": "2024-12-31",
+              "trait_type": "Expiry Date"
+            },
+            {
+              "value": "12/31/2024",
+              "trait_type": "Valid Until"
+            },
+            {
+              "value": "MBS-20OFF-2024",
+              "trait_type": "Redemption Code"
+            },
+            {
+              "value": 1,
+              "trait_type": "Max Uses"
+            },
+            {
+              "value": 0,
+              "trait_type": "Current Uses"
+            },
+            {
+              "value": "Active",
+              "trait_type": "Status"
+            },
+            {
+              "value": "Yes",
+              "trait_type": "Transferable"
+            },
+            {
+              "value": "DealCoin",
+              "trait_type": "Platform"
+            },
+            {
+              "value": "Solana Pay",
+              "trait_type": "Verification Method"
+            },
+            {
+              "value": "Compressed NFT",
+              "trait_type": "NFT Type"
+            }
+          ],
+          "collection": "21VVmpR8AeS9f7ed7Kmmrgsq9ut3X9pjQgj4hUnKkNk2",
+          "owner": "79YxpnhDfXpKSvA85HLUKRcgzNE97fCx8juMomegVW4X",
+          "category": "Hotel",
+          "discountPercent": 20,
+          "merchant": "Marina Bay Sands",
+          "redemptionCode": "MBS-20OFF-2024",
+          "expiryDate": "2024-12-31",
+          "isCompressed": true
+        },
+        {
+          "mintAddress": "6gPD7n2gPAawcqpYkuiMQ1K53p86Ti1R4twRPsJU1y1M",
+          "name": "20% Off Hotel Stay in Singapore",
+          "symbol": "",
+          "uri": "https://ayushjhax.github.io/discount-MBS-20OFF-2024.json",
+          "metadata": [
+            {
+              "value": 20,
+              "trait_type": "Discount Percentage"
+            },
+            {
+              "value": "$800",
+              "trait_type": "Original Price"
+            },
+            {
+              "value": "$640",
+              "trait_type": "Discounted Price"
+            },
+            {
+              "value": "$160",
+              "trait_type": "Savings"
+            },
+            {
+              "value": "Marina Bay Sands",
+              "trait_type": "Merchant"
+            },
+            {
+              "value": "mbs-singapore",
+              "trait_type": "Merchant ID"
+            },
+            {
+              "value": "Hotel",
+              "trait_type": "Category"
+            },
+            {
+              "value": "Singapore",
+              "trait_type": "Location"
+            },
+            {
+              "value": "2024-12-31",
+              "trait_type": "Expiry Date"
+            },
+            {
+              "value": "12/31/2024",
+              "trait_type": "Valid Until"
+            },
+            {
+              "value": "MBS-20OFF-2024",
+              "trait_type": "Redemption Code"
+            },
+            {
+              "value": 1,
+              "trait_type": "Max Uses"
+            },
+            {
+              "value": 0,
+              "trait_type": "Current Uses"
+            },
+            {
+              "value": "Active",
+              "trait_type": "Status"
+            },
+            {
+              "value": "Yes",
+              "trait_type": "Transferable"
+            },
+            {
+              "value": "DealCoin",
+              "trait_type": "Platform"
+            },
+            {
+              "value": "Solana Pay",
+              "trait_type": "Verification Method"
+            },
+            {
+              "value": "Compressed NFT",
+              "trait_type": "NFT Type"
+            }
+          ],
+          "collection": "GmkGX3uh17uNCytwJ1qpUmSVCU4DCHysYYetAz5KNZ3e",
+          "owner": "79YxpnhDfXpKSvA85HLUKRcgzNE97fCx8juMomegVW4X",
+          "category": "Hotel",
+          "discountPercent": 20,
+          "merchant": "Marina Bay Sands",
+          "redemptionCode": "MBS-20OFF-2024",
+          "expiryDate": "2024-12-31",
+          "isCompressed": true
+        },
+        {
+          "mintAddress": "5BQhX7v5FTbZokxoqSN9tUgoYrxbjAKqzVL5LBh3976R",
+          "name": "20% Off Hotel Stay in Singapore",
+          "symbol": "",
+          "uri": "https://ayushjhax.github.io/discount-MBS-20OFF-2024.json",
+          "metadata": [
+            {
+              "value": 20,
+              "trait_type": "Discount Percentage"
+            },
+            {
+              "value": "$800",
+              "trait_type": "Original Price"
+            },
+            {
+              "value": "$640",
+              "trait_type": "Discounted Price"
+            },
+            {
+              "value": "$160",
+              "trait_type": "Savings"
+            },
+            {
+              "value": "Marina Bay Sands",
+              "trait_type": "Merchant"
+            },
+            {
+              "value": "mbs-singapore",
+              "trait_type": "Merchant ID"
+            },
+            {
+              "value": "Hotel",
+              "trait_type": "Category"
+            },
+            {
+              "value": "Singapore",
+              "trait_type": "Location"
+            },
+            {
+              "value": "2024-12-31",
+              "trait_type": "Expiry Date"
+            },
+            {
+              "value": "12/31/2024",
+              "trait_type": "Valid Until"
+            },
+            {
+              "value": "MBS-20OFF-2024",
+              "trait_type": "Redemption Code"
+            },
+            {
+              "value": 1,
+              "trait_type": "Max Uses"
+            },
+            {
+              "value": 0,
+              "trait_type": "Current Uses"
+            },
+            {
+              "value": "Active",
+              "trait_type": "Status"
+            },
+            {
+              "value": "Yes",
+              "trait_type": "Transferable"
+            },
+            {
+              "value": "DealCoin",
+              "trait_type": "Platform"
+            },
+            {
+              "value": "Solana Pay",
+              "trait_type": "Verification Method"
+            },
+            {
+              "value": "Compressed NFT",
+              "trait_type": "NFT Type"
+            }
+          ],
+          "collection": "6sm8TTTCpZBQHDTHsr78PkFdYHCZsgy5Q1riGJGaPan7",
+          "owner": "79YxpnhDfXpKSvA85HLUKRcgzNE97fCx8juMomegVW4X",
+          "category": "Hotel",
+          "discountPercent": 20,
+          "merchant": "Marina Bay Sands",
+          "redemptionCode": "MBS-20OFF-2024",
+          "expiryDate": "2024-12-31",
+          "isCompressed": true
+        }
+      ],
+      "checks": {
+        "addressValid": true,
+        "hasNFTBalance": true,
+        "hasValidNFTs": true,
+        "collectionMatch": true,
+        "promotionAttributes": true,
+        "redemptionCode": true,
+        "expiryValid": false,
+        "typeVerification": true
+      },
+      "provenanceData": {},
+      "fraudDetection": {
+        "isForged": false,
+        "isWrapped": false,
+        "isProxy": false,
+        "hasAlterations": false,
+        "warnings": []
+      },
+      "errors": [],
+      "warnings": [
+        "Promotion 20% Off Hotel Stay in Singapore has expired",
+        "✅ Correct discount type: Hotel",
+        "Promotion 20% Off Hotel Stay in Singapore has expired",
+        "✅ Correct discount type: Hotel",
+        "Promotion 20% Off Hotel Stay in Singapore has expired",
+        "✅ Correct discount type: Hotel",
+        "Promotion 20% Off Hotel Stay in Singapore has expired",
+        "✅ Correct discount type: Hotel",
+        "Promotion 20% Off Hotel Stay in Singapore has expired",
+        "✅ Correct discount type: Hotel"
+      ],
+      "verifiedAt": 1761775558036
+    },
+    {
+      "address": "BkxuGUMYfZe3CEQfLcEG4towJFsXGzXhouM7F8EjSVC2",
+      "isValid": true,
+      "score": 90,
+      "maxScore": 100,
+      "percentage": 90,
+      "totalNFTs": 5,
+      "validNFTs": 5,
+      "nftDetails": [
+        {
+          "mintAddress": "J14BTLr9gHr2ZJCALZnBjtrvrvdUJJJJ7PSf4MWMjt1B",
+          "name": "15% Off Flight to Tokyo",
+          "symbol": "",
+          "uri": "https://ayushjhax.github.io/discount-SKY-TOKYO15-2024.json",
+          "metadata": [
+            {
+              "value": 15,
+              "trait_type": "Discount Percentage"
+            },
+            {
+              "value": "$1200",
+              "trait_type": "Original Price"
+            },
+            {
+              "value": "$1020",
+              "trait_type": "Discounted Price"
+            },
+            {
+              "value": "$180",
+              "trait_type": "Savings"
+            },
+            {
+              "value": "SkyTravel Airlines",
+              "trait_type": "Merchant"
+            },
+            {
+              "value": "sky-travel",
+              "trait_type": "Merchant ID"
+            },
+            {
+              "value": "Flight",
+              "trait_type": "Category"
+            },
+            {
+              "value": "Tokyo, Japan",
+              "trait_type": "Location"
+            },
+            {
+              "value": "2024-11-30",
+              "trait_type": "Expiry Date"
+            },
+            {
+              "value": "11/30/2024",
+              "trait_type": "Valid Until"
+            },
+            {
+              "value": "SKY-TOKYO15-2024",
+              "trait_type": "Redemption Code"
+            },
+            {
+              "value": 1,
+              "trait_type": "Max Uses"
+            },
+            {
+              "value": 0,
+              "trait_type": "Current Uses"
+            },
+            {
+              "value": "Active",
+              "trait_type": "Status"
+            },
+            {
+              "value": "Yes",
+              "trait_type": "Transferable"
+            },
+            {
+              "value": "DealCoin",
+              "trait_type": "Platform"
+            },
+            {
+              "value": "Solana Pay",
+              "trait_type": "Verification Method"
+            },
+            {
+              "value": "Compressed NFT",
+              "trait_type": "NFT Type"
+            }
+          ],
+          "collection": "G37i2dA2Xj863hovh2454yBkqcSK89EAjmP2nu6T4A3J",
+          "owner": "BkxuGUMYfZe3CEQfLcEG4towJFsXGzXhouM7F8EjSVC2",
+          "category": "Flight",
+          "discountPercent": 15,
+          "merchant": "SkyTravel Airlines",
+          "redemptionCode": "SKY-TOKYO15-2024",
+          "expiryDate": "2024-11-30",
+          "isCompressed": true
+        },
+        {
+          "mintAddress": "C64Ctfw1SNGrMZXa5spWjuSG1LBExTRZqhGqcujvkdCj",
+          "name": "15% Off Flight to Tokyo",
+          "symbol": "",
+          "uri": "https://ayushjhax.github.io/discount-SKY-TOKYO15-2024.json",
+          "metadata": [
+            {
+              "value": 15,
+              "trait_type": "Discount Percentage"
+            },
+            {
+              "value": "$1200",
+              "trait_type": "Original Price"
+            },
+            {
+              "value": "$1020",
+              "trait_type": "Discounted Price"
+            },
+            {
+              "value": "$180",
+              "trait_type": "Savings"
+            },
+            {
+              "value": "SkyTravel Airlines",
+              "trait_type": "Merchant"
+            },
+            {
+              "value": "sky-travel",
+              "trait_type": "Merchant ID"
+            },
+            {
+              "value": "Flight",
+              "trait_type": "Category"
+            },
+            {
+              "value": "Tokyo, Japan",
+              "trait_type": "Location"
+            },
+            {
+              "value": "2024-11-30",
+              "trait_type": "Expiry Date"
+            },
+            {
+              "value": "11/30/2024",
+              "trait_type": "Valid Until"
+            },
+            {
+              "value": "SKY-TOKYO15-2024",
+              "trait_type": "Redemption Code"
+            },
+            {
+              "value": 1,
+              "trait_type": "Max Uses"
+            },
+            {
+              "value": 0,
+              "trait_type": "Current Uses"
+            },
+            {
+              "value": "Active",
+              "trait_type": "Status"
+            },
+            {
+              "value": "Yes",
+              "trait_type": "Transferable"
+            },
+            {
+              "value": "DealCoin",
+              "trait_type": "Platform"
+            },
+            {
+              "value": "Solana Pay",
+              "trait_type": "Verification Method"
+            },
+            {
+              "value": "Compressed NFT",
+              "trait_type": "NFT Type"
+            }
+          ],
+          "collection": "7RVa6hDFbX23BMVk8qDzXKLMEss9jZjqo5gpYoo8Jd4t",
+          "owner": "BkxuGUMYfZe3CEQfLcEG4towJFsXGzXhouM7F8EjSVC2",
+          "category": "Flight",
+          "discountPercent": 15,
+          "merchant": "SkyTravel Airlines",
+          "redemptionCode": "SKY-TOKYO15-2024",
+          "expiryDate": "2024-11-30",
+          "isCompressed": true
+        },
+        {
+          "mintAddress": "ABrBhfeXaRUez84XSJbb4TVytHo4aeHdZWXGY1YF8mWR",
+          "name": "15% Off Flight to Tokyo",
+          "symbol": "",
+          "uri": "https://ayushjhax.github.io/discount-SKY-TOKYO15-2024.json",
+          "metadata": [
+            {
+              "value": 15,
+              "trait_type": "Discount Percentage"
+            },
+            {
+              "value": "$1200",
+              "trait_type": "Original Price"
+            },
+            {
+              "value": "$1020",
+              "trait_type": "Discounted Price"
+            },
+            {
+              "value": "$180",
+              "trait_type": "Savings"
+            },
+            {
+              "value": "SkyTravel Airlines",
+              "trait_type": "Merchant"
+            },
+            {
+              "value": "sky-travel",
+              "trait_type": "Merchant ID"
+            },
+            {
+              "value": "Flight",
+              "trait_type": "Category"
+            },
+            {
+              "value": "Tokyo, Japan",
+              "trait_type": "Location"
+            },
+            {
+              "value": "2024-11-30",
+              "trait_type": "Expiry Date"
+            },
+            {
+              "value": "11/30/2024",
+              "trait_type": "Valid Until"
+            },
+            {
+              "value": "SKY-TOKYO15-2024",
+              "trait_type": "Redemption Code"
+            },
+            {
+              "value": 1,
+              "trait_type": "Max Uses"
+            },
+            {
+              "value": 0,
+              "trait_type": "Current Uses"
+            },
+            {
+              "value": "Active",
+              "trait_type": "Status"
+            },
+            {
+              "value": "Yes",
+              "trait_type": "Transferable"
+            },
+            {
+              "value": "DealCoin",
+              "trait_type": "Platform"
+            },
+            {
+              "value": "Solana Pay",
+              "trait_type": "Verification Method"
+            },
+            {
+              "value": "Compressed NFT",
+              "trait_type": "NFT Type"
+            }
+          ],
+          "collection": "6sm8TTTCpZBQHDTHsr78PkFdYHCZsgy5Q1riGJGaPan7",
+          "owner": "BkxuGUMYfZe3CEQfLcEG4towJFsXGzXhouM7F8EjSVC2",
+          "category": "Flight",
+          "discountPercent": 15,
+          "merchant": "SkyTravel Airlines",
+          "redemptionCode": "SKY-TOKYO15-2024",
+          "expiryDate": "2024-11-30",
+          "isCompressed": true
+        },
+        {
+          "mintAddress": "6z4PKi3t1sSok3ZiiP7sNoZYHhJSsfT6CP8rkkph4jco",
+          "name": "15% Off Flight to Tokyo",
+          "symbol": "",
+          "uri": "https://ayushjhax.github.io/discount-SKY-TOKYO15-2024.json",
+          "metadata": [
+            {
+              "value": 15,
+              "trait_type": "Discount Percentage"
+            },
+            {
+              "value": "$1200",
+              "trait_type": "Original Price"
+            },
+            {
+              "value": "$1020",
+              "trait_type": "Discounted Price"
+            },
+            {
+              "value": "$180",
+              "trait_type": "Savings"
+            },
+            {
+              "value": "SkyTravel Airlines",
+              "trait_type": "Merchant"
+            },
+            {
+              "value": "sky-travel",
+              "trait_type": "Merchant ID"
+            },
+            {
+              "value": "Flight",
+              "trait_type": "Category"
+            },
+            {
+              "value": "Tokyo, Japan",
+              "trait_type": "Location"
+            },
+            {
+              "value": "2024-11-30",
+              "trait_type": "Expiry Date"
+            },
+            {
+              "value": "11/30/2024",
+              "trait_type": "Valid Until"
+            },
+            {
+              "value": "SKY-TOKYO15-2024",
+              "trait_type": "Redemption Code"
+            },
+            {
+              "value": 1,
+              "trait_type": "Max Uses"
+            },
+            {
+              "value": 0,
+              "trait_type": "Current Uses"
+            },
+            {
+              "value": "Active",
+              "trait_type": "Status"
+            },
+            {
+              "value": "Yes",
+              "trait_type": "Transferable"
+            },
+            {
+              "value": "DealCoin",
+              "trait_type": "Platform"
+            },
+            {
+              "value": "Solana Pay",
+              "trait_type": "Verification Method"
+            },
+            {
+              "value": "Compressed NFT",
+              "trait_type": "NFT Type"
+            }
+          ],
+          "collection": "21VVmpR8AeS9f7ed7Kmmrgsq9ut3X9pjQgj4hUnKkNk2",
+          "owner": "BkxuGUMYfZe3CEQfLcEG4towJFsXGzXhouM7F8EjSVC2",
+          "category": "Flight",
+          "discountPercent": 15,
+          "merchant": "SkyTravel Airlines",
+          "redemptionCode": "SKY-TOKYO15-2024",
+          "expiryDate": "2024-11-30",
+          "isCompressed": true
+        },
+        {
+          "mintAddress": "592xmpEipfQFxhAdMHAcj7gULoa6FU68ZTQiqEVWJiWS",
+          "name": "15% Off Flight to Tokyo",
+          "symbol": "",
+          "uri": "https://ayushjhax.github.io/discount-SKY-TOKYO15-2024.json",
+          "metadata": [
+            {
+              "value": 15,
+              "trait_type": "Discount Percentage"
+            },
+            {
+              "value": "$1200",
+              "trait_type": "Original Price"
+            },
+            {
+              "value": "$1020",
+              "trait_type": "Discounted Price"
+            },
+            {
+              "value": "$180",
+              "trait_type": "Savings"
+            },
+            {
+              "value": "SkyTravel Airlines",
+              "trait_type": "Merchant"
+            },
+            {
+              "value": "sky-travel",
+              "trait_type": "Merchant ID"
+            },
+            {
+              "value": "Flight",
+              "trait_type": "Category"
+            },
+            {
+              "value": "Tokyo, Japan",
+              "trait_type": "Location"
+            },
+            {
+              "value": "2024-11-30",
+              "trait_type": "Expiry Date"
+            },
+            {
+              "value": "11/30/2024",
+              "trait_type": "Valid Until"
+            },
+            {
+              "value": "SKY-TOKYO15-2024",
+              "trait_type": "Redemption Code"
+            },
+            {
+              "value": 1,
+              "trait_type": "Max Uses"
+            },
+            {
+              "value": 0,
+              "trait_type": "Current Uses"
+            },
+            {
+              "value": "Active",
+              "trait_type": "Status"
+            },
+            {
+              "value": "Yes",
+              "trait_type": "Transferable"
+            },
+            {
+              "value": "DealCoin",
+              "trait_type": "Platform"
+            },
+            {
+              "value": "Solana Pay",
+              "trait_type": "Verification Method"
+            },
+            {
+              "value": "Compressed NFT",
+              "trait_type": "NFT Type"
+            }
+          ],
+          "collection": "GmkGX3uh17uNCytwJ1qpUmSVCU4DCHysYYetAz5KNZ3e",
+          "owner": "BkxuGUMYfZe3CEQfLcEG4towJFsXGzXhouM7F8EjSVC2",
+          "category": "Flight",
+          "discountPercent": 15,
+          "merchant": "SkyTravel Airlines",
+          "redemptionCode": "SKY-TOKYO15-2024",
+          "expiryDate": "2024-11-30",
+          "isCompressed": true
+        }
+      ],
+      "checks": {
+        "addressValid": true,
+        "hasNFTBalance": true,
+        "hasValidNFTs": true,
+        "collectionMatch": true,
+        "promotionAttributes": true,
+        "redemptionCode": true,
+        "expiryValid": false,
+        "typeVerification": true
+      },
+      "provenanceData": {},
+      "fraudDetection": {
+        "isForged": false,
+        "isWrapped": false,
+        "isProxy": false,
+        "hasAlterations": false,
+        "warnings": []
+      },
+      "errors": [],
+      "warnings": [
+        "Promotion 15% Off Flight to Tokyo has expired",
+        "✅ Correct discount type: Flight",
+        "Promotion 15% Off Flight to Tokyo has expired",
+        "✅ Correct discount type: Flight",
+        "Promotion 15% Off Flight to Tokyo has expired",
+        "✅ Correct discount type: Flight",
+        "Promotion 15% Off Flight to Tokyo has expired",
+        "✅ Correct discount type: Flight",
+        "Promotion 15% Off Flight to Tokyo has expired",
+        "✅ Correct discount type: Flight"
+      ],
+      "verifiedAt": 1761775559346
+    },
+    {
+      "address": "4aLYHregmyZxYQpTFFNzRAFrBAgs46gNCFsqVQkPP6nK",
+      "isValid": true,
+      "score": 90,
+      "maxScore": 100,
+      "percentage": 90,
+      "totalNFTs": 5,
+      "validNFTs": 5,
+      "nftDetails": [
+        {
+          "mintAddress": "H1mNuAL8SbrbxAcQV1SwCoCqAXdvA3UTirTFRMxGW2aD",
+          "name": "30% Off Fine Dining Experience",
+          "symbol": "",
+          "uri": "https://ayushjhax.github.io/discount-LCB-DINING30-2024.json",
+          "metadata": [
+            {
+              "value": 30,
+              "trait_type": "Discount Percentage"
+            },
+            {
+              "value": "$200",
+              "trait_type": "Original Price"
+            },
+            {
+              "value": "$140",
+              "trait_type": "Discounted Price"
+            },
+            {
+              "value": "$60",
+              "trait_type": "Savings"
+            },
+            {
+              "value": "Le Cordon Bleu",
+              "trait_type": "Merchant"
+            },
+            {
+              "value": "le-cordon-bleu",
+              "trait_type": "Merchant ID"
+            },
+            {
+              "value": "Restaurant",
+              "trait_type": "Category"
+            },
+            {
+              "value": "Paris, France",
+              "trait_type": "Location"
+            },
+            {
+              "value": "2024-10-31",
+              "trait_type": "Expiry Date"
+            },
+            {
+              "value": "10/31/2024",
+              "trait_type": "Valid Until"
+            },
+            {
+              "value": "LCB-DINING30-2024",
+              "trait_type": "Redemption Code"
+            },
+            {
+              "value": 1,
+              "trait_type": "Max Uses"
+            },
+            {
+              "value": 0,
+              "trait_type": "Current Uses"
+            },
+            {
+              "value": "Active",
+              "trait_type": "Status"
+            },
+            {
+              "value": "Yes",
+              "trait_type": "Transferable"
+            },
+            {
+              "value": "DealCoin",
+              "trait_type": "Platform"
+            },
+            {
+              "value": "Solana Pay",
+              "trait_type": "Verification Method"
+            },
+            {
+              "value": "Compressed NFT",
+              "trait_type": "NFT Type"
+            }
+          ],
+          "collection": "6sm8TTTCpZBQHDTHsr78PkFdYHCZsgy5Q1riGJGaPan7",
+          "owner": "4aLYHregmyZxYQpTFFNzRAFrBAgs46gNCFsqVQkPP6nK",
+          "category": "Restaurant",
+          "discountPercent": 30,
+          "merchant": "Le Cordon Bleu",
+          "redemptionCode": "LCB-DINING30-2024",
+          "expiryDate": "2024-10-31",
+          "isCompressed": true
+        },
+        {
+          "mintAddress": "EtvbaraoubRneetdvoNthgyiS2QJqerZASNMop6D5s83",
+          "name": "30% Off Fine Dining Experience",
+          "symbol": "",
+          "uri": "https://ayushjhax.github.io/discount-LCB-DINING30-2024.json",
+          "metadata": [
+            {
+              "value": 30,
+              "trait_type": "Discount Percentage"
+            },
+            {
+              "value": "$200",
+              "trait_type": "Original Price"
+            },
+            {
+              "value": "$140",
+              "trait_type": "Discounted Price"
+            },
+            {
+              "value": "$60",
+              "trait_type": "Savings"
+            },
+            {
+              "value": "Le Cordon Bleu",
+              "trait_type": "Merchant"
+            },
+            {
+              "value": "le-cordon-bleu",
+              "trait_type": "Merchant ID"
+            },
+            {
+              "value": "Restaurant",
+              "trait_type": "Category"
+            },
+            {
+              "value": "Paris, France",
+              "trait_type": "Location"
+            },
+            {
+              "value": "2024-10-31",
+              "trait_type": "Expiry Date"
+            },
+            {
+              "value": "10/31/2024",
+              "trait_type": "Valid Until"
+            },
+            {
+              "value": "LCB-DINING30-2024",
+              "trait_type": "Redemption Code"
+            },
+            {
+              "value": 1,
+              "trait_type": "Max Uses"
+            },
+            {
+              "value": 0,
+              "trait_type": "Current Uses"
+            },
+            {
+              "value": "Active",
+              "trait_type": "Status"
+            },
+            {
+              "value": "Yes",
+              "trait_type": "Transferable"
+            },
+            {
+              "value": "DealCoin",
+              "trait_type": "Platform"
+            },
+            {
+              "value": "Solana Pay",
+              "trait_type": "Verification Method"
+            },
+            {
+              "value": "Compressed NFT",
+              "trait_type": "NFT Type"
+            }
+          ],
+          "collection": "7RVa6hDFbX23BMVk8qDzXKLMEss9jZjqo5gpYoo8Jd4t",
+          "owner": "4aLYHregmyZxYQpTFFNzRAFrBAgs46gNCFsqVQkPP6nK",
+          "category": "Restaurant",
+          "discountPercent": 30,
+          "merchant": "Le Cordon Bleu",
+          "redemptionCode": "LCB-DINING30-2024",
+          "expiryDate": "2024-10-31",
+          "isCompressed": true
+        },
+        {
+          "mintAddress": "DJUcU2YVDoDVW2NaMwXJ8LoNv53ATPEETxbNiegbqmVj",
+          "name": "30% Off Fine Dining Experience",
+          "symbol": "",
+          "uri": "https://ayushjhax.github.io/discount-LCB-DINING30-2024.json",
+          "metadata": [
+            {
+              "value": 30,
+              "trait_type": "Discount Percentage"
+            },
+            {
+              "value": "$200",
+              "trait_type": "Original Price"
+            },
+            {
+              "value": "$140",
+              "trait_type": "Discounted Price"
+            },
+            {
+              "value": "$60",
+              "trait_type": "Savings"
+            },
+            {
+              "value": "Le Cordon Bleu",
+              "trait_type": "Merchant"
+            },
+            {
+              "value": "le-cordon-bleu",
+              "trait_type": "Merchant ID"
+            },
+            {
+              "value": "Restaurant",
+              "trait_type": "Category"
+            },
+            {
+              "value": "Paris, France",
+              "trait_type": "Location"
+            },
+            {
+              "value": "2024-10-31",
+              "trait_type": "Expiry Date"
+            },
+            {
+              "value": "10/31/2024",
+              "trait_type": "Valid Until"
+            },
+            {
+              "value": "LCB-DINING30-2024",
+              "trait_type": "Redemption Code"
+            },
+            {
+              "value": 1,
+              "trait_type": "Max Uses"
+            },
+            {
+              "value": 0,
+              "trait_type": "Current Uses"
+            },
+            {
+              "value": "Active",
+              "trait_type": "Status"
+            },
+            {
+              "value": "Yes",
+              "trait_type": "Transferable"
+            },
+            {
+              "value": "DealCoin",
+              "trait_type": "Platform"
+            },
+            {
+              "value": "Solana Pay",
+              "trait_type": "Verification Method"
+            },
+            {
+              "value": "Compressed NFT",
+              "trait_type": "NFT Type"
+            }
+          ],
+          "collection": "G37i2dA2Xj863hovh2454yBkqcSK89EAjmP2nu6T4A3J",
+          "owner": "4aLYHregmyZxYQpTFFNzRAFrBAgs46gNCFsqVQkPP6nK",
+          "category": "Restaurant",
+          "discountPercent": 30,
+          "merchant": "Le Cordon Bleu",
+          "redemptionCode": "LCB-DINING30-2024",
+          "expiryDate": "2024-10-31",
+          "isCompressed": true
+        },
+        {
+          "mintAddress": "8bS5UtYvMxXTzz24CbPJmUTgrPWcdwLCyV6xQbPweGxg",
+          "name": "30% Off Fine Dining Experience",
+          "symbol": "",
+          "uri": "https://ayushjhax.github.io/discount-LCB-DINING30-2024.json",
+          "metadata": [
+            {
+              "value": 30,
+              "trait_type": "Discount Percentage"
+            },
+            {
+              "value": "$200",
+              "trait_type": "Original Price"
+            },
+            {
+              "value": "$140",
+              "trait_type": "Discounted Price"
+            },
+            {
+              "value": "$60",
+              "trait_type": "Savings"
+            },
+            {
+              "value": "Le Cordon Bleu",
+              "trait_type": "Merchant"
+            },
+            {
+              "value": "le-cordon-bleu",
+              "trait_type": "Merchant ID"
+            },
+            {
+              "value": "Restaurant",
+              "trait_type": "Category"
+            },
+            {
+              "value": "Paris, France",
+              "trait_type": "Location"
+            },
+            {
+              "value": "2024-10-31",
+              "trait_type": "Expiry Date"
+            },
+            {
+              "value": "10/31/2024",
+              "trait_type": "Valid Until"
+            },
+            {
+              "value": "LCB-DINING30-2024",
+              "trait_type": "Redemption Code"
+            },
+            {
+              "value": 1,
+              "trait_type": "Max Uses"
+            },
+            {
+              "value": 0,
+              "trait_type": "Current Uses"
+            },
+            {
+              "value": "Active",
+              "trait_type": "Status"
+            },
+            {
+              "value": "Yes",
+              "trait_type": "Transferable"
+            },
+            {
+              "value": "DealCoin",
+              "trait_type": "Platform"
+            },
+            {
+              "value": "Solana Pay",
+              "trait_type": "Verification Method"
+            },
+            {
+              "value": "Compressed NFT",
+              "trait_type": "NFT Type"
+            }
+          ],
+          "collection": "GmkGX3uh17uNCytwJ1qpUmSVCU4DCHysYYetAz5KNZ3e",
+          "owner": "4aLYHregmyZxYQpTFFNzRAFrBAgs46gNCFsqVQkPP6nK",
+          "category": "Restaurant",
+          "discountPercent": 30,
+          "merchant": "Le Cordon Bleu",
+          "redemptionCode": "LCB-DINING30-2024",
+          "expiryDate": "2024-10-31",
+          "isCompressed": true
+        },
+        {
+          "mintAddress": "31t9mgNSeYVno3jWor6Cwg69Z8dpCQ6bNp9pDE3McYY2",
+          "name": "30% Off Fine Dining Experience",
+          "symbol": "",
+          "uri": "https://ayushjhax.github.io/discount-LCB-DINING30-2024.json",
+          "metadata": [
+            {
+              "value": 30,
+              "trait_type": "Discount Percentage"
+            },
+            {
+              "value": "$200",
+              "trait_type": "Original Price"
+            },
+            {
+              "value": "$140",
+              "trait_type": "Discounted Price"
+            },
+            {
+              "value": "$60",
+              "trait_type": "Savings"
+            },
+            {
+              "value": "Le Cordon Bleu",
+              "trait_type": "Merchant"
+            },
+            {
+              "value": "le-cordon-bleu",
+              "trait_type": "Merchant ID"
+            },
+            {
+              "value": "Restaurant",
+              "trait_type": "Category"
+            },
+            {
+              "value": "Paris, France",
+              "trait_type": "Location"
+            },
+            {
+              "value": "2024-10-31",
+              "trait_type": "Expiry Date"
+            },
+            {
+              "value": "10/31/2024",
+              "trait_type": "Valid Until"
+            },
+            {
+              "value": "LCB-DINING30-2024",
+              "trait_type": "Redemption Code"
+            },
+            {
+              "value": 1,
+              "trait_type": "Max Uses"
+            },
+            {
+              "value": 0,
+              "trait_type": "Current Uses"
+            },
+            {
+              "value": "Active",
+              "trait_type": "Status"
+            },
+            {
+              "value": "Yes",
+              "trait_type": "Transferable"
+            },
+            {
+              "value": "DealCoin",
+              "trait_type": "Platform"
+            },
+            {
+              "value": "Solana Pay",
+              "trait_type": "Verification Method"
+            },
+            {
+              "value": "Compressed NFT",
+              "trait_type": "NFT Type"
+            }
+          ],
+          "collection": "21VVmpR8AeS9f7ed7Kmmrgsq9ut3X9pjQgj4hUnKkNk2",
+          "owner": "4aLYHregmyZxYQpTFFNzRAFrBAgs46gNCFsqVQkPP6nK",
+          "category": "Restaurant",
+          "discountPercent": 30,
+          "merchant": "Le Cordon Bleu",
+          "redemptionCode": "LCB-DINING30-2024",
+          "expiryDate": "2024-10-31",
+          "isCompressed": true
+        }
+      ],
+      "checks": {
+        "addressValid": true,
+        "hasNFTBalance": true,
+        "hasValidNFTs": true,
+        "collectionMatch": true,
+        "promotionAttributes": true,
+        "redemptionCode": true,
+        "expiryValid": false,
+        "typeVerification": true
+      },
+      "provenanceData": {},
+      "fraudDetection": {
+        "isForged": false,
+        "isWrapped": false,
+        "isProxy": false,
+        "hasAlterations": false,
+        "warnings": []
+      },
+      "errors": [],
+      "warnings": [
+        "Promotion 30% Off Fine Dining Experience has expired",
+        "✅ Correct discount type: Restaurant",
+        "Promotion 30% Off Fine Dining Experience has expired",
+        "✅ Correct discount type: Restaurant",
+        "Promotion 30% Off Fine Dining Experience has expired",
+        "✅ Correct discount type: Restaurant",
+        "Promotion 30% Off Fine Dining Experience has expired",
+        "✅ Correct discount type: Restaurant",
+        "Promotion 30% Off Fine Dining Experience has expired",
+        "✅ Correct discount type: Restaurant"
+      ],
+      "verifiedAt": 1761775560646
+    }
+  ],
+  "cryptographicProof": {
+    "reportHash": "e87e4e28086fbee84f5df33cf958019ce667b7b5e550e40e2d281a1ac319b121",
+    "blockHeight": 417990975,
+    "rpcEndpoint": "https://devnet.helius-rpc.com/?api-key=22abefb4-e86a-482d-9a62-452fcd4f2cb0"
+  },
+  "summary": "Verified 4 addresses across 4 CSV files. 4 valid promotions found (100.0%). Average verification score: 92.5%."
+}

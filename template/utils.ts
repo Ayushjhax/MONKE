@@ -67,10 +67,12 @@ export async function sendVersionedTx(
 	return signature;
 }
 
-export function txToLink(signature: string, cluster: string) {
-	return "https://explorer.solana.com/tx/"+signature+"?cluster="+cluster;
+export function txToLink(signature: string, cluster?: string) {
+    const clusterQuery = cluster ? `?cluster=${cluster}` : '';
+    return "https://explorer.solana.com/tx/"+signature+clusterQuery;
 }
 
-export function addrToLink(signature: string, cluster: string) {
-	return "https://explorer.solana.com/address/"+signature+"?cluster="+cluster;
+export function addrToLink(signature: string, cluster?: string) {
+    const clusterQuery = cluster ? `?cluster=${cluster}` : '';
+    return "https://explorer.solana.com/address/"+signature+clusterQuery;
 }

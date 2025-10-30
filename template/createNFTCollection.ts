@@ -106,11 +106,11 @@ const run = async () => {
 
     const collectionMintExplolerUrl = `https://explorer.solana.com/address/${
       collectionMint.publicKey
-    }${process.env.NODE_ENV !== 'production' && '?cluster=devnet'}`
+    }${process.env.NODE_ENV !== 'production' ? '?cluster=devnet' : ''}`
 
     console.log('collectionMint:', collectionMintExplolerUrl);
 
-    let cluster = ""; if (process.env.NODE_ENV !== 'production') { cluster = '?cluster=devnet';}
+    let cluster = undefined as string | undefined; if (process.env.NODE_ENV !== 'production') { cluster = 'devnet';}
     const txLink = addrToLink( collectionMint.publicKey, cluster);
     console.log(txLink);
 
