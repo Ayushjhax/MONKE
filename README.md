@@ -1,8 +1,7 @@
 ## Driftly — Internet Capital Markets Powered by Solana cNFTs
 
-[![Watch the 5‑minute overview](https://img.youtube.com/vi/nNys79UtaTg/maxresdefault.jpg)](https://youtu.be/nNys79UtaTg?si=-0OgwiAyFdzgrERJ)
+[Demo video link](https://youtu.be/nNys79UtaTg?si=-0OgwiAyFdzgrERJ)
 
-Inline playback available inside the app at `/videos`.
 
 Build, sell, redeem, and trade digital assets with Solana’s Compressed NFTs (cNFTs). Driftly gives small businesses programmatic loyalty, verifiable discounts, and secondary-market liquidity — at internet scale and near-zero cost (Mint More than 1 Million cNFTs for 0.3 Sol 🤩).
 
@@ -37,9 +36,15 @@ Why cNFTs: ultra-low minting cost, massive scalability (Merkle-compressed), on-c
 
 💡 Hackathon teams: see [`MONKE/template/README.md`](https://github.com/Ayushjhax/MONKE/blob/main/MONKE/template/README.md) to integrate Driftly’s cNFT module directly.
 
-[![Hackathon walkthrough](https://img.youtube.com/vi/fQk5rVYCtSw/maxresdefault.jpg)](https://youtu.be/fQk5rVYCtSw?si=GBtXv7hzTNg0Nz-D)
+[ Demo to Integrate cNFT into your dAPP under 60 seconds](https://youtu.be/fQk5rVYCtSw?si=GBtXv7hzTNg0Nz-D)
 
-Or watch both embedded at: `http://localhost:3000/videos` (after running the app).
+
+---
+
+### System Architecture
+
+- High-level diagram and notes: [Google Drive link](https://drive.google.com/file/d/163CZ2yo7Y7FaxUPz80HuEj2jBBH90ite/view?usp=sharing)
+- High-level write up notes: [Google Docs](https://docs.google.com/document/d/1m1LYWXDqSSUmfJEy8Uk1JXE8rXEUBOS1eyTBOIWR6j0/edit?usp=sharing)
 
 ---
 
