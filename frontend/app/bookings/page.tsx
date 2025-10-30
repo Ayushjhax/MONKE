@@ -6,6 +6,12 @@ import ClientWalletButton from '../../components/ClientWalletButton';
 import Link from 'next/link';
 import { formatPrice, formatDate } from '@/lib/amadeus';
 
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
+
 interface Booking {
   id: number;
   bookingReference: string;
@@ -29,6 +35,8 @@ export default function BookingsPage() {
   const [filterType, setFilterType] = useState<'all' | 'flight' | 'hotel'>('all');
   const [filterStatus, setFilterStatus] = useState<'all' | 'confirmed' | 'cancelled'>('all');
   const [sortBy, setSortBy] = useState<'date' | 'price'>('date');
+  
+  const [processingPayment, setProcessingPayment] = useState(false);
 
   useEffect(() => {
     if (connected && publicKey) {
@@ -37,6 +45,144 @@ export default function BookingsPage() {
       setLoading(false);
     }
   }, [connected, publicKey]);
+
+  useEffect(() => {
+    // Load Razorpay script
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    document.body.appendChild(script);
+    
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  const handleRazorpayPayment = async () => {
+    if (!publicKey) {
+      alert('Please connect your wallet first');
+      return;
+    }
+
+    setProcessingPayment(true);
+    try {
+      // Create order with hardcoded 10 INR
+      const createOrderResponse = await fetch('/api/razorpay/create-order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: 10,
+          currency: 'INR',
+        }),
+      });
+
+      const orderData = await createOrderResponse.json();
+
+      if (!orderData.success) {
+        throw new Error(orderData.error || 'Failed to create order');
+      }
+
+      // Initialize Razorpay checkout
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: 'MonkeDao Travel',
+        description: 'Test Booking Payment',
+        order_id: orderData.order_id,
+        handler: async function (response: any) {
+          // Verify payment
+          const verifyResponse = await fetch('/api/razorpay/verify-payment', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            }),
+          });
+
+          const verifyData = await verifyResponse.json();
+
+          if (verifyData.success) {
+            alert('Payment successful! Your booking is confirmed.');
+            // Simulate a booking after successful payment
+            await simulateBookingAfterPayment();
+          } else {
+            alert('Payment verification failed. Please try again.');
+          }
+        },
+        modal: {
+          ondismiss: function() {
+            setProcessingPayment(false);
+          }
+        },
+        prefill: {
+          name: 'Test User',
+          email: 'test@example.com',
+          contact: '9810977535'
+        },
+        theme: {
+          color: '#000000'
+        }
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+      razorpay.on('payment.failed', function (response: any) {
+        alert('Payment failed. Please try again.');
+        setProcessingPayment(false);
+      });
+    } catch (error) {
+      console.error('Error processing payment:', error);
+      alert('Failed to process payment. Please try again.');
+      setProcessingPayment(false);
+    }
+  };
+
+  const simulateBookingAfterPayment = async () => {
+    try {
+      const bookingRequest = {
+        userWallet: publicKey?.toString(),
+        dealType: 'hotel' as const,
+        amadeusOfferId: 'test-offer-001',
+        originalPrice: 1000,
+        currency: 'USD',
+        bookingDetails: {
+          description: 'Test booking after Razorpay payment',
+          hotel: 'Test Hotel',
+          checkIn: '2024-12-25',
+          checkOut: '2024-12-27',
+        },
+      };
+
+      const response = await fetch('/api/amadeus/booking/simulate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(bookingRequest),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        alert(`Booking confirmed! Reference: ${data.booking.bookingReference}`);
+        // Refresh bookings list
+        fetchBookings();
+      } else {
+        console.error('Failed to create booking:', data.error);
+      }
+    } catch (error) {
+      console.error('Error creating booking:', error);
+    } finally {
+      setProcessingPayment(false);
+    }
+  };
 
   const fetchBookings = async () => {
     if (!publicKey) return;
@@ -377,6 +523,25 @@ export default function BookingsPage() {
             </button>
           </div>
         </div>
+
+        {/* Razorpay Test Payment Button */}
+        {connected && (
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl border border-blue-200 p-6 mb-8">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 mb-1">💳 Test Payment</h3>
+                <p className="text-sm text-gray-600">Test Razorpay payment gateway with ₹10</p>
+              </div>
+              <button
+                onClick={handleRazorpayPayment}
+                disabled={processingPayment}
+                className="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {processingPayment ? 'Processing...' : '💳 Pay ₹10'}
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Bookings List */}
         {error && (

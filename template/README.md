@@ -315,15 +315,5 @@ Outputs go to `data/` (IDs, tx signatures, and verification reports).
 
 ---
 
-### Checklist (Hackathon-ready)
-- [ ] `.env` configured (RPCs, NODE_ENV)
-- [ ] `key.json` present
-- [ ] `config.ts` URLs + collection info set
-- [ ] CSVs prepared (`address` column)
-- [ ] Assets and JSON uploaded to IPFS
-- [ ] Run steps 1–6 and verify outputs in `data/`
-
----
-
 ### Support
 - External URL is set to `https://x.com/Ayushjhax`. For issues or questions, share console logs and the `data/verification-report-*.json` artifact.

@@ -21,6 +21,12 @@ import SocialStats from '@/components/social/SocialStats';
 import { createRealBurnTransaction, fetchAssetDataForBurn, createRedemptionOnlyTransaction } from '@/lib/burn-nft';
 import { PublicKey, Transaction } from '@solana/web3.js';
 
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
+
 interface NFTData {
   mint: string;
   name: string;
@@ -69,6 +75,8 @@ export default function DealDetailPage() {
   
   const [socialStats, setSocialStats] = useState<any>(null);
   const [activeTab, setActiveTab] = useState<'details' | 'reviews'>('details');
+  
+  const [processingPayment, setProcessingPayment] = useState(false);
 
   // Sample merchant wallet
   const merchantWallet = 'aPi7gR9c3s7eUvtWu7HVFRakW1e9rZz59ZNzrGbkKZ3';
@@ -76,6 +84,18 @@ export default function DealDetailPage() {
   useEffect(() => {
     fetchSocialStats();
   }, [dealId, publicKey]);
+
+  useEffect(() => {
+    // Load Razorpay script
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    document.body.appendChild(script);
+    
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   useEffect(() => {
     if (connected && publicKey) {
@@ -495,6 +515,92 @@ export default function DealDetailPage() {
       console.error('Error booking:', err);
     } finally {
       setBooking(false);
+    }
+  };
+
+  const handleRazorpayPayment = async () => {
+    if (!publicKey) {
+      alert('Please connect your wallet first');
+      return;
+    }
+
+    setProcessingPayment(true);
+    try {
+      // Create order with hardcoded 10 INR
+      const createOrderResponse = await fetch('/api/razorpay/create-order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: 10,
+          currency: 'INR',
+        }),
+      });
+
+      const orderData = await createOrderResponse.json();
+
+      if (!orderData.success) {
+        throw new Error(orderData.error || 'Failed to create order');
+      }
+
+      // Initialize Razorpay checkout
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: 'MonkeDao Travel',
+        description: 'Test Booking Payment',
+        order_id: orderData.order_id,
+        handler: async function (response: any) {
+          // Verify payment
+          const verifyResponse = await fetch('/api/razorpay/verify-payment', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+            }),
+          });
+
+          const verifyData = await verifyResponse.json();
+
+          if (verifyData.success) {
+            alert('Payment successful! Your booking is confirmed.');
+            // Trigger the booking after successful payment
+            await handleBooking();
+          } else {
+            alert('Payment verification failed. Please try again.');
+          }
+        },
+        modal: {
+          ondismiss: function() {
+            setProcessingPayment(false);
+          }
+        },
+        prefill: {
+          name: 'Test User',
+          email: 'test@example.com',
+          contact: '9810977535'
+        },
+        theme: {
+          color: '#000000'
+        }
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+      razorpay.on('payment.failed', function (response: any) {
+        alert('Payment failed. Please try again.');
+        setProcessingPayment(false);
+      });
+    } catch (error) {
+      console.error('Error processing payment:', error);
+      alert('Failed to process payment. Please try again.');
+      setProcessingPayment(false);
     }
   };
 
@@ -937,13 +1043,32 @@ export default function DealDetailPage() {
                   <ClientWalletButton className="!bg-black hover:!bg-gray-800 !w-full" />
                 </div>
               ) : (
-                <button
-                  onClick={handleBooking}
-                  disabled={booking}
-                  className="w-full px-6 py-3 bg-black text-white font-semibold rounded-xl hover:bg-gray-800 disabled:bg-gray-400 transition-colors"
-                >
-                  {booking ? 'Processing...' : burnedNFT ? 'Complete Booking with Discount' : 'Simulate Booking'}
-                </button>
+                <>
+                  <button
+                    onClick={handleBooking}
+                    disabled={booking}
+                    className="w-full px-6 py-3 bg-black text-white font-semibold rounded-xl hover:bg-gray-800 disabled:bg-gray-400 transition-colors"
+                  >
+                    {booking ? 'Processing...' : burnedNFT ? 'Complete Booking with Discount' : 'Simulate Booking'}
+                  </button>
+                  
+                  {/* Razorpay Test Payment Button */}
+                  <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl border border-blue-200">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h4 className="text-sm font-semibold text-gray-900 mb-1">💳 Test Payment</h4>
+                        <p className="text-xs text-gray-600">Pay ₹10 with Razorpay</p>
+                      </div>
+                      <button
+                        onClick={handleRazorpayPayment}
+                        disabled={processingPayment}
+                        className="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                      >
+                        {processingPayment ? 'Processing...' : '💳 Pay ₹10'}
+                      </button>
+                    </div>
+                  </div>
+                </>
               )}
 
               {error && (
