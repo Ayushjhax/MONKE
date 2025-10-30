@@ -1078,14 +1078,14 @@ export default function DealDetailPage() {
                     <div className="flex items-center justify-between">
                       <div>
                         <h4 className="text-sm font-semibold text-gray-900 mb-1">💳 Test Payment</h4>
-                        <p className="text-xs text-gray-600">Pay ₹10 with Razorpay</p>
+                        <p className="text-xs text-gray-600">Pay with Razorpay</p>
                       </div>
                       <button
                         onClick={handleRazorpayPayment}
                         disabled={processingPayment}
                         className="px-4 py-2 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                       >
-                        {processingPayment ? 'Processing...' : '💳 Pay ₹10'}
+                        {processingPayment ? 'Processing...' : '💳 Pay'}
                       </button>
                     </div>
                   </div>
